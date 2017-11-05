@@ -1,0 +1,497 @@
+﻿using QuanLyBanHang.BUS;
+using QuanLyBanHang.BUS.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace QuanLyBanHang
+{
+    public partial class frmQuanLyThongTin : Form
+    {
+        private QuanLyThongTinBUS QuanLyThongTin { get => Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<QuanLyThongTinBUS>(); }
+
+        public frmQuanLyThongTin()
+        {
+            InitializeComponent();
+            Loading();
+        }
+
+        #region Common Method
+
+        void ConfigForListView()
+        {
+            lvwThongKeHH.Columns.Add(new ColumnHeader() { Text = "Mã Hàng" });
+            lvwThongKeHH.Columns.Add(new ColumnHeader() { Text = "Tên Hàng" });
+            lvwThongKeHH.Columns.Add(new ColumnHeader() { Text = "Đơn Giá" });
+            lvwThongKeHH.Columns.Add(new ColumnHeader() { Text = "Số Lượng" });
+
+            lvwChiTietHoaDon.Columns.Add(new ColumnHeader() { Text = "Mã Hàng" });
+            lvwChiTietHoaDon.Columns.Add(new ColumnHeader() { Text = "Tên Hàng" });
+            lvwChiTietHoaDon.Columns.Add(new ColumnHeader() { Text = "Đơn Giá" });
+            lvwChiTietHoaDon.Columns.Add(new ColumnHeader() { Text = "Số Lượng" });
+        }
+
+        void Loading()
+        {
+
+            this.ActiveControl = txtSDTKhachHang;
+            ConfigForListView();
+            cboTenHang.DataSource = QuanLyThongTin.DataSourceForCombobox();
+            StatusControlLapPhieu(false);
+
+            txtID.Text = Program.IDStaff;
+            txtName.Text = Program.NameStaff;
+            txtRole.Text = Program.RoleStaff;
+            txtRole.Enabled = false;
+            txtRole.ReadOnly = true;
+            txtID.Enabled = false;
+            txtID.ReadOnly = true;
+            txtName.Enabled = false;
+            txtName.ReadOnly = true;
+            txtNameStaff.Text = txtName.Text;
+            this.AcceptButton = btnKiemTraKH;
+        }
+
+        /// <summary>
+        /// Thêm dữ liệu vào listview ; dữ liệu ở đây là một danh sách có kiểu <see cref="DTO.HangDTO"/>
+        /// </summary>
+        /// <param name="listHang"></param>
+        void AddDataToListView(List<DTO.HangDTO> listHang, ListView listView)
+        {
+            listHang.ForEach((x) =>
+            {
+                ListViewItem listViewItem = new ListViewItem() { Text = x.StrMaHang };
+                listViewItem.SubItems.Add(x.StrTenHang);
+                listViewItem.SubItems.Add(x.FltDonGia.ToString());
+                listViewItem.SubItems.Add(x.IntSoLuong.ToString());
+                listView.Items.Add(listViewItem);
+            });
+        }
+        #endregion
+
+        //===================================================================================================================//
+
+        //===================================================================================================================//
+
+        #region Thống Kê Hàng Hóa 
+        private void BntHienHangHoa_Click(object sender, EventArgs e)
+        {
+            lvwThongKeHH.Items.Clear();
+            var data = QuanLyThongTin.ShowAllHang();
+            AddDataToListView(data, lvwThongKeHH);
+        }
+
+
+        private void BtnSapXep_Click(object sender, EventArgs e)
+        {
+            lvwThongKeHH.Items.Clear();
+            if (rdbBeDenLon.Checked == false && rdbLonDenBe.Checked == false)
+            {
+                MessageBox.Show("Làm ơn tích vào ít nhất một ô lựa chọn", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            var kiemTraCheckBox = chkDonGia.CheckState == CheckState.Unchecked &&
+                chkMaHang.CheckState == CheckState.Unchecked &&
+                chkSoLuong.CheckState == CheckState.Unchecked &&
+                chkTenHang.CheckState == CheckState.Unchecked;
+            if (kiemTraCheckBox)
+            {
+                MessageBox.Show("Làm on đánh dấu vào ít nhất một ô", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            var MaHang = chkMaHang.CheckState == CheckState.Checked ? "MaHang" : "";
+            var TenHang = chkTenHang.CheckState == CheckState.Checked ? "TenHang" : "";
+            var SoLuong = chkSoLuong.CheckState == CheckState.Checked ? "SoLuong" : "";
+            var DonGia = chkDonGia.CheckState == CheckState.Checked ? "DonGia" : "";
+            var asc = rdbBeDenLon.Checked;
+            var data = QuanLyThongTin.SortBy(new object[] { MaHang, TenHang, SoLuong, DonGia }, asc);
+            AddDataToListView(data, lvwThongKeHH);
+        }
+
+        private void BtnTimKiem_Click(object sender, EventArgs e)
+        {
+            lvwThongKeHH.Items.Clear();
+            var checkTextBox = String.IsNullOrEmpty(txtTen.Text) || String.IsNullOrWhiteSpace(txtTen.Text);
+            if ((rdbChinhXac.Checked == false && rdbGanDung.Checked == false) || checkTextBox == true)
+            {
+                MessageBox.Show("Xin hãy nhập thông tin ", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            var typeSearch = rdbChinhXac.Checked == true ? true : false;
+            var data = QuanLyThongTin.SearchBy(txtTen.Text, typeSearch);
+            AddDataToListView(data, lvwThongKeHH);
+        }
+        #endregion
+
+        //===================================================================================================================//
+
+        //===================================================================================================================//
+
+        #region Lập Phiếu
+
+        #region Method
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        void DefaultValue()
+        {
+            nudSoLuong.Value =decimal.Parse( "1");
+            txtDonGia.Text = "";
+        }
+
+        /// <summary>
+        /// Kiểm tra <see cref="lvwChiTietHoaDon"/> có bất cứ items nào được chọn không
+        /// </summary>
+        bool KiemTraListViewSelect()
+        {
+            var beSelect = lvwChiTietHoaDon.SelectedIndices.Count > 0;
+            if (beSelect)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Sử dụng làm cờ cho các button 
+        /// Khi giá trị <paramref name="flag"/> bằng <see cref="true"/> thì <see cref="btnKiemTraKH"/> ,
+        /// <see cref="btnInPhieu"/> , <seealso cref="btnSua"/>
+        /// , <see cref="btnThemHang"/> được kích hoạt ( hay  Enabled bằng true) và ngược lại
+        /// </summary>
+        /// <param name="flag">Có giá trị true hoặc false</param>
+        void FlagForButton(bool flag)
+        {
+            btnKiemTraKH.Enabled = flag;
+            btnInPhieu.Enabled = flag;
+            btnHuy.Enabled = flag;
+            btnXoa.Enabled = flag;
+            btnThemHang.Enabled = flag;
+            btnKiemTraKH.Enabled = flag;
+            btnCapNhat.Enabled = !flag;
+            rdbXuat.Enabled = flag;
+            rdbNhap.Enabled = flag;
+            rdbHangMoi.Enabled = flag;
+            rdbHangTrongKho.Enabled = flag;
+        }
+
+
+        /// <summary>
+        /// Kiểm tra các xem đã chọn Loại Hàng ,Đơn Giá ,Loại Phiếu chưa.
+        /// Trả về true nếu tất cả điều hợp lệ
+        /// </summary>
+        /// <returns></returns>
+        private bool KiemTraHopLe()
+        {
+            var kiemTraDonGia = txtDonGia.Enabled ? txtDonGia.Text.Trim().Length > 0 : true;//trả ra true khi các txtDonGia được điền đầu đủ
+            var kiemTraTenHang = cboTenHang.Text.Trim().Length > 0;//trả ra true khi cboTenHang được điền đầu đủ
+            var loaiHang = rdbHangMoi.Checked == true || rdbHangTrongKho.Checked == true;
+            var loaiPhieu = rdbNhap.Checked == true || rdbXuat.Checked == true;
+            var ketQua = kiemTraDonGia && kiemTraTenHang && loaiPhieu && loaiHang;
+            return ketQua;
+        }
+
+        /// <summary>
+        /// Chỉ cho phép nhập số 
+        /// <param name="e"></param>
+        private void KhongChoNhapChu(KeyPressEventArgs e)
+        {
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
+            {
+                e.Handled = true;
+            }
+        }
+
+        /// <summary>
+        /// Xem đã <see cref="RadioButton"/> loại hóa đơn đã được chọn chưa
+        /// </summary>
+        /// <returns></returns>
+        bool KiemTraLoaiHD()
+        {
+            var check = rdbNhap.Checked || rdbXuat.Checked;
+            return check;
+        }
+
+        /// <summary>
+        /// Gán các giá trị của các Control theo giá <paramref name="flag"/> 
+        /// </summary>
+        /// <param name="flag"></param>
+        private void StatusControlLapPhieu(bool flag)
+        {
+            btnCapNhat.Enabled = flag;
+            btnSua.Enabled = flag;
+            btnXoa.Enabled = flag;
+            txtDonGia.Enabled = flag;
+            btnInPhieu.Enabled = flag;
+            btnThemHang.Enabled = flag;
+            nudSoLuong.Enabled = flag;
+            cboTenHang.Enabled = flag;
+            nudSoLuong.Enabled = flag;
+            lvwChiTietHoaDon.Enabled = flag;
+            rdbHangMoi.Enabled = flag;
+            rdbHangTrongKho.Enabled = flag;
+            rdbNhap.Enabled = flag;
+            rdbXuat.Enabled = flag;
+            if (!flag)
+            {
+                lvwChiTietHoaDon.Items.Clear();
+                nudSoLuong.Value = 1;
+            }
+        }
+
+
+        #endregion
+
+        private void BtnKiemTraKH_Click(object sender, EventArgs e)
+        {
+            var sdtKH = txtSDTKhachHang.Text;
+            var kiemTra = !(sdtKH.Trim().Length > 0); //String.IsNullOrEmpty(sdtKH) || String.IsNullOrWhiteSpace(sdtKH);
+            if (kiemTra)
+            {
+                MessageBox.Show("Điền số điện thoại");
+                StatusControlLapPhieu(false);
+                return;
+            }
+            var tenKH = QuanLyThongTin.GetTenKH(txtSDTKhachHang.Text);
+            txtTenKhachHang.Text = tenKH?.ToString();
+            if (tenKH != null)
+            {
+                StatusControlLapPhieu(true);
+            }
+            else
+            {
+                StatusControlLapPhieu(false);
+                var dialogResult = MessageBox.Show("Số điện thoại không tồn tại.\n Chọn Yes nếu muốn tạo mới và No để quay về", "Lỗi", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1);
+                if (dialogResult == DialogResult.Yes)
+                {
+                    frmThemKhachHang frmThemKhachHang = new frmThemKhachHang();
+                    frmThemKhachHang.ShowDialog();
+                }
+            }
+            btnCapNhat.Enabled = false;
+            this.AcceptButton = btnThemHang;
+        }
+
+        private void RdbHangMoi_CheckedChanged(object sender, EventArgs e)
+        {
+            if ((!KiemTraLoaiHD()) && (rdbHangMoi.Checked))
+            {
+                MessageBox.Show("Chọn loại hóa đơn trước", "", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                rdbHangMoi.Checked = false;
+                return;
+            }
+            txtDonGia.Enabled = true;
+            cboTenHang.DropDownStyle = ComboBoxStyle.Simple;
+            cboTenHang.Text = "";
+        }
+
+        private void RdbHangTrongKho_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!KiemTraLoaiHD() && (rdbHangTrongKho.Checked))
+            {
+                MessageBox.Show("Chọn loại hóa đơn trước", "", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                rdbHangTrongKho.Checked = false;
+                return;
+            }
+            txtDonGia.Enabled = false;
+            cboTenHang.DropDownStyle = ComboBoxStyle.DropDownList;
+        }
+
+        private void BtnThemHang_Click(object sender, EventArgs e)
+        {
+            //Kiểm tra các ô đơn giá , tên hàng có để trống không
+            if (!KiemTraHopLe())
+            {
+                MessageBox.Show("Điền vào chỗ trống");
+                return;
+            }
+            var tenHang = cboTenHang.Text;
+            var maHang = rdbHangMoi.Checked == true ? "-1" : QuanLyThongTin.GetMaHang(tenHang).ToString();
+            //Kiểm tra xem mặt hàng đó có trong listview chưa nếu có thì tăng mặt hàng đó lên theo số lượng thêm vào
+            bool checkTenHangInListView = lvwChiTietHoaDon.FindItemWithText(tenHang) != null ? true : false;//trả ra true khi tìm thấy có tên hàng trong listview và ngược lại
+            if (checkTenHangInListView)
+            {
+                //Cái này là cộng dồn vào cột số lượng
+                lvwChiTietHoaDon.FindItemWithText(tenHang).SubItems[3].Text = (int.Parse(lvwChiTietHoaDon.FindItemWithText(tenHang).SubItems[3].Text)
+                    + int.Parse(nudSoLuong.Value.ToString())).ToString();
+            }
+            //Nếu không thì thêm mặt hàng đó vào listview
+            else
+            {
+                var donGia = rdbHangTrongKho.Checked == true ? QuanLyThongTin.LayDonGia(tenHang) : txtDonGia.Text;
+                DTO.HangDTO hang = new DTO.HangDTO(maHang, tenHang, float.Parse(donGia.ToString()), int.Parse(nudSoLuong.Value.ToString()));
+                List<DTO.HangDTO> list = new List<DTO.HangDTO>
+                {
+                    hang
+                };
+                AddDataToListView(list, lvwChiTietHoaDon);
+            }
+            DefaultValue();
+            ///
+
+        }
+
+        private void RxtDonGia_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            KhongChoNhapChu(e);
+        }
+
+
+        private void TxtSDTKhachHang_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            KhongChoNhapChu(e);
+        }
+
+        private void BtnInPhieu_Click(object sender, EventArgs e)
+        {
+            var kiemtra = lvwChiTietHoaDon.Items.Count == 0;
+            if (kiemtra)
+            {
+                MessageBox.Show("Điền đơn hàng");
+                return;
+            }
+            List<DTO.HangDTO> list = new List<DTO.HangDTO>();
+
+            foreach (ListViewItem item in lvwChiTietHoaDon.Items)
+            {
+                var maHang = item.SubItems[0].Text.ToString();
+                var tenHang = item.SubItems[1].Text.ToString();
+                var donGia = float.Parse(item.SubItems[2].Text.ToString());
+                var soLuong = int.Parse(item.SubItems[3].Text.ToString());
+                DTO.HangDTO chiTietHoaDon = new DTO.HangDTO(maHang, tenHang, donGia, soLuong);
+                list.Add(chiTietHoaDon);
+            }
+            var khachHang = QuanLyThongTin.GetKhachHangBySDT(int.Parse(txtSDTKhachHang.Text.ToString()));
+            //Chỉnh sửa cho đúng dữ liệu
+            DTO.HoaDonDTO hoaDon = new DTO.HoaDonDTO(0, 0, "", 0, DateTime.Now, "0");
+            //
+            this.Cursor = Cursors.WaitCursor;
+            using (frmInPhieu inPhieu = new frmInPhieu(list, hoaDon, khachHang))
+            {
+                this.Cursor = Cursors.Default;
+                inPhieu.ShowDialog();
+            }
+        }
+
+
+        private void btnSua_Click(object sender, EventArgs e)
+        {
+            var text = btnSua.Text;
+            if (text.Equals("Sửa"))
+            {
+                btnSua.Text = "Xong";
+                FlagForButton(false);
+            }
+            else
+            {
+                btnSua.Text = "Sửa";
+                FlagForButton(true);
+            }
+        }
+
+        private void btnXoa_Click(object sender, EventArgs e)
+        {
+            if (KiemTraListViewSelect())
+            {
+                MessageBox.Show("Chọn Item trước", "", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+                return;
+            }
+            var index = lvwChiTietHoaDon.SelectedIndices.OfType<int>().Single();
+            lvwChiTietHoaDon.Items[index].Remove();
+            StatusControlLapPhieu(true);
+        }
+
+        private void btnCapNhat_Click(object sender, EventArgs e)
+        {
+            var index = lvwChiTietHoaDon.SelectedIndices.OfType<int>().Single();
+            var items = lvwChiTietHoaDon.Items[index];
+            var maHang = items.SubItems[0].Text;
+            if (maHang.Equals("-1") && txtDonGia.Text.Trim().Length <= 0)
+            {
+                MessageBox.Show("Điền đầy đủ vào chỗ trống", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            lvwChiTietHoaDon.Items[index].Remove();
+            BtnThemHang_Click(sender, e);
+        }
+
+
+        private void lvwChiTietHoaDon_MouseClick(object sender, MouseEventArgs e)
+        {
+            var checkValue = btnSua.Text.Equals("Xong") && lvwChiTietHoaDon.SelectedIndices.Count > 0;
+            if (checkValue)
+            {
+                var index = lvwChiTietHoaDon.SelectedIndices.OfType<int>().Single();
+                var items = lvwChiTietHoaDon.Items[index];
+                var maHang = items.SubItems[0].Text;
+                txtDonGia.Enabled = maHang.Equals("-1");
+                cboTenHang.DropDownStyle = maHang.Equals("-1") ? ComboBoxStyle.Simple : ComboBoxStyle.DropDownList;
+                cboTenHang.Text = items.SubItems[1].Text;
+                txtDonGia.Text = items.SubItems[2].Text;
+                var soLuong = items.SubItems[3].Text.ToString();
+                nudSoLuong.Value = decimal.Parse(soLuong);
+            }
+        }
+
+
+        private int flagRdb = 0;
+        private void rdbXuat_CheckedChanged(object sender, EventArgs e)
+        {
+            var countItem = lvwChiTietHoaDon.Items.Count > 0;
+            if (flagRdb == 1)
+            {
+                flagRdb = 0;
+                return;
+            }
+            else if (countItem)
+            {
+                var reslut = MessageBox.Show("Bạn sẽ xóa hóa đơn cũ.Và sẽ tạo hóa đơn mới?", "NHẮC NHỞ", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (reslut == DialogResult.Yes)
+                {
+                    lvwChiTietHoaDon.Items.Clear();
+                }
+                else
+                {
+                    flagRdb = 1;
+                    if (rdbNhap.Checked == true)
+                    {
+                        rdbNhap.Checked = false;
+                        rdbXuat.Checked = true;
+                    }
+                    else
+                    {
+                        rdbNhap.Checked = true;
+                    }
+                }
+            }
+            if (rdbXuat.Checked == true)
+            {
+                rdbHangTrongKho.Checked = true;
+                rdbHangMoi.Enabled = false;
+            }
+            else
+            {
+                rdbHangTrongKho.Checked = false;
+                rdbHangMoi.Enabled = true;
+            }
+        }
+
+        private void btnHuy_Click(object sender, EventArgs e)
+        {
+            var result = MessageBox.Show("Bạn có chắc không", "Hủy hóa đơn", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (result == DialogResult.Yes)
+            {
+                lvwChiTietHoaDon.Items.Clear();
+            }
+        }
+
+        #endregion
+
+    }
+}
