@@ -37,6 +37,8 @@ namespace QuanLyBanHang
             lvwChiTietHoaDon.Columns.Add(new ColumnHeader() { Text = "Số Lượng" });
         }
 
+
+
         void Loading()
         {
 
@@ -45,7 +47,7 @@ namespace QuanLyBanHang
             cboTenHang.DataSource = QuanLyThongTin.DataSourceForCombobox();
             StatusControlLapPhieu(false);
 
-            txtID.Text = Program.IDStaff;
+            /*txtID.Text = Program.IDStaff;
             txtName.Text = Program.NameStaff;
             txtRole.Text = Program.RoleStaff;
             txtRole.Enabled = false;
@@ -54,8 +56,27 @@ namespace QuanLyBanHang
             txtID.ReadOnly = true;
             txtName.Enabled = false;
             txtName.ReadOnly = true;
-            txtNameStaff.Text = txtName.Text;
+            txtNameStaff.Text = txtName.Text;*/
+            DefaultSetControl();
             this.AcceptButton = btnKiemTraKH;
+        }
+
+        /// <summary>
+        /// Các trạng thái và giá trị của một số <see cref="Control"/> khi mới Loading
+        /// Các <see cref="Control"/> gồm <see cref="txtID"/> và <see cref="txtName"/> và <see cref="txtRole"/> và <see cref="txtNameStaff"/>
+        /// </summary>
+        void DefaultSetControl()
+        {
+            txtID.Enabled = false;
+            txtID.ReadOnly = true;
+            txtID.Text = Program.IDStaff;
+            txtName.Enabled = false;
+            txtName.ReadOnly = true;
+            txtName.Text = Program.NameStaff;
+            txtRole.Text = Program.RoleStaff;
+            txtRole.Enabled = false;
+            txtRole.ReadOnly = true;
+            txtNameStaff.Text = txtName.Text;
         }
 
         /// <summary>
@@ -92,7 +113,7 @@ namespace QuanLyBanHang
         /// có bị unchecked hay không
         /// </summary>
         /// <returns>Trả về <see cref="true"/> khi tất cả các <see cref="CheckBox"/> không được check </returns>
-        bool IsCheckBox()
+        bool IsUnCheckCheckBox()
         {
             var kiemTraCheckBox = chkDonGia.CheckState == CheckState.Unchecked &&
                 chkMaHang.CheckState == CheckState.Unchecked &&
@@ -104,20 +125,20 @@ namespace QuanLyBanHang
         private void BtnSapXep_Click(object sender, EventArgs e)
         {
             lvwThongKeHH.Items.Clear();
-            if (rdbBeDenLon.Checked == false && rdbLonDenBe.Checked == false)
+            if ((rdbBeDenLon.Checked == false && rdbLonDenBe.Checked == false) || IsUnCheckCheckBox())
             {
-                MessageBox.Show("Làm ơn tích vào ít nhất một ô lựa chọn", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Làm ơn tích vào ít nhất một ô lựa chọn", "Thiếu lựa chọn", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
             /*var kiemTraCheckBox = chkDonGia.CheckState == CheckState.Unchecked &&
                 chkMaHang.CheckState == CheckState.Unchecked &&
                 chkSoLuong.CheckState == CheckState.Unchecked &&
                 chkTenHang.CheckState == CheckState.Unchecked;*/
-            if (IsCheckBox())
+            /*if (IsUnCheckCheckBox())
             {
                 MessageBox.Show("Làm on đánh dấu vào ít nhất một ô", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
-            }
+            }*/
             var MaHang = chkMaHang.CheckState == CheckState.Checked ? "MaHang" : "";
             var TenHang = chkTenHang.CheckState == CheckState.Checked ? "TenHang" : "";
             var SoLuong = chkSoLuong.CheckState == CheckState.Checked ? "SoLuong" : "";
@@ -149,13 +170,13 @@ namespace QuanLyBanHang
         #region Lập Phiếu
 
         #region Method
-        
+
         /// <summary>
         /// 
         /// </summary>
         void DefaultValue()
         {
-            nudSoLuong.Value =decimal.Parse( "1");
+            nudSoLuong.Value = decimal.Parse("1");
             txtDonGia.Text = "";
         }
 
@@ -337,7 +358,7 @@ namespace QuanLyBanHang
             }
             StateFortxtDonGiaAndcboTenHang(true);
         }
-       
+
         private void RdbHangTrongKho_CheckedChanged(object sender, EventArgs e)
         {
             /*if (!KiemTraLoaiHD() && (rdbHangTrongKho.Checked))
@@ -411,18 +432,19 @@ namespace QuanLyBanHang
                 return;
             }
             List<DTO.HangDTO> list = new List<DTO.HangDTO>();
-            
+
             foreach (ListViewItem item in lvwChiTietHoaDon.Items)
             {
                 /*var maHang = item.SubItems[0].Text.ToString();
                 var tenHang = item.SubItems[1].Text.ToString();
                 var donGia = float.Parse(item.SubItems[2].Text.ToString());
                 var soLuong = int.Parse(item.SubItems[3].Text.ToString());*/
-                DTO.HangDTO chiTietHoaDon = new DTO.HangDTO() {
+                DTO.HangDTO chiTietHoaDon = new DTO.HangDTO()
+                {
                     StrMaHang = item.SubItems[0].Text.ToString(),
-                    StrTenHang= item.SubItems[1].Text.ToString(),
+                    StrTenHang = item.SubItems[1].Text.ToString(),
                     FltDonGia = float.Parse(item.SubItems[2].Text.ToString()),
-                    IntSoLuong=int.Parse(item.SubItems[3].Text.ToString()),
+                    IntSoLuong = int.Parse(item.SubItems[3].Text.ToString()),
                 };
                 /*DTO.HangDTO chiTietHoaDon = new DTO.HangDTO(maHang, tenHang, donGia, soLuong);*/
                 list.Add(chiTietHoaDon);

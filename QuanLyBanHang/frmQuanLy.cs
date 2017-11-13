@@ -82,12 +82,27 @@ namespace QuanLyBanHang
             }
 
         }
+        
+        /// <summary>
+        ///Hiển thị thông báo khi có bất kì <see cref="Exception"/> nào bị phát hiện 
+        /// </summary>
+        /// <param name="ex"></param>
+        void WarningMessageBox(Exception ex)
+        {
+            MessageBox.Show($"Lỗi trong quá trình thực thi.Mã lỗi :\n {ex.Message.ToString()} \\\n Vui lòng liên hệ người quản trị " +
+                $"hoặc nhân viên để được nhận thêm sự " +
+                $" hỗ trợ", "Lỗi Trong Quá Trình Thực Thi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
 
         private void btnCapNhat_Click(object sender, EventArgs e)
         {
-            if (!CheckTextBoxNV())
+            /*if (!CheckTextBoxNV())
             {
                 MessageBox.Show("Vui Lòng điền đầy đủ thông tin", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }*/
+            if (!ValidateBeforeAction(CheckTextBoxNV()))
+            {
                 return;
             }
             try
@@ -98,19 +113,27 @@ namespace QuanLyBanHang
                     MessageBox.Show("Thành công", "", MessageBoxButtons.OK);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                MessageBox.Show("Có lỗi trong quá trình sửa", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                WarningMessageBox(ex);
+                return;
+                //MessageBox.Show("Có lỗi trong quá trình sửa", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             ClearAllTextBoxNV();
             GetDataNhanVien();
+            this.Cursor = Cursors.Default;
         }
 
         private void btnThem_Click(object sender, EventArgs e)
         {
-            if (!CheckTextBoxNV())
+            /*if (!CheckTextBoxNV())
             {
                 MessageBox.Show("Vui Lòng điền đầy đủ thông tin", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }*/
+
+            if (!ValidateBeforeAction(CheckTextBoxNV()))
+            {
                 return;
             }
             try
@@ -121,12 +144,15 @@ namespace QuanLyBanHang
                     MessageBox.Show("Thêm thành công", "", MessageBoxButtons.OK);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                MessageBox.Show("Có lỗi trong quá trình thêm");
+                WarningMessageBox(ex);
+                return;
+                //MessageBox.Show("Có lỗi trong quá trình thêm");
             }
             ClearAllTextBoxNV();
             GetDataNhanVien();
+            this.Cursor = Cursors.Default;
         }
 
         /// <summary>
@@ -197,13 +223,36 @@ namespace QuanLyBanHang
             return isLoaiKH && isDiaChi && isDT && isTen;
         }
 
-        private void btnThemKhach_Click(object sender, EventArgs e)
+        /// <summary>
+        /// Kiểm tra về <paramref name="CheckTextBox"/> ở đây bao gồm <see cref="CheckTextBoxKH"/> hoặc <see cref="CheckTextBoxNV"/> đã ổn chưa
+        /// Và hiển thị cảnh báo khi có vấn đề
+        /// </summary>
+        /// <param name="CheckTextBox">Bao gồm <see cref="CheckTextBoxKH"/> hoặc <see cref="CheckTextBoxNV"/> </param>
+        /// <returns></returns>
+        bool ValidateBeforeAction(bool CheckTextBox)
         {
             this.Cursor = Cursors.WaitCursor;
+            if (!CheckTextBox)
+            {
+                MessageBox.Show("Điền đầy đủ thông tin", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                this.Cursor = Cursors.Default;
+                return false;
+            }
+            return true;
+        }
+        
+        private void btnThemKhach_Click(object sender, EventArgs e)
+        {
+            /*this.Cursor = Cursors.WaitCursor;
             if (!CheckTextBoxKH())
             {
                 MessageBox.Show("Điền đầy đủ thông tin", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 this.Cursor = Cursors.Default;
+                return;
+            }
+            */
+            if (!ValidateBeforeAction(CheckTextBoxKH()))
+            {
                 return;
             }
             try
@@ -216,7 +265,8 @@ namespace QuanLyBanHang
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi không thể thêm khách hàng .Lỗi {ex.Message.ToString()}", "Lỗi Thêm Khách Hàng", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                WarningMessageBox(ex);
+                //MessageBox.Show($"Lỗi không thể thêm khách hàng .Lỗi {ex.Message.ToString()}", "Lỗi Thêm Khách Hàng", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
             ClearAllTextBoxKH();
@@ -243,9 +293,15 @@ namespace QuanLyBanHang
 
         private void btnCapNhatKhach_Click(object sender, EventArgs e)
         {
-            if (!CheckTextBoxKH())
+            /*if (!CheckTextBoxKH())
             {
                 MessageBox.Show("Điền đầy đủ thông tin", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            */
+
+            if (!ValidateBeforeAction(CheckTextBoxKH()))
+            {
                 return;
             }
             try
@@ -258,11 +314,13 @@ namespace QuanLyBanHang
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Không thể cập nhật thông tin khách hàng.Lỗi {ex.Message.ToString()}", "Lỗi Cập Nhật", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                WarningMessageBox(ex);
+                //MessageBox.Show($"Không thể cập nhật thông tin khách hàng.Lỗi {ex.Message.ToString()}", "Lỗi Cập Nhật", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
             ClearAllTextBoxKH();
             GetDataKhachHang();
+            this.Cursor = Cursors.Default;
         }
 
         /// <summary>
@@ -292,9 +350,11 @@ namespace QuanLyBanHang
             {
                 dgrvNhanVien.DataSource = QuanLy.GetDataNV();
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi không thể lấy dữ liệu.Lỗi {e.Message.ToString()}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                WarningMessageBox(ex);
+                return;
+                //MessageBox.Show($"Lỗi không thể lấy dữ liệu.Lỗi {e.Message.ToString()}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             this.Cursor = Cursors.Default;
         }
@@ -334,10 +394,11 @@ namespace QuanLyBanHang
             {
                 dgrvKhachHang.DataSource = QuanLy.GetDataKH();
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-
-                MessageBox.Show($"Không thể lấy dữ liệu .Tên lỗi {e.Message.ToString()}", "Không thể truy vấn", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                WarningMessageBox(ex);
+                return;
+                //MessageBox.Show($"Không thể lấy dữ liệu .Tên lỗi {e.Message.ToString()}", "Không thể truy vấn", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             this.Cursor = Cursors.Default;
         }
