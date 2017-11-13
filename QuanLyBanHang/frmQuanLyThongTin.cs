@@ -87,6 +87,19 @@ namespace QuanLyBanHang
             AddDataToListView(data, lvwThongKeHH);
         }
 
+        /// <summary>
+        /// Kiểm tra các <see cref="CheckBox"/> bao gồm <see cref="chkDonGia"/> và <see cref="chkMaHang"/> và <see cref="chkSoLuong"/> và <see cref="chkTenHang"/>
+        /// có bị unchecked hay không
+        /// </summary>
+        /// <returns>Trả về <see cref="true"/> khi tất cả các <see cref="CheckBox"/> không được check </returns>
+        bool IsCheckBox()
+        {
+            var kiemTraCheckBox = chkDonGia.CheckState == CheckState.Unchecked &&
+                chkMaHang.CheckState == CheckState.Unchecked &&
+                chkSoLuong.CheckState == CheckState.Unchecked &&
+                chkTenHang.CheckState == CheckState.Unchecked;
+            return kiemTraCheckBox;
+        }
 
         private void BtnSapXep_Click(object sender, EventArgs e)
         {
@@ -96,11 +109,11 @@ namespace QuanLyBanHang
                 MessageBox.Show("Làm ơn tích vào ít nhất một ô lựa chọn", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            var kiemTraCheckBox = chkDonGia.CheckState == CheckState.Unchecked &&
+            /*var kiemTraCheckBox = chkDonGia.CheckState == CheckState.Unchecked &&
                 chkMaHang.CheckState == CheckState.Unchecked &&
                 chkSoLuong.CheckState == CheckState.Unchecked &&
-                chkTenHang.CheckState == CheckState.Unchecked;
-            if (kiemTraCheckBox)
+                chkTenHang.CheckState == CheckState.Unchecked;*/
+            if (IsCheckBox())
             {
                 MessageBox.Show("Làm on đánh dấu vào ít nhất một ô", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
@@ -117,8 +130,8 @@ namespace QuanLyBanHang
         private void BtnTimKiem_Click(object sender, EventArgs e)
         {
             lvwThongKeHH.Items.Clear();
-            var checkTextBox = String.IsNullOrEmpty(txtTen.Text) || String.IsNullOrWhiteSpace(txtTen.Text);
-            if ((rdbChinhXac.Checked == false && rdbGanDung.Checked == false) || checkTextBox == true)
+            var checkNullTextBox = txtTen.Text.Trim().Length == 0;// String.IsNullOrEmpty(txtTen.Text) || String.IsNullOrWhiteSpace(txtTen.Text);
+            if ((rdbChinhXac.Checked == false && rdbGanDung.Checked == false) || checkNullTextBox == true)
             {
                 MessageBox.Show("Xin hãy nhập thông tin ", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
@@ -278,9 +291,38 @@ namespace QuanLyBanHang
             this.AcceptButton = btnThemHang;
         }
 
+
+        /// <summary>
+        /// Đưa trạng thái của <see cref=" txtDonGia"/> và <see cref="cboTenHang"/> về các trạng thái khác nhau tùy vào tùy loại đơn hàng  
+        /// </summary>
+        /// <param name="flag"></param>
+        void StateFortxtDonGiaAndcboTenHang(bool flag)
+        {
+            txtDonGia.Enabled = flag;
+            cboTenHang.DropDownStyle = flag == true ? ComboBoxStyle.Simple : ComboBoxStyle.DropDownList;
+            cboTenHang.Text = flag == true ? "" : cboTenHang.Text;
+        }
+
+        /// <summary>
+        /// Kiểm tra các yếu tố,yếu tố ở đây là đã chọn loại hóa đơn chưa mới được check <see cref="rdbHangMoi"/> hoặc <see cref="rdbHangTrongKho"/>
+        /// </summary>
+        /// <param name="radioButton"> chỉ có được <see cref="rdbHangTrongKho"/> hoặc <see cref="rdbHangMoi"/></param>
+        /// <returns></returns>
+        bool CheckValueRdbHang(RadioButton radioButton)
+        {
+            if ((!KiemTraLoaiHD()) && (radioButton.Checked))
+            {
+                MessageBox.Show("Chọn loại hóa đơn trước", "", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                radioButton.Checked = false;
+                return false;
+            }
+            return true;
+        }
+
+
         private void RdbHangMoi_CheckedChanged(object sender, EventArgs e)
         {
-            if ((!KiemTraLoaiHD()) && (rdbHangMoi.Checked))
+            /*if ((!KiemTraLoaiHD()) && (rdbHangMoi.Checked))
             {
                 MessageBox.Show("Chọn loại hóa đơn trước", "", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 rdbHangMoi.Checked = false;
@@ -288,19 +330,31 @@ namespace QuanLyBanHang
             }
             txtDonGia.Enabled = true;
             cboTenHang.DropDownStyle = ComboBoxStyle.Simple;
-            cboTenHang.Text = "";
+            cboTenHang.Text = "";*/
+            if (!CheckValueRdbHang(rdbHangMoi))
+            {
+                return;
+            }
+            StateFortxtDonGiaAndcboTenHang(true);
         }
-
+       
         private void RdbHangTrongKho_CheckedChanged(object sender, EventArgs e)
         {
-            if (!KiemTraLoaiHD() && (rdbHangTrongKho.Checked))
+            /*if (!KiemTraLoaiHD() && (rdbHangTrongKho.Checked))
             {
                 MessageBox.Show("Chọn loại hóa đơn trước", "", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 rdbHangTrongKho.Checked = false;
                 return;
             }
             txtDonGia.Enabled = false;
-            cboTenHang.DropDownStyle = ComboBoxStyle.DropDownList;
+            cboTenHang.DropDownStyle = ComboBoxStyle.DropDownList;*/
+
+            if (!CheckValueRdbHang(rdbHangTrongKho))
+            {
+                return;
+            }
+            StateFortxtDonGiaAndcboTenHang(false);
+
         }
 
         private void BtnThemHang_Click(object sender, EventArgs e)
@@ -317,7 +371,7 @@ namespace QuanLyBanHang
             bool checkTenHangInListView = lvwChiTietHoaDon.FindItemWithText(tenHang) != null ? true : false;//trả ra true khi tìm thấy có tên hàng trong listview và ngược lại
             if (checkTenHangInListView)
             {
-                //Cái này là cộng dồn vào cột số lượng
+                //Cái này là cộng dồn vào cột số lượng khi món hàng thêm vào đã có
                 lvwChiTietHoaDon.FindItemWithText(tenHang).SubItems[3].Text = (int.Parse(lvwChiTietHoaDon.FindItemWithText(tenHang).SubItems[3].Text)
                     + int.Parse(nudSoLuong.Value.ToString())).ToString();
             }
@@ -357,14 +411,20 @@ namespace QuanLyBanHang
                 return;
             }
             List<DTO.HangDTO> list = new List<DTO.HangDTO>();
-
+            
             foreach (ListViewItem item in lvwChiTietHoaDon.Items)
             {
-                var maHang = item.SubItems[0].Text.ToString();
+                /*var maHang = item.SubItems[0].Text.ToString();
                 var tenHang = item.SubItems[1].Text.ToString();
                 var donGia = float.Parse(item.SubItems[2].Text.ToString());
-                var soLuong = int.Parse(item.SubItems[3].Text.ToString());
-                DTO.HangDTO chiTietHoaDon = new DTO.HangDTO(maHang, tenHang, donGia, soLuong);
+                var soLuong = int.Parse(item.SubItems[3].Text.ToString());*/
+                DTO.HangDTO chiTietHoaDon = new DTO.HangDTO() {
+                    StrMaHang = item.SubItems[0].Text.ToString(),
+                    StrTenHang= item.SubItems[1].Text.ToString(),
+                    FltDonGia = float.Parse(item.SubItems[2].Text.ToString()),
+                    IntSoLuong=int.Parse(item.SubItems[3].Text.ToString()),
+                };
+                /*DTO.HangDTO chiTietHoaDon = new DTO.HangDTO(maHang, tenHang, donGia, soLuong);*/
                 list.Add(chiTietHoaDon);
             }
             var khachHang = QuanLyThongTin.GetKhachHangBySDT(int.Parse(txtSDTKhachHang.Text.ToString()));
@@ -406,6 +466,8 @@ namespace QuanLyBanHang
             lvwChiTietHoaDon.Items[index].Remove();
             StatusControlLapPhieu(true);
         }
+
+        //ListViewItem GetListViewItem
 
         private void btnCapNhat_Click(object sender, EventArgs e)
         {
