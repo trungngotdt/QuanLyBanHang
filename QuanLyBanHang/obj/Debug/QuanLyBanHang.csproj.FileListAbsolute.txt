@@ -41,3 +41,10 @@ C:\Users\Tran\Documents\Visual Studio 2017\Projects\QuanLyBanHang\QuanLyBanHang\
 C:\Users\Tran\Documents\Visual Studio 2017\Projects\QuanLyBanHang\QuanLyBanHang\obj\Debug\QuanLyBanHang.frmInPhieu.resources
 C:\Users\Tran\Documents\Visual Studio 2017\Projects\QuanLyBanHang\QuanLyBanHang\obj\Debug\QuanLyBanHang.csprojResolveAssemblyReference.cache
 C:\Users\Tran\Documents\Visual Studio 2017\Projects\QuanLyBanHang\QuanLyBanHang\obj\Debug\QuanLyBanHang.frmQuanLy.resources
+C:\Users\Tran\Documents\Visual Studio 2017\Projects\QuanLyBanHang\QuanLyBanHang\bin\Debug\NUnit3.TestAdapter.dll
+C:\Users\Tran\Documents\Visual Studio 2017\Projects\QuanLyBanHang\QuanLyBanHang\bin\Debug\nunit.engine.dll
+C:\Users\Tran\Documents\Visual Studio 2017\Projects\QuanLyBanHang\QuanLyBanHang\bin\Debug\nunit.engine.api.dll
+C:\Users\Tran\Documents\Visual Studio 2017\Projects\QuanLyBanHang\QuanLyBanHang\bin\Debug\Mono.Cecil.dll
+C:\Users\Tran\Documents\Visual Studio 2017\Projects\QuanLyBanHang\QuanLyBanHang\bin\Debug\Mono.Cecil.Pdb.dll
+C:\Users\Tran\Documents\Visual Studio 2017\Projects\QuanLyBanHang\QuanLyBanHang\bin\Debug\Mono.Cecil.Mdb.dll
+C:\Users\Tran\Documents\Visual Studio 2017\Projects\QuanLyBanHang\QuanLyBanHang\bin\Debug\Mono.Cecil.Rocks.dll

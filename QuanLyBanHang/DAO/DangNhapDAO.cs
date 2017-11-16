@@ -14,6 +14,7 @@ namespace QuanLyBanHang.DAO
 
         public object ChucVu(string query,object[] name)
         {
+
             return DataProvider.Instance.ExecuteScalar("EXEC USP_CheckChucVu @Name", name);
         }
 
@@ -25,8 +26,17 @@ namespace QuanLyBanHang.DAO
 
         public int GetPassHashCode(string query,string name)
         {
-            var Pass = DataProvider.Instance.ExecuteScalar(query,new object[] { name }).GetHashCode();
-            return Pass;
+            try
+            {
+                var Pass = DataProvider.Instance.ExecuteScalar(query, new object[] { name }).GetHashCode();
+                return Pass;
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+            
             //throw new NotImplementedException();
         }
         
