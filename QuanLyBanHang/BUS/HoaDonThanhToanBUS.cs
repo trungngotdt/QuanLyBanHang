@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 namespace QuanLyBanHang.BUS
 {
-    public class HoaDonThanhToanBUS:IHoaDonThanhToanBUS
+    public class HoaDonThanhToanBUS : IHoaDonThanhToanBUS
     {
         private IHoaDonThanhToanDAO hoaDonThanhToan;
         public HoaDonThanhToanBUS(IHoaDonThanhToanDAO hoaDonThanhToanDAO)
@@ -23,9 +23,17 @@ namespace QuanLyBanHang.BUS
         /// <param name="textBox"></param>
         public void AutoComplete(TextBox textBox)
         {
-            textBox.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
-            textBox.AutoCompleteSource = AutoCompleteSource.CustomSource;
-            textBox.AutoCompleteCustomSource = hoaDonThanhToan.SourceForAutoComplete("SELECT kh.TenKH FROM dbo.KhachHang kh");
+            try
+            {
+                textBox.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+                textBox.AutoCompleteSource = AutoCompleteSource.CustomSource;
+                textBox.AutoCompleteCustomSource = hoaDonThanhToan.SourceForAutoComplete("SELECT kh.TenKH FROM dbo.KhachHang kh");
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
         }
 
         /// <summary>
@@ -35,8 +43,16 @@ namespace QuanLyBanHang.BUS
         /// <returns></returns>
         public object LayDonGia(string tenhang)
         {
-            var donGia = hoaDonThanhToan.GetFirstValue("EXECUTE USP_GetDonGia @name", new object[] { tenhang });
-            return donGia;
+            try
+            {
+                var donGia = hoaDonThanhToan.GetFirstValue("EXECUTE USP_GetDonGia @name", new object[] { tenhang });
+                return donGia;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
         }
 
         /// <summary>
@@ -45,8 +61,16 @@ namespace QuanLyBanHang.BUS
         /// <returns></returns>
         public string[] DataSourceForCombobox()
         {
-            var source = hoaDonThanhToan.SourceComplete("SELECT h.TenHang FROM dbo.Hang h WHERE h.SoLuong>0");
-            return source;
+            try
+            {
+                var source = hoaDonThanhToan.SourceComplete("SELECT h.TenHang FROM dbo.Hang h WHERE h.SoLuong>0");
+                return source;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
             //throw new NotImplementedException();
         }
 
@@ -57,9 +81,16 @@ namespace QuanLyBanHang.BUS
         /// </summary>
         /// <param name="values"></param>
         /// <returns></returns>
-        public bool InsertKhachHang( object[] values)
+        public bool InsertKhachHang(object[] values)
         {
-            return hoaDonThanhToan.Insert("EXEC USP_InsertKhachHang @name , @phone , @sex , @address , @level", values)>0;
+            try
+            {
+                return hoaDonThanhToan.Insert("EXEC USP_InsertKhachHang @name , @phone , @sex , @address , @level", values) > 0;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
             //throw new NotImplementedException();
         }
 
@@ -70,10 +101,16 @@ namespace QuanLyBanHang.BUS
         /// <param name="query"></param>
         /// <param name="values"></param>
         /// <returns></returns>
-        public bool InsertChiTietHoaDon( object[] values = null)
+        public bool InsertChiTietHoaDon(object[] values = null)
         {
-            return hoaDonThanhToan.Insert("EXEC USP_InsertChiTietHoaDon @idbill , @idgoods , @price , @number ", values) > 0;
-            //throw new NotImplementedException();
+            try
+            {
+                return hoaDonThanhToan.Insert("EXEC USP_InsertChiTietHoaDon @idbill , @idgoods , @price , @number ", values) > 0;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }//throw new NotImplementedException();
         }
 
         /// <summary>
@@ -83,7 +120,14 @@ namespace QuanLyBanHang.BUS
         /// <returns></returns>
         public object GetMaHang(string tenHang)
         {
-            return hoaDonThanhToan.GetFirstValue("EXECUTE USP_GetMaHang @name",new object[] { tenHang });
+            try
+            {
+                return hoaDonThanhToan.GetFirstValue("EXECUTE USP_GetMaHang @name", new object[] { tenHang });
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         /// <summary>
@@ -94,7 +138,14 @@ namespace QuanLyBanHang.BUS
         /// <returns></returns>
         public bool InsertHoaDon(object[] values)
         {
-            return hoaDonThanhToan.Insert("EXEC USP_InsertHoaDon   @idcustomer , @typebill , @idstaff , @date , @namestaff", values) > 0;
+            try
+            {
+                return hoaDonThanhToan.Insert("EXEC USP_InsertHoaDon   @idcustomer , @typebill , @idstaff , @date , @namestaff", values) > 0;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         /// <summary>
@@ -104,7 +155,14 @@ namespace QuanLyBanHang.BUS
         /// <returns></returns>
         public object GetMaKH(string sdtKH)
         {
-            return hoaDonThanhToan.GetFirstValue("EXECUTE USP_GetMaKHBySDT  @sdt", new object[] {int.Parse( sdtKH) });
+            try
+            {
+                return hoaDonThanhToan.GetFirstValue("EXECUTE USP_GetMaKHBySDT  @sdt", new object[] { int.Parse(sdtKH) });
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
             //throw new NotImplementedException();
         }
 
@@ -115,7 +173,14 @@ namespace QuanLyBanHang.BUS
         /// <returns></returns>
         public object GetTenKH(string sdt)
         {
-            return hoaDonThanhToan.GetFirstValue("EXECUTE USP_GetTenKH @sdt", new object[] { int.Parse(sdt) });
+            try
+            {
+                return hoaDonThanhToan.GetFirstValue("EXECUTE USP_GetTenKH @sdt", new object[] { int.Parse(sdt) });
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         /// <summary>
@@ -129,7 +194,14 @@ namespace QuanLyBanHang.BUS
         /// <returns></returns>
         public object GetMaHoaDon(int MaKH, string LoaiHD, int MaNV, string NgayLap, string TenNV)
         {
-            return hoaDonThanhToan.GetFirstValue("EXECUTE USP_GetMaHoaDon @idcustomer , @type , @idstaff , @date , @namestaff ", new object[] { MaKH, LoaiHD, MaNV, NgayLap, TenNV });
+            try
+            {
+                return hoaDonThanhToan.GetFirstValue("EXECUTE USP_GetMaHoaDon @idcustomer , @type , @idstaff , @date , @namestaff ", new object[] { MaKH, LoaiHD, MaNV, NgayLap, TenNV });
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         /// <summary>
@@ -139,9 +211,16 @@ namespace QuanLyBanHang.BUS
         /// <param name="query"></param>
         /// <param name="values"></param>
         /// <returns></returns>
-        public bool UpdateHangHoa( object[] values = null)
+        public bool UpdateHangHoa(object[] values = null)
         {
-            return hoaDonThanhToan.Update("EXECUTE USP_UpdateSoLuongHang @idgoods , @number ", values)>0;
+            try
+            {
+                return hoaDonThanhToan.Update("EXECUTE USP_UpdateSoLuongHang @idgoods , @number ", values) > 0;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
 
@@ -152,7 +231,14 @@ namespace QuanLyBanHang.BUS
         /// <returns></returns>
         public object GetSoLuong(object[] values = null)
         {
-            return hoaDonThanhToan.GetFirstValue("EXECUTE USP_GetSoLuong @idgoods ", values);
+            try
+            {
+                return hoaDonThanhToan.GetFirstValue("EXECUTE USP_GetSoLuong @idgoods ", values);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
             //throw new NotImplementedException();
         }
     }

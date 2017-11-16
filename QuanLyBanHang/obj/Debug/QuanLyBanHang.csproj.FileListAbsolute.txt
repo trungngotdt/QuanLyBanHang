@@ -39,7 +39,6 @@ C:\Users\Tran\Documents\Visual Studio 2017\Projects\QuanLyBanHang\QuanLyBanHang\
 C:\Users\Tran\Documents\Visual Studio 2017\Projects\QuanLyBanHang\QuanLyBanHang\bin\Debug\FlashControlV71.dll
 C:\Users\Tran\Documents\Visual Studio 2017\Projects\QuanLyBanHang\QuanLyBanHang\bin\Debug\ShockwaveFlashObjects.dll
 C:\Users\Tran\Documents\Visual Studio 2017\Projects\QuanLyBanHang\QuanLyBanHang\obj\Debug\QuanLyBanHang.frmInPhieu.resources
-C:\Users\Tran\Documents\Visual Studio 2017\Projects\QuanLyBanHang\QuanLyBanHang\obj\Debug\QuanLyBanHang.csprojResolveAssemblyReference.cache
 C:\Users\Tran\Documents\Visual Studio 2017\Projects\QuanLyBanHang\QuanLyBanHang\obj\Debug\QuanLyBanHang.frmQuanLy.resources
 C:\Users\Tran\Documents\Visual Studio 2017\Projects\QuanLyBanHang\QuanLyBanHang\bin\Debug\NUnit3.TestAdapter.dll
 C:\Users\Tran\Documents\Visual Studio 2017\Projects\QuanLyBanHang\QuanLyBanHang\bin\Debug\nunit.engine.dll

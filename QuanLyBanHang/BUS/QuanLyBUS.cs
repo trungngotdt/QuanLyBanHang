@@ -23,7 +23,16 @@ namespace QuanLyBanHang.BUS
         /// <returns></returns>
         public DataTable GetDataKH()
         {
-            return quanLy.GetData("SELECT kh.* FROM dbo.KhachHang kh");
+            try
+            {
+
+                return quanLy.GetData("SELECT kh.* FROM dbo.KhachHang kh");
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
             //throw new NotImplementedException();
         }
 
@@ -33,8 +42,17 @@ namespace QuanLyBanHang.BUS
         /// <returns></returns>
         public DataTable GetDataNV()
         {
+            try
+            {
+
             return quanLy.GetData("SELECT nv.MaNV ,nv.TenNV,nv.ChucVu,nv.DiaChi,nv.DienThoai,nv.Email,nv.TenDangNhap FROM dbo.NhanVien nv");
             //throw new NotImplementedException();
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
         }
 
         /// <summary>
@@ -45,8 +63,17 @@ namespace QuanLyBanHang.BUS
         /// <returns></returns>
         public bool InsertKH(object[] para)
         {
+            try
+            {
+
             return quanLy.Insert("EXECUTE USP_InsertKhachHang @name , @phone , @sex , @address , @level ", para) > 0;
             //throw new NotImplementedException();
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
         }
 
         /// <summary>
@@ -58,8 +85,17 @@ namespace QuanLyBanHang.BUS
         /// <returns></returns>
         public bool InsertNV(object[] para)
         {
+            try
+            {
+
             return quanLy.Insert("EXECUTE USP_InsertNV @Ten , @Chuc , @DiaChi , @SDT , @Email", para) > 0;
             //throw new NotImplementedException();
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
         }
 
         /// <summary>
@@ -70,8 +106,17 @@ namespace QuanLyBanHang.BUS
         /// <returns></returns>
         public bool UpdateKH(object[] para)
         {
+            try
+            {
+
             return quanLy.Update("EXECUTE USP_UpdateKH @ID , @name , @phone , @sex , @address , @level ", para) > 0;
             //throw new NotImplementedException();
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
         }
 
         /// <summary>
@@ -82,8 +127,17 @@ namespace QuanLyBanHang.BUS
         /// <returns></returns>
         public bool UpdateNV(object[] para)
         {
+            try
+            {
+
             return quanLy.Update("EXECUTE USP_UpdateNVWithoutPassAndNameSignIn @MaNV , @Ten , @Chuc , @DiaChi , @SDT , @Email ", para)>0;
             //throw new NotImplementedException();
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
         }
     }
 }

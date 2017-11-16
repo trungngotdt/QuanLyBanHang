@@ -31,7 +31,7 @@ namespace QuanLyBanHang.BUS
             catch (Exception ex)
             {
 
-                throw new Exception();
+                throw ex;
             }
 
         }

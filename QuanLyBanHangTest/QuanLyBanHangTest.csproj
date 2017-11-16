@@ -60,11 +60,14 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BUS\DangNhapBUSTests.cs" />
     <Compile Include="BUS\HoaDonThanhToanBUSTest.cs" />
+    <Compile Include="BUS\QuanLyBUSTest.cs" />
+    <Compile Include="BUS\QuanLyThongTinBUSTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

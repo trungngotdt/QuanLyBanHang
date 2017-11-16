@@ -41,14 +41,14 @@ namespace QuanLyBanHang
         {
             var maKH = HoaDonThanhToan.GetMaKH(txtSDTKhachHang.Text);
             var date = DateTime.Now.Year.ToString() + DateTime.Now.Month.ToString() + DateTime.Now.Day.ToString() + " " + DateTime.Now.ToLongTimeString();
-            HoaDonThanhToan.InsertHoaDon(new object[] { maKH, "Bán Hàng", 1, date, "A" });
+            HoaDonThanhToan.InsertHoaDon(new object[] { maKH, "Bán Hàng", Program.IDStaff, date, txtNameStaff.Text });
             var kiemtra= lvwChiTietHoaDon.Items.Count == 0;
             if (kiemtra)
             {
                 MessageBox.Show("Điền đơn hàng");
                 return;
             }
-            var maHD = HoaDonThanhToan.GetMaHoaDon(int.Parse(maKH.ToString()), "Bán Hàng", 1, date, "A");
+            var maHD = HoaDonThanhToan.GetMaHoaDon(int.Parse(maKH.ToString()), "Bán Hàng",int.Parse( Program.IDStaff.ToString()), date, txtNameStaff.Text);
             foreach (ListViewItem item in lvwChiTietHoaDon.Items)
             {
                 var maHang = HoaDonThanhToan.GetMaHang(item.SubItems[0].Text);
