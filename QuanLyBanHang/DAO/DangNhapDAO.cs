@@ -15,12 +15,12 @@ namespace QuanLyBanHang.DAO
         public object ChucVu(string query,object[] name)
         {
 
-            return DataProvider.Instance.ExecuteScalar("EXEC USP_CheckChucVu @Name", name);
+            return DataProvider2.Instance.ExecuteScalar("EXEC USP_CheckChucVu @Name", name);
         }
 
         public object GetFirstData(string query, object[] para = null)
         {
-            return DataProvider.Instance.ExecuteScalar(query, para);
+            return DataProvider2.Instance.ExecuteScalar(query, para);
             //throw new NotImplementedException();
         }
 
@@ -28,7 +28,7 @@ namespace QuanLyBanHang.DAO
         {
             try
             {
-                var Pass = DataProvider.Instance.ExecuteScalar(query, new object[] { name }).GetHashCode();
+                var Pass = DataProvider2.Instance.ExecuteScalar(query, new object[] { name }).GetHashCode();
                 return Pass;
             }
             catch (Exception ex)

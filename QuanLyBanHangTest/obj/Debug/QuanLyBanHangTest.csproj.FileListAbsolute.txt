@@ -52,3 +52,4 @@ C:\Users\Tran\Documents\Visual Studio 2017\Projects\QuanLyBanHang\QuanLyBanHangT
 C:\Users\Tran\Documents\Visual Studio 2017\Projects\QuanLyBanHang\QuanLyBanHangTest\bin\Debug\Microsoft.Practices.ServiceLocation.xml
 C:\Users\Tran\Documents\Visual Studio 2017\Projects\QuanLyBanHang\QuanLyBanHangTest\obj\Debug\QuanLyBanHangTest.dll
 C:\Users\Tran\Documents\Visual Studio 2017\Projects\QuanLyBanHang\QuanLyBanHangTest\obj\Debug\QuanLyBanHangTest.pdb
+C:\Users\Tran\Documents\Visual Studio 2017\Projects\QuanLyBanHang\QuanLyBanHangTest\bin\Debug\FizzWare.NBuilder.dll

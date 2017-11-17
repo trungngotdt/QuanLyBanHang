@@ -89,7 +89,9 @@
     </Compile>
     <Compile Include="DAO\DangNhapDAO.cs" />
     <Compile Include="DAO\DataProvider.cs" />
+    <Compile Include="DAO\DataProvider2.cs" />
     <Compile Include="DAO\HoaDonThanhToanDAO.cs" />
+    <Compile Include="DAO\IDataProvider.cs" />
     <Compile Include="DAO\InterfacesDAO\IDangNhapDAO.cs" />
     <Compile Include="DAO\InterfacesDAO\IHoaDonThanhToanDAO.cs" />
     <Compile Include="DAO\InterfacesDAO\IQuanLyDAO.cs" />

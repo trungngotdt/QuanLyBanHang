@@ -8,30 +8,31 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using QuanLyBanHang.DAO.InterfacesDAO;
+using QuanLyBanHang.DAO;
 
 namespace QuanLyBanHang.BUS.Tests
 {
     [TestFixture]
     public class DangNhapBUSTests
     {
-        private Mock<IDangNhapDAO> mockIDangNhapDAO;
+        private Mock<IDataProvider> mockIDataProvider;
         private DangNhapBUS dangNhapBUS;
 
         [SetUp]
         public void SetUp()
         {
-            mockIDangNhapDAO = new Mock<IDangNhapDAO>();
-            dangNhapBUS = new DangNhapBUS(mockIDangNhapDAO.Object);
+            mockIDataProvider = new Mock<IDataProvider>();
+            dangNhapBUS = new DangNhapBUS(mockIDataProvider.Object);
         }
 
         [TestCase("name2", "value2")]
         [TestCase("name3", "value3")]
         public void ChucVuTestAllow(string name, string value)
         {
-            mockIDangNhapDAO.Setup(x => x.ChucVu(It.IsNotNull<string>(), new object[] { name })).Returns(value);
+            mockIDataProvider.Setup(x => x.ExecuteScalar(It.IsNotNull<string>(), new object[] { name })).Returns(value);
             var result = dangNhapBUS.ChucVu(name);
             Assert.AreEqual(value, result);
-            mockIDangNhapDAO.VerifyAll();
+            mockIDataProvider.VerifyAll();
             //Assert.Fail();
         }
 
@@ -41,7 +42,7 @@ namespace QuanLyBanHang.BUS.Tests
         {
             try
             {
-                mockIDangNhapDAO.Setup(x => x.ChucVu(It.IsNotNull<string>(), new object[] { name })).Throws(new Exception());
+                mockIDataProvider.Setup(x => x.ExecuteScalar(It.IsNotNull<string>(), new object[] { name })).Throws(new Exception());
                 dangNhapBUS.ChucVu(name);
             }
             catch (Exception ex)
@@ -50,24 +51,24 @@ namespace QuanLyBanHang.BUS.Tests
                 Assert.True(ex.GetType() == typeof(Exception));
             }
 
-            //mockIDangNhapDAO.Setup(x => x.ChucVu(It.IsNotNull<string>(), new object[] { "name" })).Returns(new Exception());
+            //mockIDataProvider.Setup(x => x.ChucVu(It.IsNotNull<string>(), new object[] { "name" })).Returns(new Exception());
             //var result = ;
             //Assert.That(() => dangNhapBUS.ChucVu("name"), Throws.Exception);
             //Assert.That(()=>dangNhapBUS.ChucVu(null), Throws.Exception);
             // Assert.Throws<Exception>(() => dangNhapBUS.ChucVu(null));
-            //mockIDangNhapDAO.VerifyAll();
+            //mockIDataProvider.VerifyAll();
         }
 
         [TestCase("name", "pass")]
         [TestCase("name1", "pass1")]
         public void IsDangNhapTest(string name, string pass)
         {
-            mockIDangNhapDAO.Setup(x => x.GetPassHashCode(It.IsNotNull<string>(), name)).Returns(pass.GetHashCode);
+            mockIDataProvider.Setup(x => x.ExecuteScalar(It.IsNotNull<string>(),new object[] { name })).Returns(pass);
             var result = dangNhapBUS.IsDangNhap(name, pass);
             var resultFalse = dangNhapBUS.IsDangNhap(name, "passs");
             Assert.True(result);
             Assert.False(resultFalse);
-            mockIDangNhapDAO.VerifyAll();
+            mockIDataProvider.VerifyAll();
         }
 
         [TestCase(null, "pass")]
@@ -76,7 +77,7 @@ namespace QuanLyBanHang.BUS.Tests
         {
             try
             {
-                mockIDangNhapDAO.Setup(x => x.GetPassHashCode(It.IsNotNull<string>(), name)).Throws(new Exception());
+                mockIDataProvider.Setup(x => x.ExecuteScalar(It.IsNotNull<string>(),new object[] { name })).Throws(new Exception());
                 dangNhapBUS.IsDangNhap(name, pass);
             }
             catch (Exception ex)
@@ -90,10 +91,10 @@ namespace QuanLyBanHang.BUS.Tests
         [TestCase("name1", "ma1")]
         public void MaNVTest(string name, string maNV)
         {
-            mockIDangNhapDAO.Setup(x => x.GetFirstData(It.IsNotNull<string>(), new object[] { name })).Returns(maNV);
+            mockIDataProvider.Setup(x => x.ExecuteScalar(It.IsNotNull<string>(), new object[] { name })).Returns(maNV);
             var result = dangNhapBUS.MaNV(name);
             Assert.True(result.Equals(maNV));
-            mockIDangNhapDAO.VerifyAll();
+            mockIDataProvider.VerifyAll();
         }
 
         [TestCase(null)]
@@ -102,7 +103,7 @@ namespace QuanLyBanHang.BUS.Tests
         {
             try
             {
-                mockIDangNhapDAO.Setup(x => x.GetFirstData(It.IsAny<string>(), new object[] { name })).Throws(new Exception());
+                mockIDataProvider.Setup(x => x.ExecuteScalar(It.IsAny<string>(), new object[] { name })).Throws(new Exception());
                 dangNhapBUS.MaNV(name);
             }
             catch (Exception ex)
@@ -115,10 +116,10 @@ namespace QuanLyBanHang.BUS.Tests
         [TestCase(2, "name1")]
         public void TenNVTest(int id, string name)
         {
-            mockIDangNhapDAO.Setup(x => x.GetFirstData(It.IsNotNull<string>(), new object[] { id })).Returns(name);
+            mockIDataProvider.Setup(x => x.ExecuteScalar(It.IsNotNull<string>(), new object[] { id })).Returns(name);
             var result = dangNhapBUS.TenNV(id);
             Assert.True(result.Equals(name));
-            mockIDangNhapDAO.VerifyAll();
+            mockIDataProvider.VerifyAll();
         }
 
         [TestCase(null)]
@@ -127,7 +128,7 @@ namespace QuanLyBanHang.BUS.Tests
         {
             try
             {
-                mockIDangNhapDAO.Setup(x => x.GetFirstData(It.IsNotNull<string>(), new object[] { id })).Throws(new Exception());
+                mockIDataProvider.Setup(x => x.ExecuteScalar(It.IsNotNull<string>(), new object[] { id })).Throws(new Exception());
                 dangNhapBUS.TenNV(id);
             }
             catch (Exception ex)

@@ -9,44 +9,49 @@ namespace QuanLyBanHang.DTO
 {
     public class NhanVienDTO
     {
-        private string strMaNV;
-        private string strtenNV;
-        private string chucVu;
-        private string diaChi;
-        private int dienThoai;
-        private string email;
-        private string tenDangNhap;
-        private string matKhau;
+        private int intMaNV;
+        private string strTenNV;
+        private string strChucVu;
+        private string strDiaChi;
+        private int intDienThoai;
+        private string strEmail;
+        private string strTenDangNhap;
+        private string strMatKhau;
 
-        public string StrMaNV { get => strMaNV; set => strMaNV = value; }
-        public string StrTenNV { get => strtenNV; set => strtenNV = value; }
-        public string ChucVu { get => chucVu; set => chucVu = value; }
-        public string DiaChi { get => diaChi; set => diaChi = value; }
-        public int DienThoai { get => dienThoai; set => dienThoai = value; }
-        public string Email { get => email; set => email = value; }
-        public string TenDangNhap { get => tenDangNhap; set => tenDangNhap = value; }
-        public string MatKhau { get => matKhau; set => matKhau = value; }
-        public NhanVienDTO(string manv,string tennv,string chucVu,string diaChi,int dienThoai,string Email,string tenDangNhap,string matKhau)
+        public int StrMaNV { get => intMaNV; set => intMaNV = value; }
+        public string StrTenNV { get => strTenNV; set => strTenNV = value; }
+        public string StrChucVu { get => strChucVu; set => strChucVu = value; }
+        public string StrDiaChi { get => strDiaChi; set => strDiaChi = value; }
+        public int StrDienThoai { get => intDienThoai; set => intDienThoai = value; }
+        public string StrEmail { get => strEmail; set => strEmail = value; }
+        public string StrTenDangNhap { get => strTenDangNhap; set => strTenDangNhap = value; }
+        public string StrMatKhau { get => strMatKhau; set => strMatKhau = value; }
+
+        public NhanVienDTO()
+        {
+
+        }
+        public NhanVienDTO(int manv,string tennv,string chucVu,string diaChi,int dienThoai,string Email,string tenDangNhap,string matKhau)
         {
             this.StrMaNV = manv;
             this.StrTenNV = tennv;
-            this.ChucVu = chucVu;
-            this.DiaChi = diaChi;
-            this.DienThoai = dienThoai;
-            this.Email = Email;
-            this.TenDangNhap = tenDangNhap;
-            this.MatKhau = matKhau;
+            this.StrChucVu = chucVu;
+            this.StrDiaChi = diaChi;
+            this.StrDienThoai = dienThoai;
+            this.StrEmail = Email;
+            this.StrTenDangNhap = tenDangNhap;
+            this.StrMatKhau = matKhau;
         }
         public NhanVienDTO(DataRow row)
         {
-            this.StrMaNV = row["MaNV"].ToString();
+            this.StrMaNV =int.Parse( row["MaNV"].ToString());
             this.StrTenNV = row["TenNV"].ToString();
-            this.ChucVu= row["ChucVu"].ToString();
-            this.DiaChi= row["DiaChi"].ToString();
-            this.DienThoai=(int) row["DienThoai"];
-            this.Email= row["Email"].ToString();
-            this.TenDangNhap= row["TenDangNhap"].ToString();
-            this.MatKhau= row["MatKhau"].ToString();
+            this.StrChucVu= row["ChucVu"].ToString();
+            this.StrDiaChi= row["DiaChi"].ToString();
+            this.StrDienThoai=(int) row["DienThoai"];
+            this.StrEmail= row["Email"].ToString();
+            this.StrTenDangNhap= row["TenDangNhap"].ToString();
+            this.StrMatKhau= row["MatKhau"].ToString();
         }
     }
 }

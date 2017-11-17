@@ -17,7 +17,7 @@ namespace QuanLyBanHang.DAO
         /// <returns></returns>
         public int Insert(string query, object[] values = null)
         {
-            return DataProvider.Instance.ExecuteNonQuery(query, values);
+            return DataProvider2.Instance.ExecuteNonQuery(query, values);
             //throw new NotImplementedException();
         }
     }

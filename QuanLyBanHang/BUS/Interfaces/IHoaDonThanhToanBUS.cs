@@ -9,6 +9,19 @@ namespace QuanLyBanHang.BUS.Interfaces
     public interface IHoaDonThanhToanBUS
     {
 
+        /// <summary>
+        /// Trả về chuỗi <see cref="AutoCompleteStringCollection"/> phục vụ cho chức năng AutoComplete của TextBox
+        /// </summary>
+        /// <param name="query"></param>
+        /// <param name="values"></param>
+        /// <returns></returns>
+        System.Windows.Forms.AutoCompleteStringCollection SourceForAutoComplete(string query, object[] values = null);
+
+        /// <summary>
+        /// trả về chuổi <see cref="string"/> có thể lấy làm dữ liệu cho các gợi ý
+        /// </summary>
+        /// <returns></returns>
+        string[] SourceComplete(string query, object[] values = null);
 
         /// <summary>
         /// Lấy số lượng hàng dựa vào mã hàng

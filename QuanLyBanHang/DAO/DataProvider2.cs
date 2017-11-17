@@ -8,11 +8,65 @@ using System.Threading.Tasks;
 
 namespace QuanLyBanHang.DAO
 {
-    public class DataProvider : IDataProvider
+    public class DataProvider2
     {
+        private static volatile DataProvider2 instance;
+        private static object syncRoot = new Object();
 
+        private DataProvider2() { }
+
+        public static DataProvider2 Instance
+        {
+            get
+            {
+                if (instance == null)
+                {
+                    lock (syncRoot)
+                    {
+                        if (instance == null)
+                            instance = new DataProvider2();
+                    }
+                }
+
+                return instance;
+            }
+        }
         private string connectionString = "Data Source=.;Initial Catalog = QuanLyBanHang; Integrated Security = True"; //"Data Source=.;Initial Catalog=QuanLyCafeDatabase;Integrated Security=True";
 
+        /// <summary>
+        /// Trả về dòng một cộng một của bảng dữ liệu
+        /// </summary>
+        /// <param name="query"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public object ExecuteScalar(string query, object[] value = null)
+        {
+            object data = -1;
+            using (var objConn = new SqlConnection(connectionString))
+            {
+                objConn.Open();
+                using (var objCommand = new SqlCommand(query, objConn))
+                {
+
+                    if (value != null)
+                    {
+                        var storeQuery = query.Split(' ');
+                        int i = 0;
+                        foreach (var item in storeQuery)
+                        {
+                            if (item.StartsWith("@"))
+                            {
+                                objCommand.Parameters.AddWithValue(item, value[i]);
+                                i++;
+                            }
+                        }
+                    }
+                    data = objCommand.ExecuteScalar();
+                    objConn.Close();
+                }
+            }
+            return data;
+        }
 
         /// <summary>
         /// Trả về số dòng bị câu lệnh truy vấn ảnh hưởng 
@@ -78,48 +132,16 @@ namespace QuanLyBanHang.DAO
 
                             }
                         }
+
                     }
                     SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(objCommand);
                     sqlDataAdapter.Fill(dataTable);
                 }
+
                 objConn.Close();
             }
             return dataTable;
             //throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// Trả về dòng một cộng một của bảng dữ liệu
-        /// </summary>
-        /// <param name="query"></param>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public object ExecuteScalar(string query, object[] value = null)
-        {
-            object data = -1;
-            using (var objConn = new SqlConnection(connectionString))
-            {
-                objConn.Open();
-                using (var objCommand = new SqlCommand(query, objConn))
-                {
-                    if (value != null)
-                    {
-                        var storeQuery = query.Split(' ');
-                        int i = 0;
-                        foreach (var item in storeQuery)
-                        {
-                            if (item.StartsWith("@"))
-                            {
-                                objCommand.Parameters.AddWithValue(item, value[i]);
-                                i++;
-                            }
-                        }
-                    }
-                    data = objCommand.ExecuteScalar();
-                    objConn.Close();
-                }
-            }
-            return data;
         }
     }
 }

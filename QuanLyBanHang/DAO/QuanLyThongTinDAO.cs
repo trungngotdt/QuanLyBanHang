@@ -18,7 +18,7 @@ namespace QuanLyBanHang.DAO
         /// <returns></returns>
         public object GetFirstValue(string query, object[] para = null)
         {
-            return DataProvider.Instance.ExecuteScalar(query, para);
+            return DataProvider2.Instance.ExecuteScalar(query, para);
             //throw new NotImplementedException();
         }
 
@@ -30,7 +30,7 @@ namespace QuanLyBanHang.DAO
         /// <returns></returns>
         public DataTable SearchBy(string query, object values)
         {
-            return DataProvider.Instance.ExecuteQuery(query,new object[] { values });
+            return DataProvider2.Instance.ExecuteQuery(query,new object[] { values });
             //throw new NotImplementedException();
         }
 
@@ -41,7 +41,7 @@ namespace QuanLyBanHang.DAO
         /// <returns></returns>
         public DataTable ShowAll(string query)
         {
-            return DataProvider.Instance.ExecuteQuery(query);
+            return DataProvider2.Instance.ExecuteQuery(query);
         }
 
         /// <summary>
@@ -52,7 +52,7 @@ namespace QuanLyBanHang.DAO
         /// <returns></returns>
         public DataTable ShowData(string query, object[] para = null)
         {
-            return DataProvider.Instance.ExecuteQuery(query,para);
+            return DataProvider2.Instance.ExecuteQuery(query,para);
         }
 
         /// <summary>
@@ -61,7 +61,7 @@ namespace QuanLyBanHang.DAO
         /// <returns></returns>
         public string[] SourceComplete(string query, object[] values = null)
         {
-            var data = DataProvider.Instance.ExecuteQuery(query, values);
+            var data = DataProvider2.Instance.ExecuteQuery(query, values);
             var source = data.AsEnumerable().ToList().Select(p => p.ItemArray).Select(p => p.FirstOrDefault()).OfType<String>().ToArray();
             return source;
             //throw new NotImplementedException();

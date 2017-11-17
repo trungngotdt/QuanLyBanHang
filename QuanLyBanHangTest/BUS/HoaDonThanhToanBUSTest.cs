@@ -9,21 +9,24 @@ using NUnit.Framework;
 using QuanLyBanHang.DAO.InterfacesDAO;
 using QuanLyBanHang.BUS;
 using QuanLyBanHang.BUS.Interfaces;
+using QuanLyBanHang.DAO;
+using System.Data;
+using FizzWare.NBuilder;
+using QuanLyBanHang.DTO;
 
 namespace QuanLyBanHangTest.BUS
 {
     [TestFixture]
     class HoaDonThanhToanBUSTest
     {
-
-        private Mock<IHoaDonThanhToanDAO> mockIHoaDonThanhToanDAO;
         private HoaDonThanhToanBUS hoaDonThanhToanBUS;
+        private Mock<IDataProvider> mockIDataProvider;
 
         [SetUp]
         public void SetUp()
         {
-            mockIHoaDonThanhToanDAO = new Mock<IHoaDonThanhToanDAO>();
-            hoaDonThanhToanBUS = new HoaDonThanhToanBUS(mockIHoaDonThanhToanDAO.Object);
+            mockIDataProvider = new Mock<IDataProvider>();
+            hoaDonThanhToanBUS = new HoaDonThanhToanBUS(mockIDataProvider.Object);
         }
 
         [Test]
@@ -35,39 +38,84 @@ namespace QuanLyBanHangTest.BUS
             Assert.IsTrue(result1);
         }
 
-        [TestCase("value1", "value2")]
-        public void AutoCompleteTest(string value1, string value2)
+
+        private DataTable GenerateDataTable<T>(int rows)
+        {
+            var datatable = new DataTable(typeof(T).Name);
+            typeof(T).GetProperties().ToList().ForEach(
+                x => datatable.Columns.Add(x.Name));
+            Builder<T>.CreateListOfSize(rows).Build()
+                .ToList().ForEach(
+                    x => datatable.LoadDataRow(x.GetType().GetProperties().Select(
+                        y => y.GetValue(x, null)).ToArray(), true));
+            return datatable;
+        }
+
+        [TestCase("query", null)]
+        public void SourceForAutoCompleteTest(string query, object[] values)
+        {
+            var data = GenerateDataTable<ChiTietHoaDonDTO>(10);
+
+            mockIDataProvider.Setup(x => x.ExecuteQuery(query, values)).Returns(data);
+            hoaDonThanhToanBUS.SourceForAutoComplete(query, values);
+            mockIDataProvider.VerifyAll();
+        }
+
+        [TestCase("query",null)]
+        public void SourceCompleteTest(string query, object[] values)
+        {
+            var data= GenerateDataTable<HangDTO>(10);
+
+            mockIDataProvider.Setup(x => x.ExecuteQuery(query, values)).Returns(data);
+            var result = hoaDonThanhToanBUS.SourceComplete(query, values);
+            var resultExcept= data.AsEnumerable().ToList().Select(p => p.ItemArray).Select(p => p.FirstOrDefault()).OfType<String>().ToArray();
+            Assert.IsTrue(result.Count() == resultExcept.Count());
+        }
+        
+        [TestCase( null, "value1", "value2")]
+        public void AutoCompleteTest( object[] values, string value1, string value2)
         {
             var array = new string[] { value1, value2 };
             var valueResult = new System.Windows.Forms.AutoCompleteStringCollection();
+            
+
+            var data = GenerateDataTable<HangDTO>(20);
+            mockIDataProvider.Setup(x => x.ExecuteQuery(It.IsNotNull<string>(), values)).Returns(data);
+            //var result = hoaDonThanhToanBUS.SourceComplete(query, values);
+
             valueResult.AddRange(array);
-            mockIHoaDonThanhToanDAO.Setup(x => x.SourceForAutoComplete(It.IsNotNull<string>(), null)).Returns(valueResult);
+            //mockIDataProvider.Setup(x => x.SourceForAutoComplete(It.IsNotNull<string>(), null)).Returns(valueResult);
             hoaDonThanhToanBUS.AutoComplete(new System.Windows.Forms.TextBox());
-            mockIHoaDonThanhToanDAO.VerifyAll();
+            mockIDataProvider.VerifyAll();
         }
 
-        [Test]
-        public void AutoCompleTestException()
+        [TestCase(null,"a")]
+        public void AutoCompleTestException(object[] values,string a)
         {
             try
             {
-                mockIHoaDonThanhToanDAO.Setup(x => x.SourceForAutoComplete(It.IsNotNull<string>(), null)).Throws(new Exception());
+
+                var data = GenerateDataTable<KhachHangDTO>(10);
+
+                mockIDataProvider.Setup(x => x.ExecuteQuery(It.IsNotNull<string>(), values)).Throws(new Exception());
+                //mockIDataProvider.Setup(x => x.SourceForAutoComplete(It.IsNotNull<string>(), null)).Throws(new Exception());
                 hoaDonThanhToanBUS.AutoComplete(new System.Windows.Forms.TextBox());
             }
             catch (Exception ex)
             {
                 Assert.That(ex.GetType() == typeof(Exception));
-                mockIHoaDonThanhToanDAO.VerifyAll();
+                mockIDataProvider.VerifyAll();
             }
         }
+        
 
         [TestCase("name", "value")]
         [TestCase("name1", "value1")]
         public void LayDonGiaTest(string name, string value)
         {
-            mockIHoaDonThanhToanDAO.Setup(x => x.GetFirstValue(It.IsNotNull<string>(), new object[] { name })).Returns(value);
+            mockIDataProvider.Setup(x => x.ExecuteScalar(It.IsNotNull<string>(), new object[] { name })).Returns(value);
             var result = hoaDonThanhToanBUS.LayDonGia(name);
-            mockIHoaDonThanhToanDAO.VerifyAll();
+            mockIDataProvider.VerifyAll();
             Assert.IsTrue(result.Equals(value));
 
         }
@@ -77,23 +125,25 @@ namespace QuanLyBanHangTest.BUS
         {
             try
             {
-                mockIHoaDonThanhToanDAO.Setup(x => x.GetFirstValue(It.IsNotNull<string>(), new object[] { null })).Throws(new Exception());
+                mockIDataProvider.Setup(x => x.ExecuteScalar(It.IsNotNull<string>(), new object[] { null })).Throws(new Exception());
                 hoaDonThanhToanBUS.LayDonGia(null);
             }
             catch (Exception ex)
             {
-                mockIHoaDonThanhToanDAO.VerifyAll();
+                mockIDataProvider.VerifyAll();
                 Assert.IsTrue(ex.GetType() == typeof(Exception));
             }
         }
-
+        
         [TestCase("value", "value1")]
         public void DataSourceForComboboxTest(string value, string value1)
         {
-            mockIHoaDonThanhToanDAO.Setup(x => x.SourceComplete(It.IsNotNull<string>(), null)).Returns(new string[] { value, value1 });
+            var data = GenerateDataTable<NhanVienDTO>(10);
+
+            mockIDataProvider.Setup(x => x.ExecuteQuery(It.IsNotNull<string>(), null)).Returns(data);
             var result = hoaDonThanhToanBUS.DataSourceForCombobox();
-            mockIHoaDonThanhToanDAO.VerifyAll();
-            Assert.IsTrue(result.Count<string>() == 2);
+            mockIDataProvider.VerifyAll();
+            Assert.IsTrue(result.Count<string>() == data.Rows.Count);
         }
 
         [Test]
@@ -101,7 +151,9 @@ namespace QuanLyBanHangTest.BUS
         {
             try
             {
-                mockIHoaDonThanhToanDAO.Setup(x => x.SourceComplete(It.IsNotNull<string>(), null)).Throws(new Exception());
+                var data = GenerateDataTable<NhanVienDTO>(10);
+
+                mockIDataProvider.Setup(x => x.ExecuteQuery(It.IsNotNull<string>(), null)).Throws(new Exception());
                 hoaDonThanhToanBUS.DataSourceForCombobox();
             }
             catch (Exception ex)
@@ -109,17 +161,17 @@ namespace QuanLyBanHangTest.BUS
                 Assert.IsTrue(ex.GetType() == typeof(Exception));
             }
         }
-
+        
         [Test]
         public void InsertKhachHangTest()
         {
-            mockIHoaDonThanhToanDAO.Setup(x => x.Insert(It.IsNotNull<string>(), new object[] { "value", "value1", "value2", "value3", "value4" })).Returns(1);
-            mockIHoaDonThanhToanDAO.Setup(x => x.Insert(It.IsNotNull<string>(), new object[] { "value0", "value1", "value2", "value3", "value4" })).Returns(0);
+            mockIDataProvider.Setup(x => x.ExecuteNonQuery(It.IsNotNull<string>(), new object[] { "value", "value1", "value2", "value3", "value4" })).Returns(1);
+            mockIDataProvider.Setup(x => x.ExecuteNonQuery(It.IsNotNull<string>(), new object[] { "value0", "value1", "value2", "value3", "value4" })).Returns(0);
 
             var result = hoaDonThanhToanBUS.InsertKhachHang(new object[] { "value", "value1", "value2", "value3", "value4" });
             var result1 = hoaDonThanhToanBUS.InsertKhachHang(new object[] { "value0", "value1", "value2", "value3", "value4" });
 
-            mockIHoaDonThanhToanDAO.VerifyAll();
+            mockIDataProvider.VerifyAll();
             Assert.IsTrue(result);
             Assert.IsFalse(result1);
         }
@@ -129,13 +181,13 @@ namespace QuanLyBanHangTest.BUS
         {
             try
             {
-                mockIHoaDonThanhToanDAO.Setup(x => x.Insert(It.IsNotNull<string>(), null)).Throws(new Exception());
+                mockIDataProvider.Setup(x => x.ExecuteNonQuery(It.IsNotNull<string>(), null)).Throws(new Exception());
                 hoaDonThanhToanBUS.InsertKhachHang(null);
             }
             catch (Exception ex)
             {
                 Assert.IsTrue(ex.GetType() == typeof(Exception));
-                mockIHoaDonThanhToanDAO.VerifyAll();
+                mockIDataProvider.VerifyAll();
             }
         }
 
@@ -143,10 +195,10 @@ namespace QuanLyBanHangTest.BUS
         [TestCase(new object[] { "value0", "value1", "value2", "value3" }, 0, false)]
         public void InsertChiTietHoaDonTest(object[] array, int value, bool valueReslut)
         {
-            mockIHoaDonThanhToanDAO.Setup(x => x.Insert(It.IsNotNull<string>(), array)).Returns(value);
+            mockIDataProvider.Setup(x => x.ExecuteNonQuery(It.IsNotNull<string>(), array)).Returns(value);
             var reslut = hoaDonThanhToanBUS.InsertChiTietHoaDon(array);
             Assert.IsTrue(reslut == valueReslut);
-            mockIHoaDonThanhToanDAO.VerifyAll();
+            mockIDataProvider.VerifyAll();
         }
 
         [Test]
@@ -154,13 +206,13 @@ namespace QuanLyBanHangTest.BUS
         {
             try
             {
-                mockIHoaDonThanhToanDAO.Setup(x => x.Insert(It.IsNotNull<string>(), null)).Throws(new Exception());
+                mockIDataProvider.Setup(x => x.ExecuteNonQuery(It.IsNotNull<string>(), null)).Throws(new Exception());
                 hoaDonThanhToanBUS.InsertChiTietHoaDon(null);
             }
             catch (Exception ex)
             {
                 Assert.IsTrue(ex.GetType() == typeof(Exception));
-                mockIHoaDonThanhToanDAO.VerifyAll();
+                mockIDataProvider.VerifyAll();
             }
         }
 
@@ -168,10 +220,10 @@ namespace QuanLyBanHangTest.BUS
         [TestCase("name1", "value1")]
         public void GetMaHangTest(string name, string value)
         {
-            mockIHoaDonThanhToanDAO.Setup(x => x.GetFirstValue(It.IsNotNull<string>(), new object[] { name })).Returns(value);
+            mockIDataProvider.Setup(x => x.ExecuteScalar(It.IsNotNull<string>(), new object[] { name })).Returns(value);
             var result = hoaDonThanhToanBUS.GetMaHang(name);
             Assert.AreEqual(result, value);
-            mockIHoaDonThanhToanDAO.VerifyAll();
+            mockIDataProvider.VerifyAll();
         }
 
         [TestCase("name")]
@@ -180,13 +232,13 @@ namespace QuanLyBanHangTest.BUS
         {
             try
             {
-                mockIHoaDonThanhToanDAO.Setup(x => x.GetFirstValue(It.IsNotNull<string>(), new object[] { name })).Throws(new Exception());
+                mockIDataProvider.Setup(x => x.ExecuteScalar(It.IsNotNull<string>(), new object[] { name })).Throws(new Exception());
                 hoaDonThanhToanBUS.GetMaHang(name);
             }
             catch (Exception ex)
             {
                 Assert.IsTrue(ex.GetType() == typeof(Exception));
-                mockIHoaDonThanhToanDAO.VerifyAll();
+                mockIDataProvider.VerifyAll();
             }
         }
 
@@ -195,11 +247,11 @@ namespace QuanLyBanHangTest.BUS
         [TestCase(new object[] { "value0", "value1", "value2", "value3" }, 0, false)]
         public void InsertHoaDonTest(object[] array, int value, bool valueReslut)
         {
-            mockIHoaDonThanhToanDAO.Setup(x => x.Insert(It.IsNotNull<string>(), array)).Returns(value);
+            mockIDataProvider.Setup(x => x.ExecuteNonQuery(It.IsNotNull<string>(), array)).Returns(value);
             var result = hoaDonThanhToanBUS.InsertHoaDon(array);
 
             Assert.IsTrue(result == valueReslut);
-            mockIHoaDonThanhToanDAO.VerifyAll();
+            mockIDataProvider.VerifyAll();
         }
 
         [TestCase(new object[] { "value", "value1", "value2", "value3" }, typeof(Exception))]
@@ -208,13 +260,13 @@ namespace QuanLyBanHangTest.BUS
         {
             try
             {
-                mockIHoaDonThanhToanDAO.Setup(x => x.Insert(It.IsNotNull<string>(), array)).Throws(new Exception());
+                mockIDataProvider.Setup(x => x.ExecuteNonQuery(It.IsNotNull<string>(), array)).Throws(new Exception());
                 hoaDonThanhToanBUS.InsertHoaDon(array);
             }
             catch (Exception ex)
             {
                 Assert.IsTrue(ex.GetType() == type);
-                mockIHoaDonThanhToanDAO.VerifyAll();
+                mockIDataProvider.VerifyAll();
             }
         }
 
@@ -222,11 +274,11 @@ namespace QuanLyBanHangTest.BUS
         [TestCase("123", "value1")]
         public void GetMaKHTest(string number, string value)
         {
-            mockIHoaDonThanhToanDAO.Setup(x => x.GetFirstValue(It.IsNotNull<string>(), new object[] { int.Parse(number) })).Returns(value);
+            mockIDataProvider.Setup(x => x.ExecuteScalar(It.IsNotNull<string>(), new object[] { int.Parse(number) })).Returns(value);
             var reslut = hoaDonThanhToanBUS.GetMaKH(number);
 
             Assert.AreEqual(reslut, value);
-            mockIHoaDonThanhToanDAO.VerifyAll();
+            mockIDataProvider.VerifyAll();
         }
 
         [TestCase("123", typeof(Exception))]
@@ -235,27 +287,26 @@ namespace QuanLyBanHangTest.BUS
         {
             try
             {
-                mockIHoaDonThanhToanDAO.Setup(x => x.GetFirstValue(It.IsNotNull<string>(), new object[] { int.Parse(number) })).Throws(new Exception());
+                mockIDataProvider.Setup(x => x.ExecuteScalar(It.IsNotNull<string>(), new object[] { int.Parse(number) })).Throws(new Exception());
                 hoaDonThanhToanBUS.GetMaKH(number);
             }
             catch (Exception ex)
             {
                 Assert.IsTrue(ex.GetType() == value);
-                mockIHoaDonThanhToanDAO.VerifyAll();
+                mockIDataProvider.VerifyAll();
             }
         }
-
 
         [TestCase("321", "value")]
         [TestCase("123", "value1")]
         public void GetTenKHTest(string number, string value)
         {
 
-            mockIHoaDonThanhToanDAO.Setup(x => x.GetFirstValue(It.IsNotNull<string>(), new object[] { int.Parse(number) })).Returns(value);
+            mockIDataProvider.Setup(x => x.ExecuteScalar(It.IsNotNull<string>(), new object[] { int.Parse(number) })).Returns(value);
             var reslut = hoaDonThanhToanBUS.GetTenKH(number);
 
             Assert.AreEqual(reslut, value);
-            mockIHoaDonThanhToanDAO.VerifyAll();
+            mockIDataProvider.VerifyAll();
         }
 
         [TestCase("123", typeof(Exception))]
@@ -264,10 +315,10 @@ namespace QuanLyBanHangTest.BUS
         {
             try
             {
-                mockIHoaDonThanhToanDAO.Setup(x => x.GetFirstValue(It.IsNotNull<string>(), new object[] { int.Parse(number) })).Throws(new Exception());
+                mockIDataProvider.Setup(x => x.ExecuteScalar(It.IsNotNull<string>(), new object[] { int.Parse(number) })).Throws(new Exception());
                 var exception = Assert.Catch<Exception>(() => hoaDonThanhToanBUS.GetTenKH(number));
                 Assert.IsTrue(exception.GetType() == value);
-                mockIHoaDonThanhToanDAO.VerifyAll();
+                mockIDataProvider.VerifyAll();
             }
             catch (Exception ex)
             {
@@ -280,11 +331,11 @@ namespace QuanLyBanHangTest.BUS
         [TestCase(new object[] { 2, "value2", 2, "value3", "value4" }, "value5")]
         public void GetMaHoaDonTest(object[] array,object value)
         {
-            mockIHoaDonThanhToanDAO.Setup(x => x.GetFirstValue(It.IsNotNull<string>(), array)).Returns(value);
+            mockIDataProvider.Setup(x => x.ExecuteScalar(It.IsNotNull<string>(), array)).Returns(value);
             var result = hoaDonThanhToanBUS.GetMaHoaDon((int) array[0], array[1].ToString(),(int) array[2], array[3].ToString(), array[4].ToString());
 
             Assert.IsTrue(value.Equals(result));
-            mockIHoaDonThanhToanDAO.VerifyAll();
+            mockIDataProvider.VerifyAll();
         }
 
         [Test]
@@ -292,8 +343,8 @@ namespace QuanLyBanHangTest.BUS
         {
             var array = new object[] { 1, "value1", 2, "value2", "value3" };
             var arrayNull = new object[] { 1,null,1,null,null };
-            mockIHoaDonThanhToanDAO.Setup(x => x.GetFirstValue(It.IsNotNull<string>(), array)).Throws(new Exception());
-            mockIHoaDonThanhToanDAO.Setup(x => x.GetFirstValue(It.IsNotNull<string>(), arrayNull)).Throws(new Exception());
+            mockIDataProvider.Setup(x => x.ExecuteScalar(It.IsNotNull<string>(), array)).Throws(new Exception());
+            mockIDataProvider.Setup(x => x.ExecuteScalar(It.IsNotNull<string>(), arrayNull)).Throws(new Exception());
 
             var exception = Assert.Catch<Exception>(
                 () => hoaDonThanhToanBUS.GetMaHoaDon((int)array[0], array[1].ToString(), (int)array[2], array[3].ToString(), array[4].ToString()));
@@ -304,17 +355,17 @@ namespace QuanLyBanHangTest.BUS
             Assert.IsTrue(typeof(Exception) == exceptionNull.GetType());
 
             Assert.IsTrue(typeof( Exception) == exception.GetType());
-            mockIHoaDonThanhToanDAO.VerifyAll();
+            mockIDataProvider.VerifyAll();
         }
 
         [TestCase(new object[] { "id1", "number1" },true,1)]
         [TestCase(new object[] {"id","number" },true,1)]
         public void UpdateHangHoaTest(object[] arg,bool value,int number)
         {
-            mockIHoaDonThanhToanDAO.Setup(x => x.Update(It.IsNotNull<string>(), arg)).Returns(number);
+            mockIDataProvider.Setup(x => x.ExecuteNonQuery(It.IsNotNull<string>(), arg)).Returns(number);
             var result = hoaDonThanhToanBUS.UpdateHangHoa(arg);
             Assert.IsTrue(result == value);
-            mockIHoaDonThanhToanDAO.VerifyAll();
+            mockIDataProvider.VerifyAll();
         }
 
 
@@ -323,18 +374,18 @@ namespace QuanLyBanHangTest.BUS
         [TestCase(new object[] { null }, typeof(Exception))]
         public void UpdateHangHoaTestException(object[] arg, Type value)
         {
-            mockIHoaDonThanhToanDAO.Setup(x => x.Update(It.IsNotNull<string>(), arg)).Throws(new Exception());
+            mockIDataProvider.Setup(x => x.ExecuteNonQuery(It.IsNotNull<string>(), arg)).Throws(new Exception());
             var exception = Assert.Catch<Exception>(
                 () => hoaDonThanhToanBUS.UpdateHangHoa(arg));
             Assert.IsTrue(value == exception.GetType());
-            //mockIHoaDonThanhToanDAO.Setup(x => x.Update(It.IsNotNull<string>(), arg)).Returns(number);
+            //mockIDataProvider.Setup(x => x.Update(It.IsNotNull<string>(), arg)).Returns(number);
         }
 
         [TestCase(new object[] {"id" },"value")]
         [TestCase(new object[] { "id1" }, "value1")]
         public void GetSoLuongTest(object[] array,object value)
         {
-            mockIHoaDonThanhToanDAO.Setup(x => x.GetFirstValue(It.IsNotNull<string>(), array)).Returns(value);
+            mockIDataProvider.Setup(x => x.ExecuteScalar(It.IsNotNull<string>(), array)).Returns(value);
             var reslut = hoaDonThanhToanBUS.GetSoLuong(array);
             Assert.IsTrue(reslut.Equals(value));
         }
@@ -344,7 +395,7 @@ namespace QuanLyBanHangTest.BUS
         [TestCase(new object[] { "id1" }, typeof(Exception))]
         public void GetSoLuongTestException(object[] array, Type value)
         {
-            mockIHoaDonThanhToanDAO.Setup(x => x.GetFirstValue(It.IsNotNull<string>(), array)).Throws(new Exception());
+            mockIDataProvider.Setup(x => x.ExecuteScalar(It.IsNotNull<string>(), array)).Throws(new Exception());
             var exception = Assert.Catch<Exception>(
                 () => hoaDonThanhToanBUS.GetSoLuong(array));
 

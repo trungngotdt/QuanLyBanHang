@@ -11,10 +11,10 @@ namespace QuanLyBanHang.BUS
 {
     public class DangNhapBUS : IDangNhapBUS
     {
-        private IDangNhapDAO dangNhapDAO;
-        public DangNhapBUS(IDangNhapDAO dangNhap)
+        private IDataProvider dataProvider;
+        public DangNhapBUS(IDataProvider data)
         {
-            this.dangNhapDAO = dangNhap;
+            this.dataProvider = data;
         }
 
         /// <summary>
@@ -26,7 +26,7 @@ namespace QuanLyBanHang.BUS
         {
             try
             {
-                return dangNhapDAO.ChucVu("EXEC USP_CheckChucVu @Name", new object[] { name }).ToString();
+                return dataProvider.ExecuteScalar("EXEC USP_CheckChucVu @Name", new object[] { name }).ToString();
             }
             catch (Exception ex)
             {
@@ -46,7 +46,8 @@ namespace QuanLyBanHang.BUS
         {
             try
             {
-                return dangNhapDAO.GetPassHashCode("EXECUTE USP_GetPassword @name", name) == Pass.GetHashCode();
+                var passHash = dataProvider.ExecuteScalar("EXECUTE USP_GetPassword @name", new object[] { name });
+                return passHash.GetHashCode() == Pass.GetHashCode();
             }
             catch (Exception ex)
             {
@@ -66,7 +67,7 @@ namespace QuanLyBanHang.BUS
         {
             try
             {
-                return dangNhapDAO.GetFirstData("EXEC USP_GetMaNVByNameSignIn @name", new object[] { name }).ToString();
+                return dataProvider.ExecuteScalar("EXEC USP_GetMaNVByNameSignIn @name", new object[] { name }).ToString();
             }
             catch (Exception ex)
             {
@@ -85,7 +86,7 @@ namespace QuanLyBanHang.BUS
         {
             try
             {
-                return dangNhapDAO.GetFirstData("EXEC USP_GetTenNV @id", new object[] { id }).ToString();
+                return dataProvider.ExecuteScalar("EXEC USP_GetTenNV @id", new object[] { id }).ToString();
             }
             catch (Exception ex)
             {

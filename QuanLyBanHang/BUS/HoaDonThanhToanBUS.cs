@@ -1,7 +1,9 @@
 ﻿using QuanLyBanHang.BUS.Interfaces;
+using QuanLyBanHang.DAO;
 using QuanLyBanHang.DAO.InterfacesDAO;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,10 +13,38 @@ namespace QuanLyBanHang.BUS
 {
     public class HoaDonThanhToanBUS : IHoaDonThanhToanBUS
     {
-        private IHoaDonThanhToanDAO hoaDonThanhToan;
-        public HoaDonThanhToanBUS(IHoaDonThanhToanDAO hoaDonThanhToanDAO)
+        private IDataProvider dataProvider;
+
+        public HoaDonThanhToanBUS(IDataProvider data)
         {
-            this.hoaDonThanhToan = hoaDonThanhToanDAO;
+            this.dataProvider = data;
+        }
+
+
+
+        /// <summary>
+        /// trả về chuổi <see cref="string"/> có thể lấy làm dữ liệu cho các gợi ý
+        /// </summary>
+        /// <returns></returns>
+        public string[] SourceComplete(string query, object[] values = null)
+        {
+            var data = dataProvider.ExecuteQuery(query, values);
+            var source = data.AsEnumerable().ToList().Select(p => p.ItemArray).Select(p => p.FirstOrDefault()).OfType<String>().ToArray();
+            return source;
+        }
+
+        /// <summary>
+        /// Trả về chuỗi <see cref="AutoCompleteStringCollection"/> phục vụ cho chức năng AutoComplete của TextBox
+        /// </summary>
+        /// <param name="query"></param>
+        /// <param name="values"></param>
+        /// <returns></returns>
+        public AutoCompleteStringCollection SourceForAutoComplete(string query, object[] values = null)
+        {
+            AutoCompleteStringCollection autoCompleteStringCollection = new AutoCompleteStringCollection();
+            autoCompleteStringCollection.AddRange(SourceComplete(query, values));
+            return autoCompleteStringCollection;
+            //throw new NotImplementedException();
         }
 
         /// <summary>
@@ -27,7 +57,7 @@ namespace QuanLyBanHang.BUS
             {
                 textBox.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
                 textBox.AutoCompleteSource = AutoCompleteSource.CustomSource;
-                textBox.AutoCompleteCustomSource = hoaDonThanhToan.SourceForAutoComplete("SELECT kh.TenKH FROM dbo.KhachHang kh");
+                textBox.AutoCompleteCustomSource = SourceForAutoComplete("SELECT kh.TenKH FROM dbo.KhachHang kh");
             }
             catch (Exception ex)
             {
@@ -45,7 +75,7 @@ namespace QuanLyBanHang.BUS
         {
             try
             {
-                var donGia = hoaDonThanhToan.GetFirstValue("EXECUTE USP_GetDonGia @name", new object[] { tenhang });
+                var donGia = dataProvider.ExecuteScalar("EXECUTE USP_GetDonGia @name", new object[] { tenhang });
                 return donGia;
             }
             catch (Exception ex)
@@ -63,7 +93,7 @@ namespace QuanLyBanHang.BUS
         {
             try
             {
-                var source = hoaDonThanhToan.SourceComplete("SELECT h.TenHang FROM dbo.Hang h WHERE h.SoLuong>0");
+                var source = SourceComplete("SELECT h.TenHang FROM dbo.Hang h WHERE h.SoLuong>0");
                 return source;
             }
             catch (Exception ex)
@@ -85,7 +115,7 @@ namespace QuanLyBanHang.BUS
         {
             try
             {
-                return hoaDonThanhToan.Insert("EXEC USP_InsertKhachHang @name , @phone , @sex , @address , @level", values) > 0;
+                return dataProvider.ExecuteNonQuery("EXEC USP_InsertKhachHang @name , @phone , @sex , @address , @level", values) > 0;
             }
             catch (Exception ex)
             {
@@ -105,7 +135,7 @@ namespace QuanLyBanHang.BUS
         {
             try
             {
-                return hoaDonThanhToan.Insert("EXEC USP_InsertChiTietHoaDon @idbill , @idgoods , @price , @number ", values) > 0;
+                return dataProvider.ExecuteNonQuery("EXEC USP_InsertChiTietHoaDon @idbill , @idgoods , @price , @number ", values) > 0;
             }
             catch (Exception ex)
             {
@@ -122,7 +152,7 @@ namespace QuanLyBanHang.BUS
         {
             try
             {
-                return hoaDonThanhToan.GetFirstValue("EXECUTE USP_GetMaHang @name", new object[] { tenHang });
+                return dataProvider.ExecuteScalar("EXECUTE USP_GetMaHang @name", new object[] { tenHang });
             }
             catch (Exception ex)
             {
@@ -140,7 +170,7 @@ namespace QuanLyBanHang.BUS
         {
             try
             {
-                return hoaDonThanhToan.Insert("EXEC USP_InsertHoaDon   @idcustomer , @typebill , @idstaff , @date , @namestaff", values) > 0;
+                return dataProvider.ExecuteNonQuery("EXEC USP_InsertHoaDon   @idcustomer , @typebill , @idstaff , @date , @namestaff", values) > 0;
             }
             catch (Exception ex)
             {
@@ -157,7 +187,7 @@ namespace QuanLyBanHang.BUS
         {
             try
             {
-                return hoaDonThanhToan.GetFirstValue("EXECUTE USP_GetMaKHBySDT  @sdt", new object[] { int.Parse(sdtKH) });
+                return dataProvider.ExecuteScalar("EXECUTE USP_GetMaKHBySDT  @sdt", new object[] { int.Parse(sdtKH) });
             }
             catch (Exception ex)
             {
@@ -175,7 +205,7 @@ namespace QuanLyBanHang.BUS
         {
             try
             {
-                return hoaDonThanhToan.GetFirstValue("EXECUTE USP_GetTenKH @sdt", new object[] { int.Parse(sdt) });
+                return dataProvider.ExecuteScalar("EXECUTE USP_GetTenKH @sdt", new object[] { int.Parse(sdt) });
             }
             catch (Exception ex)
             {
@@ -196,7 +226,7 @@ namespace QuanLyBanHang.BUS
         {
             try
             {
-                return hoaDonThanhToan.GetFirstValue("EXECUTE USP_GetMaHoaDon @idcustomer , @type , @idstaff , @date , @namestaff ", new object[] { MaKH, LoaiHD, MaNV, NgayLap, TenNV });
+                return dataProvider.ExecuteScalar("EXECUTE USP_GetMaHoaDon @idcustomer , @type , @idstaff , @date , @namestaff ", new object[] { MaKH, LoaiHD, MaNV, NgayLap, TenNV });
             }
             catch (Exception ex)
             {
@@ -215,7 +245,7 @@ namespace QuanLyBanHang.BUS
         {
             try
             {
-                return hoaDonThanhToan.Update("EXECUTE USP_UpdateSoLuongHang @idgoods , @number ", values) > 0;
+                return dataProvider.ExecuteNonQuery("EXECUTE USP_UpdateSoLuongHang @idgoods , @number ", values) > 0;
             }
             catch (Exception ex)
             {
@@ -233,7 +263,7 @@ namespace QuanLyBanHang.BUS
         {
             try
             {
-                return hoaDonThanhToan.GetFirstValue("EXECUTE USP_GetSoLuong @idgoods ", values);
+                return dataProvider.ExecuteScalar("EXECUTE USP_GetSoLuong @idgoods ", values);
             }
             catch (Exception ex)
             {

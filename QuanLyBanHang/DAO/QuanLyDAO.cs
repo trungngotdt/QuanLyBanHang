@@ -12,23 +12,23 @@ namespace QuanLyBanHang.DAO
     {
         public DataTable GetData(string query, object[] para = null)
         {
-            return DataProvider.Instance.ExecuteQuery(query,para);
+            return DataProvider2.Instance.ExecuteQuery(query,para);
         }
 
         public object GetFirstData(string query, object[] para = null)
         {
-            return DataProvider.Instance.ExecuteScalar(query, para);
+            return DataProvider2.Instance.ExecuteScalar(query, para);
         }
 
         public int Insert(string query, object[] para = null)
         {
-            return DataProvider.Instance.ExecuteNonQuery(query, para);
+            return DataProvider2.Instance.ExecuteNonQuery(query, para);
             //throw new NotImplementedException();
         }
 
         public int Update(string query, object[] para = null)
         {
-            return DataProvider.Instance.ExecuteNonQuery(query, para);
+            return DataProvider2.Instance.ExecuteNonQuery(query, para);
             //throw new NotImplementedException();
         }
     }

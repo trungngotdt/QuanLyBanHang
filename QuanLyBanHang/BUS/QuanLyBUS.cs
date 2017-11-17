@@ -6,15 +6,16 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data;
 using QuanLyBanHang.DAO.InterfacesDAO;
+using QuanLyBanHang.DAO;
 
 namespace QuanLyBanHang.BUS
 {
     public class QuanLyBUS : IQuanLyBUS
     {
-        private IQuanLyDAO quanLy;
-        public QuanLyBUS(IQuanLyDAO quanLyDAO)
+        private IDataProvider dataProvider;
+        public QuanLyBUS(IDataProvider data)
         {
-            this.quanLy = quanLyDAO;
+            this.dataProvider = data;
         }
 
         /// <summary>
@@ -26,7 +27,7 @@ namespace QuanLyBanHang.BUS
             try
             {
 
-                return quanLy.GetData("SELECT kh.* FROM dbo.KhachHang kh");
+                return dataProvider.ExecuteQuery("SELECT kh.* FROM dbo.KhachHang kh");
             }
             catch (Exception ex)
             {
@@ -45,8 +46,8 @@ namespace QuanLyBanHang.BUS
             try
             {
 
-            return quanLy.GetData("SELECT nv.MaNV ,nv.TenNV,nv.ChucVu,nv.DiaChi,nv.DienThoai,nv.Email,nv.TenDangNhap FROM dbo.NhanVien nv");
-            //throw new NotImplementedException();
+                return dataProvider.ExecuteQuery("SELECT nv.MaNV ,nv.TenNV,nv.ChucVu,nv.DiaChi,nv.DienThoai,nv.Email,nv.TenDangNhap FROM dbo.NhanVien nv");
+                //throw new NotImplementedException();
             }
             catch (Exception ex)
             {
@@ -66,8 +67,8 @@ namespace QuanLyBanHang.BUS
             try
             {
 
-            return quanLy.Insert("EXECUTE USP_InsertKhachHang @name , @phone , @sex , @address , @level ", para) > 0;
-            //throw new NotImplementedException();
+                return dataProvider.ExecuteNonQuery("EXECUTE USP_InsertKhachHang @name , @phone , @sex , @address , @level ", para) > 0;
+                //throw new NotImplementedException();
             }
             catch (Exception ex)
             {
@@ -88,8 +89,8 @@ namespace QuanLyBanHang.BUS
             try
             {
 
-            return quanLy.Insert("EXECUTE USP_InsertNV @Ten , @Chuc , @DiaChi , @SDT , @Email", para) > 0;
-            //throw new NotImplementedException();
+                return dataProvider.ExecuteNonQuery("EXECUTE USP_InsertNV @Ten , @Chuc , @DiaChi , @SDT , @Email", para) > 0;
+                //throw new NotImplementedException();
             }
             catch (Exception ex)
             {
@@ -109,8 +110,8 @@ namespace QuanLyBanHang.BUS
             try
             {
 
-            return quanLy.Update("EXECUTE USP_UpdateKH @ID , @name , @phone , @sex , @address , @level ", para) > 0;
-            //throw new NotImplementedException();
+                return dataProvider.ExecuteNonQuery("EXECUTE USP_UpdateKH @ID , @name , @phone , @sex , @address , @level ", para) > 0;
+                //throw new NotImplementedException();
             }
             catch (Exception ex)
             {
@@ -130,8 +131,8 @@ namespace QuanLyBanHang.BUS
             try
             {
 
-            return quanLy.Update("EXECUTE USP_UpdateNVWithoutPassAndNameSignIn @MaNV , @Ten , @Chuc , @DiaChi , @SDT , @Email ", para)>0;
-            //throw new NotImplementedException();
+                return dataProvider.ExecuteNonQuery("EXECUTE USP_UpdateNVWithoutPassAndNameSignIn @MaNV , @Ten , @Chuc , @DiaChi , @SDT , @Email ", para) > 0;
+                //throw new NotImplementedException();
             }
             catch (Exception ex)
             {

@@ -7,15 +7,30 @@ using System.Threading.Tasks;
 using QuanLyBanHang.DTO;
 using QuanLyBanHang.DAO.InterfacesDAO;
 using System.Data;
+using QuanLyBanHang.DAO;
 
 namespace QuanLyBanHang.BUS
 {
     public class QuanLyThongTinBUS : IQuanLyThongTinBUS
     {
-        private IQuanLyThongTinDAO quanLyThongTin;
-        public QuanLyThongTinBUS(IQuanLyThongTinDAO quanLy)
+        private IDataProvider dataProvider;
+
+        public QuanLyThongTinBUS(IDataProvider data)
         {
-            this.quanLyThongTin = quanLy;
+            this.dataProvider = data;
+        }
+
+
+        /// <summary>
+        /// trả về chuổi <see cref="string"/> có thể lấy làm dữ liệu cho các gợi ý
+        /// </summary>
+        /// <returns></returns>
+        public string[] SourceComplete(string query, object[] values = null)
+        {
+            var data = dataProvider.ExecuteQuery(query, values);
+            var source = data.AsEnumerable().ToList().Select(p => p.ItemArray).Select(p => p.FirstOrDefault()).OfType<String>().ToArray();
+            return source;
+            //throw new NotImplementedException();
         }
 
         /// <summary>
@@ -24,7 +39,7 @@ namespace QuanLyBanHang.BUS
         /// <returns></returns>
         public string[] DataSourceForCombobox()
         {
-            var source = quanLyThongTin.SourceComplete("SELECT h.TenHang FROM dbo.Hang h WHERE h.SoLuong>0");
+            var source = SourceComplete("SELECT h.TenHang FROM dbo.Hang h WHERE h.SoLuong>0");
             return source;
             //throw new NotImplementedException();
         }
@@ -36,7 +51,7 @@ namespace QuanLyBanHang.BUS
         public List<ChiTietHoaDonDTO> GetListChiTietHoaDon()
         {
             List<ChiTietHoaDonDTO> list = new List<ChiTietHoaDonDTO>();
-            var data = quanLyThongTin.ShowAll("SELECT cthd.* FROM dbo.ChiTietHoaDon cthd");
+            var data = dataProvider.ExecuteQuery("SELECT cthd.* FROM dbo.ChiTietHoaDon cthd");
             foreach (DataRow item in data.Rows)
             {
                 ChiTietHoaDonDTO hang = new ChiTietHoaDonDTO(item);
@@ -53,7 +68,7 @@ namespace QuanLyBanHang.BUS
         /// <returns></returns>
         public object GetMaKH(string sdtKH)
         {
-            return quanLyThongTin.GetFirstValue("EXECUTE USP_GetMaKHBySDT  @sdt", new object[] { int.Parse(sdtKH) });
+            return dataProvider.ExecuteScalar("EXECUTE USP_GetMaKHBySDT  @sdt", new object[] { int.Parse(sdtKH) });
             //throw new NotImplementedException();
         }
 
@@ -64,7 +79,7 @@ namespace QuanLyBanHang.BUS
         /// <returns></returns>
         public object GetMaHang(string tenHang)
         {
-            return quanLyThongTin.GetFirstValue("EXECUTE USP_GetMaHang @name", new object[] { tenHang });
+            return dataProvider.ExecuteScalar("EXECUTE USP_GetMaHang @name", new object[] { tenHang });
         }
 
         /// <summary>
@@ -74,7 +89,7 @@ namespace QuanLyBanHang.BUS
         /// <returns></returns>
         public object GetTenKH(string sdtKH)
         {
-            return quanLyThongTin.GetFirstValue("EXECUTE USP_GetTenKH @sdt", new object[] { int.Parse(sdtKH) });
+            return dataProvider.ExecuteScalar("EXECUTE USP_GetTenKH @sdt", new object[] { int.Parse(sdtKH) });
             //throw new NotImplementedException();
         }
 
@@ -85,7 +100,7 @@ namespace QuanLyBanHang.BUS
         /// <returns></returns>
         public object LayDonGia(string tenhang)
         {
-            var donGia = quanLyThongTin.GetFirstValue("EXECUTE USP_GetDonGia @name", new object[] { tenhang });
+            var donGia = dataProvider.ExecuteScalar("EXECUTE USP_GetDonGia @name", new object[] { tenhang });
             return donGia;
             //throw new NotImplementedException();
         }
@@ -100,7 +115,7 @@ namespace QuanLyBanHang.BUS
         {
             List<HangDTO> listHang = new List<HangDTO>();
             var str = correct == true ? values.ToString() : $"%{values.ToString()}%";
-            var data= quanLyThongTin.SearchBy("USP_SearchHang @name", str);
+            var data= dataProvider.ExecuteQuery("USP_SearchHang @name",new object[] { str });
             foreach (DataRow item in data.Rows)
             {
                 HangDTO hang = new HangDTO(item);
@@ -117,7 +132,7 @@ namespace QuanLyBanHang.BUS
         public List<HangDTO> ShowAllHang()
         {
             List<HangDTO> listHang = new List<HangDTO>();
-            var data = quanLyThongTin.ShowAll("SELECT h.* FROM dbo.Hang h");
+            var data = dataProvider.ExecuteQuery("SELECT h.* FROM dbo.Hang h");
             foreach (DataRow item in data.Rows)
             {
                 HangDTO hang = new HangDTO(item);
@@ -155,7 +170,7 @@ namespace QuanLyBanHang.BUS
                 stringBuilder.Append(values[i].ToString());
                 stringBuilder.Append(type);
             }            
-            var data= quanLyThongTin.ShowAll(stringBuilder.ToString());
+            var data= dataProvider.ExecuteQuery(stringBuilder.ToString());
             foreach (DataRow item in data.Rows)
             {
                 HangDTO hang = new HangDTO(item);
@@ -171,7 +186,7 @@ namespace QuanLyBanHang.BUS
         /// <returns></returns>
         public KhachHangDTO GetKhachHangBySDT(int sdt)
         {
-            var data= quanLyThongTin.ShowData("USP_GetKHBySDT @SDT",new object[] {sdt });
+            var data= dataProvider.ExecuteQuery("USP_GetKHBySDT @SDT",new object[] {sdt });
             KhachHangDTO khachHang = new KhachHangDTO(data.Rows.OfType<DataRow>().Single());
             return khachHang;
             //throw new NotImplementedException();

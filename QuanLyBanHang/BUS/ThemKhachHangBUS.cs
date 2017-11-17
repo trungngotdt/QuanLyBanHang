@@ -5,15 +5,17 @@ using System.Text;
 using System.Threading.Tasks;
 using QuanLyBanHang.BUS.Interfaces;
 using QuanLyBanHang.DAO.InterfacesDAO;
+using QuanLyBanHang.DAO;
 
 namespace QuanLyBanHang.BUS
 {
     public class ThemKhachHangBUS : IThemKhachHangBUS
     {
-        private IThemKhachHangDAO themKhachHang;
-        public ThemKhachHangBUS(IThemKhachHangDAO themKhachHangDAO)
+
+        private IDataProvider dataProvider;
+        public ThemKhachHangBUS(IDataProvider data)
         {
-            this.themKhachHang = themKhachHangDAO;
+            this.dataProvider = data;
         }
 
         /// <summary>
@@ -24,7 +26,7 @@ namespace QuanLyBanHang.BUS
         /// <returns></returns>
         public bool InsertKhachHang(object[] values)
         {
-            return themKhachHang.Insert("EXECUTE USP_InsertKhachHang @ten , @sdt , @gioitinh , @diachi , @loaikh", values)>0;
+            return dataProvider.ExecuteNonQuery("EXECUTE USP_InsertKhachHang @ten , @sdt , @gioitinh , @diachi , @loaikh", values)>0;
             //throw new NotImplementedException();
         }
     }

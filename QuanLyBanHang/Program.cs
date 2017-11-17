@@ -41,6 +41,7 @@ namespace QuanLyBanHang
             unityContainer.RegisterType<IThemKhachHangDAO, ThemKhachHangDAO>();
             unityContainer.RegisterType<IQuanLyThongTinDAO, QuanLyThongTinDAO>();
             unityContainer.RegisterType<IQuanLyDAO, QuanLyDAO>();
+            unityContainer.RegisterType<IDataProvider, DataProvider>();
 
             unityContainer.RegisterType<IHoaDonThanhToanBUS, HoaDonThanhToanBUS>();
             unityContainer.RegisterType<IDangNhapBUS, DangNhapBUS>();
