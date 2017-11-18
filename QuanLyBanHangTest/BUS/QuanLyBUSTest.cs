@@ -67,6 +67,7 @@ namespace QuanLyBanHangTest.BUS
             mockIDataProvider.VerifyAll();
         }
 
+
         [TestCase(new object[] {"value1","value2","value2","value3","value4" },1,true)]
         [TestCase(new object[] { "value1", "value2", "value2", "value3", "value5" }, 0,false)]
         public void InsertKHTest(object[] para,int number,bool value)
@@ -96,6 +97,7 @@ namespace QuanLyBanHangTest.BUS
         }
 
         [TestCase(new object[] { "null" })]
+        [TestCase(new object[] {"l",1})]
         public void InsertNVTestException(object[] para)
         {
             mockIDataProvider.Setup(x => x.ExecuteNonQuery(It.IsNotNull<string>(), para)).Throws<Exception>();
@@ -104,6 +106,25 @@ namespace QuanLyBanHangTest.BUS
             mockIDataProvider.VerifyAll();
         }
 
+
+        [TestCase(new object[] { "null" })]
+        public void InsertNVTestException2(object[] para)
+        {
+            try
+            {
+
+                mockIDataProvider.Setup(x => x.ExecuteNonQuery(It.IsNotNull<string>(), para)).Throws<Exception>(); quanLyBUS.InsertNV(para);
+                //var exception = Assert.Throws<Exception>(() => quanLyBUS.InsertNV(para));
+            }
+            catch (Exception exception)
+            {
+Assert.IsTrue(exception.GetType() == typeof(Exception));
+                mockIDataProvider.VerifyAll();
+                
+            }
+            
+            
+        }
 
         [TestCase(new object[] { "value1", "value2", "value2", "value3", "value4","value5" }, 1, true)]
         [TestCase(new object[] { "value1", "value2", "value2", "value3", "value5","value7" }, 0, false)]

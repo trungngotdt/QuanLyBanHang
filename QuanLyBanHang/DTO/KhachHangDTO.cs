@@ -11,14 +11,14 @@ namespace QuanLyBanHang.DTO
         private string strMaKH;
         private string strTenKH;
         private int intSDT;
-        private Nullable<bool> blnGoiTinh;
+        private Nullable<bool> blnGioiTinh;
         private string strDiaChi;
         private string strLoaiKhachHang;
 
         public string StrMaKH { get => strMaKH; set => strMaKH = value; }
         public string StrTenKH { get => strTenKH; set => strTenKH = value; }
         public int IntSDT { get => intSDT; set => intSDT = value; }
-        public Nullable<bool> BlnGoiTinh { get => blnGoiTinh; set => blnGoiTinh = value; }
+        public Nullable<bool> BlnGioiTinh { get => blnGioiTinh; set => blnGioiTinh = value; }
         public string StrDiaChi { get => strDiaChi; set => strDiaChi = value; }
         public string StrLoaiKhachHang { get => strLoaiKhachHang; set => strLoaiKhachHang = value; }
 
@@ -37,11 +37,11 @@ namespace QuanLyBanHang.DTO
             var gioiTinh = row["GioiTinh"].ToString();
             if (String.IsNullOrEmpty(gioiTinh.ToString()))
             {
-                this.BlnGoiTinh = null;
+                this.BlnGioiTinh = null;
             }
             else
             {
-                this.BlnGoiTinh = gioiTinh == "1" ? true : false;
+                this.BlnGioiTinh = gioiTinh == "1" ? true : false;
             }
         }
 
@@ -52,7 +52,7 @@ namespace QuanLyBanHang.DTO
             this.StrLoaiKhachHang = LoaiKhachHang;
             this.StrTenKH = TenKH;
             this.IntSDT = SDT;
-            this.BlnGoiTinh = GioiTinh;
+            this.BlnGioiTinh = GioiTinh;
         }
     }
 }

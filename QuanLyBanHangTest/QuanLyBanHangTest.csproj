@@ -73,6 +73,8 @@
     <Compile Include="BUS\HoaDonThanhToanBUSTest.cs" />
     <Compile Include="BUS\QuanLyBUSTest.cs" />
     <Compile Include="BUS\QuanLyThongTinBUSTest.cs" />
+    <Compile Include="BUS\ThemKhachHangBUSTest.cs" />
+    <Compile Include="DAO\DataProviderTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -83,6 +85,9 @@
       <Project>{663F806A-FB1B-45AD-A8E1-78D3F9D16CD7}</Project>
       <Name>QuanLyBanHang</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="DTO\" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
