@@ -91,8 +91,8 @@ namespace QuanLyBanHangTest.BUS
         [TestCase(null,"a")]
         public void AutoCompleTestException(object[] values,string a)
         {
-            try
-            {
+            /*try
+            {*/
 
                 var data = GenerateDataTable<KhachHangDTO>(10);
 
@@ -101,12 +101,12 @@ namespace QuanLyBanHangTest.BUS
                 var exception=Assert.Catch<Exception>(()=> hoaDonThanhToanBUS.AutoComplete(new System.Windows.Forms.TextBox()));
                 Assert.IsTrue(exception.GetType() == typeof(Exception));
                 mockIDataProvider.VerifyAll();
-            }
+            /*}
             catch (Exception ex)
             {
                 Assert.That(ex.GetType() == typeof(Exception));
                 mockIDataProvider.VerifyAll();
-            }
+            }*/
         }
         
 
@@ -124,18 +124,18 @@ namespace QuanLyBanHangTest.BUS
         [Test]
         public void LayDonGiaTestException()
         {
-            try
-            {
+            /*try
+            {*/
                 mockIDataProvider.Setup(x => x.ExecuteScalar(It.IsNotNull<string>(), new object[] { null })).Throws(new Exception());
                 var exception=Assert.Catch<Exception>(()=> hoaDonThanhToanBUS.LayDonGia(null));
                 Assert.IsTrue(exception.GetType() == typeof(Exception));
                 mockIDataProvider.VerifyAll();
-            }
+           /* }
             catch (Exception ex)
             {
                 mockIDataProvider.VerifyAll();
                 Assert.IsTrue(ex.GetType() == typeof(Exception));
-            }
+            }*/
         }
         
         [TestCase("value", "value1")]
@@ -152,19 +152,19 @@ namespace QuanLyBanHangTest.BUS
         [Test]
         public void DataSourceForComboboxTestException()
         {
-            try
-            {
+            /*try
+            {*/
                 var data = GenerateDataTable<NhanVienDTO>(10);
 
                 mockIDataProvider.Setup(x => x.ExecuteQuery(It.IsNotNull<string>(), null)).Throws(new Exception());
                 var exception=Assert.Catch<Exception>(()=> hoaDonThanhToanBUS.DataSourceForCombobox());
                 Assert.IsTrue(exception.GetType() == typeof(Exception));
                 mockIDataProvider.VerifyAll();
-            }
+            /*}
             catch (Exception ex)
             {
                 Assert.IsTrue(ex.GetType() == typeof(Exception));
-            }
+            }*/
         }
         
         [Test]
@@ -184,18 +184,18 @@ namespace QuanLyBanHangTest.BUS
         [Test]
         public void InsertKhachHangTestException()
         {
-            try
-            {
+            /*try
+            {*/
                 mockIDataProvider.Setup(x => x.ExecuteNonQuery(It.IsNotNull<string>(), null)).Throws(new Exception());
                 var exception=Assert.Catch<Exception>(()=> hoaDonThanhToanBUS.InsertKhachHang(null));
                 Assert.IsTrue(exception.GetType() == typeof(Exception));
                 mockIDataProvider.VerifyAll();
-            }
-            catch (Exception ex)
+            //}
+            /*catch (Exception ex)
             {
                 Assert.IsTrue(ex.GetType() == typeof(Exception));
                 mockIDataProvider.VerifyAll();
-            }
+            }*/
         }
 
         [TestCase(new object[] { "value", "value1", "value2", "value3" }, 1, true)]
@@ -211,18 +211,18 @@ namespace QuanLyBanHangTest.BUS
         [Test]
         public void InsertChiTietHoaDonTestException()
         {
-            try
-            {
+            /*try
+            {*/
                 mockIDataProvider.Setup(x => x.ExecuteNonQuery(It.IsNotNull<string>(), null)).Throws(new Exception());
                 var exception=Assert.Catch<Exception>(()=> hoaDonThanhToanBUS.InsertChiTietHoaDon(null));
                 Assert.IsTrue(exception.GetType() == typeof(Exception));
                 mockIDataProvider.VerifyAll();
-            }
-            catch (Exception ex)
+            //}
+            /*catch (Exception ex)
             {
                 Assert.IsTrue(ex.GetType() == typeof(Exception));
                 mockIDataProvider.VerifyAll();
-            }
+            }*/
         }
 
         [TestCase("name", "value")]
@@ -239,18 +239,18 @@ namespace QuanLyBanHangTest.BUS
         [TestCase(null)]
         public void GetMaHangTestException(string name)
         {
-            try
-            {
+            //try
+            //{
                 mockIDataProvider.Setup(x => x.ExecuteScalar(It.IsNotNull<string>(), new object[] { name })).Throws(new Exception());
                 var exception=Assert.Catch<Exception>(()=> hoaDonThanhToanBUS.GetMaHang(name));
                 Assert.IsTrue(exception.GetType() == typeof(Exception));
                 mockIDataProvider.VerifyAll();
-            }
-            catch (Exception ex)
+            //}
+            /*catch (Exception ex)
             {
                 Assert.IsTrue(ex.GetType() == typeof(Exception));
                 mockIDataProvider.VerifyAll();
-            }
+            }*/
         }
 
 
@@ -269,18 +269,18 @@ namespace QuanLyBanHangTest.BUS
         [TestCase(new object[] { null }, typeof(Exception))]
         public void InsertHoaDonTestException(object[] array, Type type)
         {
-            try
-            {
+            /*try
+            {*/
                 mockIDataProvider.Setup(x => x.ExecuteNonQuery(It.IsNotNull<string>(), array)).Throws(new Exception());
                 var exception=Assert.Catch<Exception>(()=> hoaDonThanhToanBUS.InsertHoaDon(array));
                 Assert.IsTrue(exception.GetType() == typeof(Exception));
                 mockIDataProvider.VerifyAll();
-            }
+            /*}
             catch (Exception ex)
             {
                 Assert.IsTrue(ex.GetType() == type);
                 mockIDataProvider.VerifyAll();
-            }
+            }*/
         }
 
         [TestCase("321", "value")]
@@ -295,21 +295,21 @@ namespace QuanLyBanHangTest.BUS
         }
 
         [TestCase("123", typeof(Exception))]
-        [TestCase(null, typeof(System.Reflection.TargetInvocationException))]
+        //[TestCase(null, typeof(System.Reflection.TargetInvocationException))]
         public void GetMaKHTestException(string number, Type value)
         {
-            try
-            {
+            //try
+            //{
                 mockIDataProvider.Setup(x => x.ExecuteScalar(It.IsNotNull<string>(), new object[] { int.Parse(number) })).Throws(new Exception());
                 var exception=Assert.Catch<Exception>(()=> hoaDonThanhToanBUS.GetMaKH(number));
                 Assert.IsTrue(exception.GetType() == typeof(Exception));
                 mockIDataProvider.VerifyAll();
-            }
-            catch (Exception ex)
+            //}
+            /*catch (Exception ex)
             {
                 Assert.IsTrue(ex.GetType() == value);
                 mockIDataProvider.VerifyAll();
-            }
+            }*/
         }
 
         [TestCase("321", "value")]
@@ -325,20 +325,20 @@ namespace QuanLyBanHangTest.BUS
         }
 
         [TestCase("123", typeof(Exception))]
-        [TestCase(null, typeof(TargetInvocationException))]
+        //[TestCase(null, typeof(TargetInvocationException))]
         public void GetTenKHTestException(string number, Type value)
         {
-            try
-            {
+            //try
+            //{
                 mockIDataProvider.Setup(x => x.ExecuteScalar(It.IsNotNull<string>(), new object[] { int.Parse(number) })).Throws(new Exception());
                 var exception = Assert.Catch<Exception>(() => hoaDonThanhToanBUS.GetTenKH(number));
                 Assert.IsTrue(exception.GetType() == value);
                 mockIDataProvider.VerifyAll();
-            }
-            catch (Exception ex)
-            {
-                Assert.IsTrue(ex.GetType() == value);
-            }
+            //}
+            //catch (Exception ex)
+            //{
+            //    Assert.IsTrue(ex.GetType() == value);
+            //}
                 
         }
 
