@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using QuanLyBanHang.BUS.Interfaces;
-using QuanLyBanHang.DAO.InterfacesDAO;
 using QuanLyBanHang.DAO;
 
 namespace QuanLyBanHang.BUS

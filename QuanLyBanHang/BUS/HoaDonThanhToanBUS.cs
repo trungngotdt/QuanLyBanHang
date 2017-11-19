@@ -1,6 +1,5 @@
 ﻿using QuanLyBanHang.BUS.Interfaces;
 using QuanLyBanHang.DAO;
-using QuanLyBanHang.DAO.InterfacesDAO;
 using System;
 using System.Collections.Generic;
 using System.Data;

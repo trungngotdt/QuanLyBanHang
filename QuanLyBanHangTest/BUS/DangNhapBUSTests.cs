@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using QuanLyBanHang.DAO.InterfacesDAO;
 using QuanLyBanHang.DAO;
 
 namespace QuanLyBanHang.BUS.Tests

@@ -3,7 +3,6 @@ using Microsoft.Practices.Unity;
 using QuanLyBanHang.BUS;
 using QuanLyBanHang.BUS.Interfaces;
 using QuanLyBanHang.DAO;
-using QuanLyBanHang.DAO.InterfacesDAO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,11 +35,6 @@ namespace QuanLyBanHang
             Application.SetCompatibleTextRenderingDefault(false);
             UnityContainer unityContainer = new UnityContainer();
 
-            unityContainer.RegisterType<IDangNhapDAO, DangNhapDAO>();
-            unityContainer.RegisterType<IHoaDonThanhToanDAO, HoaDonThanhToanDAO>();
-            unityContainer.RegisterType<IThemKhachHangDAO, ThemKhachHangDAO>();
-            unityContainer.RegisterType<IQuanLyThongTinDAO, QuanLyThongTinDAO>();
-            unityContainer.RegisterType<IQuanLyDAO, QuanLyDAO>();
             unityContainer.RegisterType<IDataProvider, DataProvider>();
 
             unityContainer.RegisterType<IHoaDonThanhToanBUS, HoaDonThanhToanBUS>();

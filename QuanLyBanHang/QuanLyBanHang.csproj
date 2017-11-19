@@ -87,19 +87,8 @@
       <DependentUpon>crpPhieuHang.rpt</DependentUpon>
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="DAO\DangNhapDAO.cs" />
     <Compile Include="DAO\DataProvider.cs" />
-    <Compile Include="DAO\DataProvider2.cs" />
-    <Compile Include="DAO\HoaDonThanhToanDAO.cs" />
     <Compile Include="DAO\IDataProvider.cs" />
-    <Compile Include="DAO\InterfacesDAO\IDangNhapDAO.cs" />
-    <Compile Include="DAO\InterfacesDAO\IHoaDonThanhToanDAO.cs" />
-    <Compile Include="DAO\InterfacesDAO\IQuanLyDAO.cs" />
-    <Compile Include="DAO\InterfacesDAO\IQuanLyThongTinDAO.cs" />
-    <Compile Include="DAO\InterfacesDAO\IThemKhachHangDAO.cs" />
-    <Compile Include="DAO\QuanLyDAO.cs" />
-    <Compile Include="DAO\QuanLyThongTinDAO.cs" />
-    <Compile Include="DAO\ThemKhachHangDAO.cs" />
     <Compile Include="DTO\ChiTietHoaDonDTO.cs" />
     <Compile Include="DTO\HangDTO.cs" />
     <Compile Include="DTO\HoaDonDTO.cs" />

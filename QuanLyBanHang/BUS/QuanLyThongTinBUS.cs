@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using QuanLyBanHang.DTO;
-using QuanLyBanHang.DAO.InterfacesDAO;
 using System.Data;
 using QuanLyBanHang.DAO;
 

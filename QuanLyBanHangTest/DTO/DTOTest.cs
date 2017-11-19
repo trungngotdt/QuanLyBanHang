@@ -62,9 +62,13 @@ namespace QuanLyBanHangTest.DTO
             chiTietHoaDonDTO = new ChiTietHoaDonDTO(cthd.IntMaHoaDon, cthd.StrMaHang, cthd.FltDonGia, cthd.IntSoLuong);
             nhanVienDTO = new NhanVienDTO(nv.StrMaNV, nv.StrTenNV, nv.StrChucVu, nv.StrDiaChi, nv.StrDienThoai, nv.StrEmail, nv.StrTenDangNhap, nv.StrMatKhau);
             khachHangDTO = new KhachHangDTO(kh.StrMaKH, kh.StrTenKH, kh.IntSDT, kh.BlnGioiTinh, kh.StrDiaChi, kh.StrLoaiKhachHang);
-            hangDTO = new HangDTO(hang.StrMaHang, hang.StrTenHang, hang.FltDonGia,hang.IntSoLuong, hang.StrGhiChu);           
+            hangDTO = new HangDTO(hang.StrMaHang, hang.StrTenHang, hang.FltDonGia,hang.IntSoLuong, hang.StrGhiChu);
+            
             dataHang.Rows.OfType<DataRow>().ToList().ForEach(x => listHang.Add(new HangDTO(x)));
             dataKH.Rows.OfType<DataRow>().ToList().ForEach(x => listKH.Add(new KhachHangDTO(x)));
+            dataKH.Rows.OfType<DataRow>().ToList().ForEach(row => {
+                row["GioiTinh"] = ""; listKH.Add(new KhachHangDTO(row));
+                });
             dataNV.Rows.OfType<DataRow>().ToList().ForEach(x => listNV.Add(new NhanVienDTO(x)));
             dataChiTietHoaDon.Rows.OfType<DataRow>().ToList().ForEach(x => listChiTiet.Add(new ChiTietHoaDonDTO(x)));
             dataHoaDon.Rows.OfType<DataRow>().ToList().ForEach(x => listHoaDon.Add(new HoaDonDTO(x)));

@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
-using QuanLyBanHang.DAO.InterfacesDAO;
 using QuanLyBanHang.BUS;
 using QuanLyBanHang.BUS.Interfaces;
 using QuanLyBanHang.DAO;
