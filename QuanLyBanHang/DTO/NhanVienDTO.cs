@@ -48,7 +48,7 @@ namespace QuanLyBanHang.DTO
             this.StrTenNV = row["TenNV"].ToString();
             this.StrChucVu= row["ChucVu"].ToString();
             this.StrDiaChi= row["DiaChi"].ToString();
-            this.StrDienThoai=(int) row["DienThoai"];
+            this.StrDienThoai=int.Parse( row["DienThoai"].ToString());
             this.StrEmail= row["Email"].ToString();
             this.StrTenDangNhap= row["TenDangNhap"].ToString();
             this.StrMatKhau= row["MatKhau"].ToString();

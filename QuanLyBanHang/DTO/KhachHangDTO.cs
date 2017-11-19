@@ -45,7 +45,7 @@ namespace QuanLyBanHang.DTO
             }
         }
 
-        public KhachHangDTO(string MaKH, string TenKH, int SDT, bool GioiTinh, string DiaChi, string LoaiKhachHang)
+        public KhachHangDTO(string MaKH, string TenKH, int SDT, bool? GioiTinh, string DiaChi, string LoaiKhachHang)
         {
             this.StrDiaChi = DiaChi;
             this.StrMaKH = MaKH;

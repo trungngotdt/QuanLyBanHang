@@ -26,6 +26,19 @@ namespace QuanLyBanHang.DTO
         {
 
         }
+
+        public HoaDonDTO(System.Data.DataRow row)
+        {
+
+            this.StrLoaiHoaDon = row["LoaiHoaDon"].ToString();
+            this.IntMaHoaDon = int.Parse(row["MaHoaDon"].ToString());
+            this.IntMaKH = int.Parse(row["MaKH"].ToString());
+            this.IntMaNV = int.Parse(row["MaNV"].ToString());
+            this.DtmNgayLap = DateTime.Parse(row["NgayLap"].ToString());
+            this.StrNguoiLap = row["NguoiLap"].ToString();
+
+        }
+
         public HoaDonDTO(int MaHoaDon,int MaKH,string LoaiHoaDon,int MaNV,DateTime NgayLap,string NguoiLap)
         {
             this.StrLoaiHoaDon = LoaiHoaDon;

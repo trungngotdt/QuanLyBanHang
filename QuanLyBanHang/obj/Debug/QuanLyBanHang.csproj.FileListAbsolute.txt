@@ -47,3 +47,4 @@ C:\Users\Tran\Documents\Visual Studio 2017\Projects\QuanLyBanHang\QuanLyBanHang\
 C:\Users\Tran\Documents\Visual Studio 2017\Projects\QuanLyBanHang\QuanLyBanHang\bin\Debug\Mono.Cecil.Pdb.dll
 C:\Users\Tran\Documents\Visual Studio 2017\Projects\QuanLyBanHang\QuanLyBanHang\bin\Debug\Mono.Cecil.Mdb.dll
 C:\Users\Tran\Documents\Visual Studio 2017\Projects\QuanLyBanHang\QuanLyBanHang\bin\Debug\Mono.Cecil.Rocks.dll
+C:\Users\Tran\Documents\Visual Studio 2017\Projects\QuanLyBanHang\QuanLyBanHang\obj\Debug\QuanLyBanHang.csprojResolveAssemblyReference.cache
