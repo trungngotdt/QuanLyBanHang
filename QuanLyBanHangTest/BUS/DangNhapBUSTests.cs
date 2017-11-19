@@ -35,20 +35,22 @@ namespace QuanLyBanHang.BUS.Tests
             //Assert.Fail();
         }
 
-        [TestCase(null)]
-        [TestCase("name")]
-        public void ChucVuTestException(string name)
+        [TestCase(null,typeof(Exception))]
+        [TestCase("name",typeof(Exception))]
+        public void ChucVuTestException(string name,Type value)
         {
-            try
-            {
+            /*try
+            {*/
                 mockIDataProvider.Setup(x => x.ExecuteScalar(It.IsNotNull<string>(), new object[] { name })).Throws(new Exception());
-                dangNhapBUS.ChucVu(name);
-            }
+                var exception=Assert.Catch<Exception>(()=> dangNhapBUS.ChucVu(name));
+                Assert.IsTrue(exception.GetType() == value);
+                mockIDataProvider.VerifyAll();
+            /*}
             catch (Exception ex)
             {
                 //Assert.True(ex.Message == "kkk");
                 Assert.True(ex.GetType() == typeof(Exception));
-            }
+            }*/
 
             //mockIDataProvider.Setup(x => x.ChucVu(It.IsNotNull<string>(), new object[] { "name" })).Returns(new Exception());
             //var result = ;
@@ -70,20 +72,22 @@ namespace QuanLyBanHang.BUS.Tests
             mockIDataProvider.VerifyAll();
         }
 
-        [TestCase(null, "pass")]
-        [TestCase("name", "pass1")]
-        public void IsDangNhapTestException(string name, string pass)
+        [TestCase(null, "pass",typeof(Exception))]
+        [TestCase("name", "pass1",typeof(Exception))]
+        public void IsDangNhapTestException(string name, string pass,Type value)
         {
-            try
-            {
+            /*try
+            {*/
                 mockIDataProvider.Setup(x => x.ExecuteScalar(It.IsNotNull<string>(),new object[] { name })).Throws(new Exception());
-                dangNhapBUS.IsDangNhap(name, pass);
-            }
+                var exception=Assert.Catch<Exception>(()=> dangNhapBUS.IsDangNhap(name, pass));
+                Assert.IsTrue(exception.GetType() == value);
+                mockIDataProvider.VerifyAll();
+            /*}
             catch (Exception ex)
             {
                 Assert.That(ex.GetType() == typeof(Exception));
                 //throw;
-            }
+            }*/
         }
 
         [TestCase("name", "ma")]
@@ -96,19 +100,21 @@ namespace QuanLyBanHang.BUS.Tests
             mockIDataProvider.VerifyAll();
         }
 
-        [TestCase(null)]
-        [TestCase("name")]
-        public void MaNVTestException(string name)
+        [TestCase(null,typeof(Exception))]
+        [TestCase("name",typeof(Exception))]
+        public void MaNVTestException(string name,Type value)
         {
-            try
-            {
+            /*try
+            {*/
                 mockIDataProvider.Setup(x => x.ExecuteScalar(It.IsAny<string>(), new object[] { name })).Throws(new Exception());
-                dangNhapBUS.MaNV(name);
-            }
+                var exception=Assert.Catch<Exception>(()=> dangNhapBUS.MaNV(name));
+                Assert.IsTrue(exception.GetType() == value);
+                mockIDataProvider.VerifyAll();
+            /*}
             catch (Exception ex)
             {
                 Assert.True(ex.GetType() == typeof(Exception));
-            }
+            }*/
         }
 
         [TestCase(1, "name")]
@@ -121,19 +127,21 @@ namespace QuanLyBanHang.BUS.Tests
             mockIDataProvider.VerifyAll();
         }
 
-        [TestCase(null)]
-        [TestCase(1)]
-        public void TenNVTestException(int id)
+        [TestCase(null,typeof(Exception))]
+        [TestCase(1,typeof(Exception))]
+        public void TenNVTestException(int id,Type value)
         {
-            try
-            {
+            /*try
+            {*/
                 mockIDataProvider.Setup(x => x.ExecuteScalar(It.IsNotNull<string>(), new object[] { id })).Throws(new Exception());
-                dangNhapBUS.TenNV(id);
-            }
+                var exception=Assert.Catch<Exception>(()=> dangNhapBUS.TenNV(id));
+            Assert.IsTrue(exception.GetType() == value);
+            mockIDataProvider.VerifyAll();
+            /*}
             catch (Exception ex)
             {
                 Assert.True(ex.GetType() == typeof(Exception));
-            }
+            }*/
 
         }
     }
