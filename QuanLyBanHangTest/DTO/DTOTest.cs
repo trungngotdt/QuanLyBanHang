@@ -65,7 +65,10 @@ namespace QuanLyBanHangTest.DTO
             hangDTO = new HangDTO(hang.StrMaHang, hang.StrTenHang, hang.FltDonGia,hang.IntSoLuong, hang.StrGhiChu);
             
             dataHang.Rows.OfType<DataRow>().ToList().ForEach(x => listHang.Add(new HangDTO(x)));
-            dataKH.Rows.OfType<DataRow>().ToList().ForEach(x => listKH.Add(new KhachHangDTO(x)));
+            dataKH.Rows.OfType<DataRow>().ToList().ForEach(row =>
+            {
+                row["GioiTinh"] = "1"; listKH.Add(new KhachHangDTO(row));
+            });
             dataKH.Rows.OfType<DataRow>().ToList().ForEach(row => {
                 row["GioiTinh"] = ""; listKH.Add(new KhachHangDTO(row));
                 });
