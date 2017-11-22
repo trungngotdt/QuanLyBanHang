@@ -37,7 +37,16 @@ namespace QuanLyBanHang
             lvwChiTietHoaDon.Columns.Add(new ColumnHeader() { Text = "Số Lượng" });
         }
 
-
+        /// <summary>
+        ///Hiển thị thông báo khi có bất kì <see cref="Exception"/> nào bị phát hiện 
+        /// </summary>
+        /// <param name="ex"></param>
+        void WarningMessageBox(Exception ex)
+        {
+            MessageBox.Show($"Lỗi trong quá trình thực thi.Mã lỗi :\n {ex.Message.ToString()} \\\n Vui lòng liên hệ người quản trị " +
+                $"hoặc nhân viên để được nhận thêm sự " +
+                $" hỗ trợ", "Lỗi Trong Quá Trình Thực Thi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
 
         void Loading()
         {
@@ -103,9 +112,17 @@ namespace QuanLyBanHang
         #region Thống Kê Hàng Hóa 
         private void BntHienHangHoa_Click(object sender, EventArgs e)
         {
-            lvwThongKeHH.Items.Clear();
-            var data = QuanLyThongTin.ShowAllHang();
-            AddDataToListView(data, lvwThongKeHH);
+            try
+            {
+
+                lvwThongKeHH.Items.Clear();
+                var data = QuanLyThongTin.ShowAllHang();
+                AddDataToListView(data, lvwThongKeHH);
+            }
+            catch (Exception ex)
+            {
+                WarningMessageBox(ex);
+            }
         }
 
         /// <summary>
@@ -124,28 +141,36 @@ namespace QuanLyBanHang
 
         private void BtnSapXep_Click(object sender, EventArgs e)
         {
-            lvwThongKeHH.Items.Clear();
-            if ((rdbBeDenLon.Checked == false && rdbLonDenBe.Checked == false) || IsUnCheckCheckBox())
+            try
             {
-                MessageBox.Show("Làm ơn tích vào ít nhất một ô lựa chọn", "Thiếu lựa chọn", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
+
+                lvwThongKeHH.Items.Clear();
+                if ((rdbBeDenLon.Checked == false && rdbLonDenBe.Checked == false) || IsUnCheckCheckBox())
+                {
+                    MessageBox.Show("Làm ơn tích vào ít nhất một ô lựa chọn", "Thiếu lựa chọn", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+                /*var kiemTraCheckBox = chkDonGia.CheckState == CheckState.Unchecked &&
+                    chkMaHang.CheckState == CheckState.Unchecked &&
+                    chkSoLuong.CheckState == CheckState.Unchecked &&
+                    chkTenHang.CheckState == CheckState.Unchecked;*/
+                /*if (IsUnCheckCheckBox())
+                {
+                    MessageBox.Show("Làm on đánh dấu vào ít nhất một ô", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }*/
+                var MaHang = chkMaHang.CheckState == CheckState.Checked ? "MaHang" : "";
+                var TenHang = chkTenHang.CheckState == CheckState.Checked ? "TenHang" : "";
+                var SoLuong = chkSoLuong.CheckState == CheckState.Checked ? "SoLuong" : "";
+                var DonGia = chkDonGia.CheckState == CheckState.Checked ? "DonGia" : "";
+                var asc = rdbBeDenLon.Checked;
+                var data = QuanLyThongTin.SortBy(new object[] { MaHang, TenHang, SoLuong, DonGia }, asc);
+                AddDataToListView(data, lvwThongKeHH);
             }
-            /*var kiemTraCheckBox = chkDonGia.CheckState == CheckState.Unchecked &&
-                chkMaHang.CheckState == CheckState.Unchecked &&
-                chkSoLuong.CheckState == CheckState.Unchecked &&
-                chkTenHang.CheckState == CheckState.Unchecked;*/
-            /*if (IsUnCheckCheckBox())
+            catch (Exception ex)
             {
-                MessageBox.Show("Làm on đánh dấu vào ít nhất một ô", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }*/
-            var MaHang = chkMaHang.CheckState == CheckState.Checked ? "MaHang" : "";
-            var TenHang = chkTenHang.CheckState == CheckState.Checked ? "TenHang" : "";
-            var SoLuong = chkSoLuong.CheckState == CheckState.Checked ? "SoLuong" : "";
-            var DonGia = chkDonGia.CheckState == CheckState.Checked ? "DonGia" : "";
-            var asc = rdbBeDenLon.Checked;
-            var data = QuanLyThongTin.SortBy(new object[] { MaHang, TenHang, SoLuong, DonGia }, asc);
-            AddDataToListView(data, lvwThongKeHH);
+                WarningMessageBox(ex);
+            }
         }
 
         private void BtnTimKiem_Click(object sender, EventArgs e)
@@ -380,35 +405,44 @@ namespace QuanLyBanHang
 
         private void BtnThemHang_Click(object sender, EventArgs e)
         {
-            //Kiểm tra các ô đơn giá , tên hàng có để trống không
-            if (!KiemTraHopLe())
+            try
             {
-                MessageBox.Show("Điền vào chỗ trống");
-                return;
-            }
-            var tenHang = cboTenHang.Text;
-            var maHang = rdbHangMoi.Checked == true ? "-1" : QuanLyThongTin.GetMaHang(tenHang).ToString();
-            //Kiểm tra xem mặt hàng đó có trong listview chưa nếu có thì tăng mặt hàng đó lên theo số lượng thêm vào
-            bool checkTenHangInListView = lvwChiTietHoaDon.FindItemWithText(tenHang) != null ? true : false;//trả ra true khi tìm thấy có tên hàng trong listview và ngược lại
-            if (checkTenHangInListView)
-            {
-                //Cái này là cộng dồn vào cột số lượng khi món hàng thêm vào đã có
-                lvwChiTietHoaDon.FindItemWithText(tenHang).SubItems[3].Text = (int.Parse(lvwChiTietHoaDon.FindItemWithText(tenHang).SubItems[3].Text)
-                    + int.Parse(nudSoLuong.Value.ToString())).ToString();
-            }
-            //Nếu không thì thêm mặt hàng đó vào listview
-            else
-            {
-                var donGia = rdbHangTrongKho.Checked == true ? QuanLyThongTin.LayDonGia(tenHang) : txtDonGia.Text;
-                DTO.HangDTO hang = new DTO.HangDTO(maHang, tenHang, float.Parse(donGia.ToString()), int.Parse(nudSoLuong.Value.ToString()));
-                List<DTO.HangDTO> list = new List<DTO.HangDTO>
+
+                //Kiểm tra các ô đơn giá , tên hàng có để trống không
+                if (!KiemTraHopLe())
+                {
+                    MessageBox.Show("Điền vào chỗ trống");
+                    return;
+                }
+                var tenHang = cboTenHang.Text;
+                var maHang = rdbHangMoi.Checked == true ? "-1" : QuanLyThongTin.GetMaHang(tenHang).ToString();
+                //Kiểm tra xem mặt hàng đó có trong listview chưa nếu có thì tăng mặt hàng đó lên theo số lượng thêm vào
+                bool checkTenHangInListView = lvwChiTietHoaDon.FindItemWithText(tenHang) != null ? true : false;//trả ra true khi tìm thấy có tên hàng trong listview và ngược lại
+                if (checkTenHangInListView)
+                {
+                    //Cái này là cộng dồn vào cột số lượng khi món hàng thêm vào đã có
+                    lvwChiTietHoaDon.FindItemWithText(tenHang).SubItems[3].Text = (int.Parse(lvwChiTietHoaDon.FindItemWithText(tenHang).SubItems[3].Text)
+                        + int.Parse(nudSoLuong.Value.ToString())).ToString();
+                }
+                //Nếu không thì thêm mặt hàng đó vào listview
+                else
+                {
+                    var donGia = rdbHangTrongKho.Checked == true ? QuanLyThongTin.LayDonGia(tenHang) : txtDonGia.Text;
+                    DTO.HangDTO hang = new DTO.HangDTO(maHang, tenHang, float.Parse(donGia.ToString()), int.Parse(nudSoLuong.Value.ToString()));
+                    List<DTO.HangDTO> list = new List<DTO.HangDTO>
                 {
                     hang
                 };
-                AddDataToListView(list, lvwChiTietHoaDon);
+                    AddDataToListView(list, lvwChiTietHoaDon);
+                }
+                DefaultValue();
+                ///
             }
-            DefaultValue();
-            ///
+            catch (Exception ex)
+            {
+                WarningMessageBox(ex);
+                return;
+            }
 
         }
 

@@ -22,31 +22,40 @@ namespace QuanLyBanHang.DAO
         /// <returns></returns>
         public int ExecuteNonQuery(string query, object[] value = null)
         {
-            int count = -1;
-            using (var objConn = new SqlConnection(connectionString))
+            try
             {
-                objConn.Open();
-                using (var objCommand = new SqlCommand(query, objConn))
+                int count = -1;
+                using (var objConn = new SqlConnection(connectionString))
                 {
-
-                    if (value != null)
+                    objConn.Open();
+                    using (var objCommand = new SqlCommand(query, objConn))
                     {
-                        var storeQuery = query.Split(' ');
-                        int i = 0;
-                        foreach (var item in storeQuery)
+
+                        if (value != null)
                         {
-                            if (item.StartsWith("@"))
+                            var storeQuery = query.Split(' ');
+                            int i = 0;
+                            foreach (var item in storeQuery)
                             {
-                                objCommand.Parameters.AddWithValue(item, value[i]);
-                                i++;
+                                if (item.StartsWith("@"))
+                                {
+                                    objCommand.Parameters.AddWithValue(item, value[i]);
+                                    i++;
+                                }
                             }
                         }
+                        count = objCommand.ExecuteNonQuery();
+                        objConn.Close();
                     }
-                    count = objCommand.ExecuteNonQuery();
-                    objConn.Close();
                 }
+                return count;
             }
-            return count;
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+
             //throw new NotImplementedException();
         }
 
@@ -58,33 +67,42 @@ namespace QuanLyBanHang.DAO
         /// <returns></returns>
         public DataTable ExecuteQuery(string query, object[] value = null)
         {
-            DataTable dataTable = new DataTable();
-            using (SqlConnection objConn = new SqlConnection(connectionString))
+            try
             {
-                objConn.Open();
-                using (SqlCommand objCommand = new SqlCommand(query, objConn))
+                DataTable dataTable = new DataTable();
+                using (SqlConnection objConn = new SqlConnection(connectionString))
                 {
-
-                    if (value != null)
+                    objConn.Open();
+                    using (SqlCommand objCommand = new SqlCommand(query, objConn))
                     {
-                        var storeQuery = query.Split(' ');
-                        int i = 0;
-                        foreach (var item in storeQuery)
-                        {
-                            if (item.StartsWith("@"))
-                            {
-                                objCommand.Parameters.AddWithValue(item, value[i]);
-                                i++;
 
+                        if (value != null)
+                        {
+                            var storeQuery = query.Split(' ');
+                            int i = 0;
+                            foreach (var item in storeQuery)
+                            {
+                                if (item.StartsWith("@"))
+                                {
+                                    objCommand.Parameters.AddWithValue(item, value[i]);
+                                    i++;
+
+                                }
                             }
                         }
+                        SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(objCommand);
+                        sqlDataAdapter.Fill(dataTable);
                     }
-                    SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(objCommand);
-                    sqlDataAdapter.Fill(dataTable);
+                    objConn.Close();
                 }
-                objConn.Close();
+                return dataTable;
             }
-            return dataTable;
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+
             //throw new NotImplementedException();
         }
 
@@ -96,30 +114,39 @@ namespace QuanLyBanHang.DAO
         /// <returns></returns>
         public object ExecuteScalar(string query, object[] value = null)
         {
-            object data = -1;
-            using (var objConn = new SqlConnection(connectionString))
+            try
             {
-                objConn.Open();
-                using (var objCommand = new SqlCommand(query, objConn))
+                object data = -1;
+                using (var objConn = new SqlConnection(connectionString))
                 {
-                    if (value != null)
+                    objConn.Open();
+                    using (var objCommand = new SqlCommand(query, objConn))
                     {
-                        var storeQuery = query.Split(' ');
-                        int i = 0;
-                        foreach (var item in storeQuery)
+                        if (value != null)
                         {
-                            if (item.StartsWith("@"))
+                            var storeQuery = query.Split(' ');
+                            int i = 0;
+                            foreach (var item in storeQuery)
                             {
-                                objCommand.Parameters.AddWithValue(item, value[i]);
-                                i++;
+                                if (item.StartsWith("@"))
+                                {
+                                    objCommand.Parameters.AddWithValue(item, value[i]);
+                                    i++;
+                                }
                             }
                         }
+                        data = objCommand.ExecuteScalar();
+                        objConn.Close();
                     }
-                    data = objCommand.ExecuteScalar();
-                    objConn.Close();
                 }
+                return data;
             }
-            return data;
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+
         }
     }
 }

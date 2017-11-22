@@ -30,6 +30,17 @@ namespace QuanLyBanHang
 
         public DangNhapBUS DangNhapBUS { get => ServiceLocator.Current.GetInstance<DangNhapBUS>(); }
 
+        /// <summary>
+        ///Hiển thị thông báo khi có bất kì <see cref="Exception"/> nào bị phát hiện 
+        /// </summary>
+        /// <param name="ex"></param>
+        void WarningMessageBox(Exception ex)
+        {
+            MessageBox.Show($"Lỗi trong quá trình thực thi.Mã lỗi :\n {ex.Message.ToString()} \\\n Vui lòng liên hệ người quản trị " +
+                $"hoặc nhân viên để được nhận thêm sự " +
+                $" hỗ trợ", "Lỗi Trong Quá Trình Thực Thi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
         private void BtnThoat_Click(object sender, EventArgs e)
         {
             Application.Exit();
@@ -37,35 +48,59 @@ namespace QuanLyBanHang
 
         private void BtnDangNhap_Click(object sender, EventArgs e)
         {
-            bool kiemTra = DangNhapBUS.IsDangNhap(txtName.Text, txtPass.Text);
+            try
+            {
 
-            if (kiemTra)
-            {
-                MessageBox.Show("Đăng Nhập thành công", "THÔNG BÁO", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                Program.IDStaff = DangNhapBUS.MaNV(txtName.Text);
-                Program.NameStaff = DangNhapBUS.TenNV(int.Parse(Program.IDStaff));
-                var chucVu = DangNhapBUS.ChucVu(txtName.Text);
-                Program.RoleStaff = chucVu;
-                if (chucVu.Equals("NV"))
+                var isTextBoxEmpty = txtName.Text.Trim().Length > 0 && txtPass.Text.Trim().Length > 0;
+                if (!isTextBoxEmpty)
                 {
-                    Program.OpenFrmHoaDonThanhToan = true;
+                    MessageBox.Show("Vui lòng điền vào chỗ trống", "THIẾU SÓT DỮ LIỆU", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    if (txtName.Text.Trim().Length == 0)
+                    {
+                        txtName.Focus();
+                    }
+                    else
+                    {
+                        txtPass.Focus();
+                    }
+                    return;
                 }
-                else if (chucVu.Equals("TK"))
+                bool kiemTra = DangNhapBUS.IsDangNhap(txtName.Text, txtPass.Text);
+                if (kiemTra)
                 {
-                    Program.OpenFrmQuanLyThongTin = true;
+                    MessageBox.Show("Đăng Nhập thành công", "THÔNG BÁO", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    Program.IDStaff = DangNhapBUS.MaNV(txtName.Text);
+                    Program.NameStaff = DangNhapBUS.TenNV(int.Parse(Program.IDStaff));
+                    var chucVu = DangNhapBUS.ChucVu(txtName.Text);
+                    Program.RoleStaff = chucVu;
+                    Program.OpenFrmHoaDonThanhToan = chucVu.Equals("NV");
+                    Program.OpenFrmQuanLy = chucVu.Equals("GD");
+                    Program.OpenFrmQuanLyThongTin = chucVu.Equals("TK");
+                    /*if (chucVu.Equals("NV"))
+                    {
+                        Program.OpenFrmHoaDonThanhToan = true;
+                    }
+                    else if (chucVu.Equals("TK"))
+                    {
+                        Program.OpenFrmQuanLyThongTin = true;
+                    }
+                    else if (chucVu.Equals("GD"))
+                    {
+                        Program.OpenFrmQuanLy = true;
+                    }*/
+                    this.Close();
                 }
-                else if (chucVu.Equals("GD"))
+                else
                 {
-                    Program.OpenFrmQuanLy = true;
+                    MessageBox.Show("Đăng Nhập thất bại", "THÔNG BÁO", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    txtName.Text = "";
+                    txtPass.Text = "";
+                    this.ActiveControl = txtName;
                 }
-                this.Close();
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("Đăng Nhập thất bại", "THÔNG BÁO", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                txtName.Text = "";
-                txtPass.Text = "";
-                this.ActiveControl = txtName;
+                WarningMessageBox(ex);
             }
         }
     }

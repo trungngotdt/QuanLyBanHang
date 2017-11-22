@@ -37,29 +37,49 @@ namespace QuanLyBanHang
             DisEnableControl();
         }
 
+
+        /// <summary>
+        ///Hiển thị thông báo khi có bất kì <see cref="Exception"/> nào bị phát hiện 
+        /// </summary>
+        /// <param name="ex"></param>
+        void WarningMessageBox(Exception ex)
+        {
+            MessageBox.Show($"Lỗi trong quá trình thực thi.Mã lỗi :\n {ex.Message.ToString()} \\\n Vui lòng liên hệ người quản trị " +
+                $"hoặc nhân viên để được nhận thêm sự " +
+                $" hỗ trợ", "Lỗi Trong Quá Trình Thực Thi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
         private void BtnThanhToan_Click(object sender, EventArgs e)
         {
-            var maKH = HoaDonThanhToan.GetMaKH(txtSDTKhachHang.Text);
-            var date = DateTime.Now.Year.ToString() + DateTime.Now.Month.ToString() + DateTime.Now.Day.ToString() + " " + DateTime.Now.ToLongTimeString();
-            HoaDonThanhToan.InsertHoaDon(new object[] { maKH, "Bán Hàng", Program.IDStaff, date, txtNameStaff.Text });
-            var kiemtra= lvwChiTietHoaDon.Items.Count == 0;
-            if (kiemtra)
+            try
             {
-                MessageBox.Show("Điền đơn hàng");
-                return;
+
+                var maKH = HoaDonThanhToan.GetMaKH(txtSDTKhachHang.Text);
+                var date = DateTime.Now.Year.ToString() + DateTime.Now.Month.ToString() + DateTime.Now.Day.ToString() + " " + DateTime.Now.ToLongTimeString();
+                HoaDonThanhToan.InsertHoaDon(new object[] { maKH, "Bán Hàng", Program.IDStaff, date, txtNameStaff.Text });
+                var kiemtra = lvwChiTietHoaDon.Items.Count == 0;
+                if (kiemtra)
+                {
+                    MessageBox.Show("Điền đơn hàng");
+                    return;
+                }
+                var maHD = HoaDonThanhToan.GetMaHoaDon(int.Parse(maKH.ToString()), "Bán Hàng", int.Parse(Program.IDStaff.ToString()), date, txtNameStaff.Text);
+                foreach (ListViewItem item in lvwChiTietHoaDon.Items)
+                {
+                    var maHang = HoaDonThanhToan.GetMaHang(item.SubItems[0].Text);
+                    var soLuongHang = int.Parse(HoaDonThanhToan.GetSoLuong(new object[] { maHang }).ToString());
+                    var donGia = float.Parse(item.SubItems[1].Text);
+                    var soLuong = int.Parse(item.SubItems[2].Text);
+                    HoaDonThanhToan.InsertChiTietHoaDon(new object[] { maHD, maHang, donGia, soLuong });
+                    HoaDonThanhToan.UpdateHangHoa(new object[] { maHang, soLuongHang - soLuong });
+                    //var element = item.SubItems.OfType<ListViewItem.ListViewSubItem>().Select(p => p.Text);
+                }
+                MessageBox.Show("Hoàn Thành Đơn Hàng", "Tình Trạng", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
-            var maHD = HoaDonThanhToan.GetMaHoaDon(int.Parse(maKH.ToString()), "Bán Hàng",int.Parse( Program.IDStaff.ToString()), date, txtNameStaff.Text);
-            foreach (ListViewItem item in lvwChiTietHoaDon.Items)
+            catch (Exception ex)
             {
-                var maHang = HoaDonThanhToan.GetMaHang(item.SubItems[0].Text);
-                var soLuongHang =int.Parse( HoaDonThanhToan.GetSoLuong(new object[] { maHang }).ToString());
-                var donGia = float.Parse(item.SubItems[1].Text);
-                var soLuong = int.Parse(item.SubItems[2].Text);
-                HoaDonThanhToan.InsertChiTietHoaDon(new object[] { maHD, maHang, donGia, soLuong });
-                HoaDonThanhToan.UpdateHangHoa(new object[] { maHang,soLuongHang- soLuong });
-                //var element = item.SubItems.OfType<ListViewItem.ListViewSubItem>().Select(p => p.Text);
+                WarningMessageBox(ex);
             }
-            MessageBox.Show("Hoàn Thành Đơn Hàng","Tình Trạng",MessageBoxButtons.OK,MessageBoxIcon.Information);
         }
 
         private void BtnThemHang_Click(object sender, EventArgs e)
@@ -97,29 +117,37 @@ namespace QuanLyBanHang
 
         private void BtnKiemTraKH_Click(object sender, EventArgs e)
         {
-            var sdtKH = txtSDTKhachHang.Text;
-            var kiemTra = String.IsNullOrEmpty(sdtKH) || String.IsNullOrWhiteSpace(sdtKH);
-            if (kiemTra)
+            try
             {
-                MessageBox.Show("Điền số điện thoại");
-                //txtSDTKhachHang.Focus();
-                return;
-            }
-            var tenKH = HoaDonThanhToan.GetTenKH(txtSDTKhachHang.Text);
-            txtTenKhachHang.Text = tenKH?.ToString();
-            if (tenKH != null)
-            {
-                EnableControl();
-            }
-            else
-            {
-                DisEnableControl();
-                var dialogResult= MessageBox.Show("Số điện thoại không tồn tại","Lỗi",MessageBoxButtons.YesNo,MessageBoxIcon.Warning,MessageBoxDefaultButton.Button1);
-                if (dialogResult==DialogResult.Yes)
+
+                var sdtKH = txtSDTKhachHang.Text;
+                var kiemTra = String.IsNullOrEmpty(sdtKH) || String.IsNullOrWhiteSpace(sdtKH);
+                if (kiemTra)
                 {
-                    frmThemKhachHang frmThemKhachHang = new frmThemKhachHang();
-                    frmThemKhachHang.ShowDialog();
+                    MessageBox.Show("Điền số điện thoại");
+                    //txtSDTKhachHang.Focus();
+                    return;
                 }
+                var tenKH = HoaDonThanhToan.GetTenKH(txtSDTKhachHang.Text);
+                txtTenKhachHang.Text = tenKH?.ToString();
+                if (tenKH != null)
+                {
+                    EnableControl();
+                }
+                else
+                {
+                    DisEnableControl();
+                    var dialogResult = MessageBox.Show("Số điện thoại không tồn tại", "Lỗi", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1);
+                    if (dialogResult == DialogResult.Yes)
+                    {
+                        frmThemKhachHang frmThemKhachHang = new frmThemKhachHang();
+                        frmThemKhachHang.ShowDialog();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                WarningMessageBox(ex);
             }
         }
 
