@@ -14,9 +14,36 @@ namespace QuanLyBanHang
     public partial class frmQuanLy : Form
     {
         private QuanLyBUS QuanLy { get => Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<QuanLyBUS>(); }
+
         public frmQuanLy()
         {
             InitializeComponent();
+        }
+
+        #region common
+        /// <summary>
+        ///Hiển thị thông báo khi có bất kì <see cref="Exception"/> nào bị phát hiện 
+        /// </summary>
+        /// <param name="ex"></param>
+        void WarningMessageBox(Exception ex)
+        {
+            MessageBox.Show($"Lỗi trong quá trình thực thi.Mã lỗi :\n {ex.Message.ToString()} \\\n Vui lòng liên hệ người quản trị " +
+                $"hoặc nhân viên để được nhận thêm sự " +
+                $" hỗ trợ", "Lỗi Trong Quá Trình Thực Thi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+        /// <summary>
+        /// Cho tất cả các textbox của Nhân Viên về giá trị rỗng
+        /// </summary>
+        void ClearAllTextBoxNV()
+        {
+            txtChucVuNV.Text = "";
+            txtDiaChiNV.Text = "";
+            txtEmailNV.Text = "";
+            txtMaNV.Text = "";
+            txtSDTNV.Text = "";
+            txtTenNV.Text = "";
+
         }
 
         void FlagForKH(bool flag)
@@ -49,146 +76,6 @@ namespace QuanLyBanHang
 
         }
 
-        private void frmQuanLy_Load(object sender, EventArgs e)
-        {
-            FlagForNV(true);
-            GetDataNhanVien();
-            txtChucVuNV.Enabled = false;
-            txtID.Text = Program.IDStaff;
-            txtName.Text = Program.NameStaff;
-            txtRole.Text = Program.RoleStaff;
-            txtRole.Enabled = false;
-            txtRole.ReadOnly = true;
-            txtID.Enabled = false;
-            txtID.ReadOnly = true;
-            txtName.Enabled = false;
-            txtName.ReadOnly = true;
-            dgrvNhanVien.ClearSelection();
-        }
-
-        private void btnSua_Click(object sender, EventArgs e)
-        {
-            var text = btnSua.Text;
-            if (text.Equals("Sửa"))
-            {
-                FlagForNV(false);
-                btnThem.Enabled = true;
-                btnSua.Text = "Xong";
-            }
-            else if (text.Equals("Xong"))
-            {
-                FlagForNV(true);
-                btnSua.Text = "Sửa";
-            }
-
-        }
-        
-        /// <summary>
-        ///Hiển thị thông báo khi có bất kì <see cref="Exception"/> nào bị phát hiện 
-        /// </summary>
-        /// <param name="ex"></param>
-        void WarningMessageBox(Exception ex)
-        {
-            MessageBox.Show($"Lỗi trong quá trình thực thi.Mã lỗi :\n {ex.Message.ToString()} \\\n Vui lòng liên hệ người quản trị " +
-                $"hoặc nhân viên để được nhận thêm sự " +
-                $" hỗ trợ", "Lỗi Trong Quá Trình Thực Thi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        }
-
-        private void btnCapNhat_Click(object sender, EventArgs e)
-        {
-            /*if (!CheckTextBoxNV())
-            {
-                MessageBox.Show("Vui Lòng điền đầy đủ thông tin", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }*/
-            if (!ValidateBeforeAction(CheckTextBoxNV()))
-            {
-                return;
-            }
-            try
-            {
-                var isUpdate = QuanLy.UpdateNV(new object[] { txtMaNV.Text, txtTenNV.Text, txtChucVuNV.Text, txtDiaChiNV.Text, txtSDTNV.Text, txtEmailNV.Text });
-                if (isUpdate)
-                {
-                    MessageBox.Show("Thành công", "", MessageBoxButtons.OK);
-                }
-            }
-            catch (Exception ex)
-            {
-                WarningMessageBox(ex);
-                return;
-                //MessageBox.Show("Có lỗi trong quá trình sửa", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            ClearAllTextBoxNV();
-            GetDataNhanVien();
-            this.Cursor = Cursors.Default;
-        }
-
-        private void btnThem_Click(object sender, EventArgs e)
-        {
-            /*if (!CheckTextBoxNV())
-            {
-                MessageBox.Show("Vui Lòng điền đầy đủ thông tin", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }*/
-
-            if (!ValidateBeforeAction(CheckTextBoxNV()))
-            {
-                return;
-            }
-            try
-            {
-                var isInsert = QuanLy.InsertNV(new object[] { txtTenNV.Text, txtChucVuNV.Text, txtDiaChiNV.Text, txtSDTNV.Text, txtEmailNV.Text });
-                if (isInsert)
-                {
-                    MessageBox.Show("Thêm thành công", "", MessageBoxButtons.OK);
-                }
-            }
-            catch (Exception ex)
-            {
-                WarningMessageBox(ex);
-                return;
-                //MessageBox.Show("Có lỗi trong quá trình thêm");
-            }
-            ClearAllTextBoxNV();
-            GetDataNhanVien();
-            this.Cursor = Cursors.Default;
-        }
-
-        /// <summary>
-        /// Cho tất cả các textbox của Nhân Viên về giá trị rỗng
-        /// </summary>
-        void ClearAllTextBoxNV()
-        {
-            txtChucVuNV.Text = "";
-            txtDiaChiNV.Text = "";
-            txtEmailNV.Text = "";
-            txtMaNV.Text = "";
-            txtSDTNV.Text = "";
-            txtTenNV.Text = "";
-
-        }
-
-        private void btnLamSachNV_Click(object sender, EventArgs e)
-        {
-            ClearAllTextBoxNV();
-        }
-
-        private void dgrvNhanVien_CellClick(object sender, DataGridViewCellEventArgs e)
-        {
-            var index = e.RowIndex;
-            if (index <= 0)
-            {
-                return;
-            }
-            txtMaNV.Text = dgrvNhanVien.Rows[index].Cells["MaNV"].Value.ToString();
-            txtDiaChiNV.Text = dgrvNhanVien.Rows[index].Cells["DiaChi"].Value.ToString();
-            txtChucVuNV.Text = dgrvNhanVien.Rows[index].Cells["ChucVu"].Value.ToString();
-            txtEmailNV.Text = dgrvNhanVien.Rows[index].Cells["Email"].Value.ToString();
-            txtSDTNV.Text = dgrvNhanVien.Rows[index].Cells["DienThoai"].Value.ToString();
-            txtTenNV.Text = dgrvNhanVien.Rows[index].Cells["TenNV"].Value.ToString();
-        }
-
         /// <summary>
         /// Kiểm tra textbox khác null hay rỗng
         /// Trả về true nếu textbox có dữ liệu
@@ -204,10 +91,22 @@ namespace QuanLyBanHang
             return isChucVu && isDiaChi && isDT && isEmail && isTen;
         }
 
-        private void btnShow_Click(object sender, EventArgs e)
+
+        void GetDataKhachHang()
         {
-            GetDataNhanVien();
+            this.Cursor = Cursors.WaitCursor;
+            try
+            {
+                dgrvKhachHang.DataSource = QuanLy.GetDataKH();
+            }
+            catch (Exception ex)
+            {
+                WarningMessageBox(ex);
+                //MessageBox.Show($"Không thể lấy dữ liệu .Tên lỗi {e.Message.ToString()}", "Không thể truy vấn", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            this.Cursor = Cursors.Default;
         }
+
 
         /// <summary>
         /// Kiểm tra các <see cref="TextBox"/> của Khách Hàng xem có để trống không .
@@ -240,8 +139,181 @@ namespace QuanLyBanHang
             }
             return true;
         }
-        
-        private void btnThemKhach_Click(object sender, EventArgs e)
+
+
+        /// <summary>
+        /// Cho tất cả các giá trị của textbox Khách hàng về rỗng
+        /// </summary>
+        void ClearAllTextBoxKH()
+        {
+            txtTenKhach.Text = "";
+            txtDiaChiKhach.Text = "";
+            txtGoiTinh.Text = "";
+            txtLoaiKhach.Text = "";
+            txtSDTKhach.Text = "";
+        }
+
+        /// <summary>
+        /// Lấy tất cả dữ liệu của Nhân Viên
+        /// </summary>
+        void GetDataNhanVien()
+        {
+            this.Cursor = Cursors.WaitCursor;
+            try
+            {
+                dgrvNhanVien.DataSource = QuanLy.GetDataNV();
+            }
+            catch (Exception ex)
+            {
+                WarningMessageBox(ex);
+                //MessageBox.Show($"Lỗi không thể lấy dữ liệu.Lỗi {e.Message.ToString()}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            this.Cursor = Cursors.Default;
+        }
+
+
+        #endregion
+
+
+        private void frmQuanLy_Load(object sender, EventArgs e)
+        {
+            FlagForNV(true);
+            GetDataNhanVien();
+            txtChucVuNV.Enabled = false;
+            txtID.Text = Program.IDStaff;
+            txtName.Text = Program.NameStaff;
+            txtRole.Text = Program.RoleStaff;
+            txtRole.Enabled = false;
+            txtRole.ReadOnly = true;
+            txtID.Enabled = false;
+            txtID.ReadOnly = true;
+            txtName.Enabled = false;
+            txtName.ReadOnly = true;
+            dgrvNhanVien.ClearSelection();
+        }
+
+        #region Nhân Viên
+
+        private void TxtSDTNV_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void BtnSua_Click(object sender, EventArgs e)
+        {
+            var text = btnSua.Text;
+            if (text.Equals("Sửa"))
+            {
+                FlagForNV(false);
+                btnThem.Enabled = true;
+                btnSua.Text = "Xong";
+            }
+            else if (text.Equals("Xong"))
+            {
+                FlagForNV(true);
+                btnSua.Text = "Sửa";
+            }
+
+        }
+
+
+        private void BtnCapNhat_Click(object sender, EventArgs e)
+        {
+            /*if (!CheckTextBoxNV())
+            {
+                MessageBox.Show("Vui Lòng điền đầy đủ thông tin", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }*/
+            if (!ValidateBeforeAction(CheckTextBoxNV()))
+            {
+                return;
+            }
+            try
+            {
+                var isUpdate = QuanLy.UpdateNV(new object[] { txtMaNV.Text, txtTenNV.Text, txtChucVuNV.Text, txtDiaChiNV.Text, txtSDTNV.Text, txtEmailNV.Text });
+                if (isUpdate)
+                {
+                    MessageBox.Show("Thành công", "", MessageBoxButtons.OK);
+                }
+            }
+            catch (Exception ex)
+            {
+                WarningMessageBox(ex);
+                //MessageBox.Show("Có lỗi trong quá trình sửa", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            ClearAllTextBoxNV();
+            GetDataNhanVien();
+            this.Cursor = Cursors.Default;
+        }
+
+        private void BtnThem_Click(object sender, EventArgs e)
+        {
+            /*if (!CheckTextBoxNV())
+            {
+                MessageBox.Show("Vui Lòng điền đầy đủ thông tin", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }*/
+
+            if (!ValidateBeforeAction(CheckTextBoxNV()))
+            {
+                return;
+            }
+            try
+            {
+                var isInsert = QuanLy.InsertNV(new object[] { txtTenNV.Text, txtChucVuNV.Text, txtDiaChiNV.Text, txtSDTNV.Text, txtEmailNV.Text });
+                if (isInsert)
+                {
+                    MessageBox.Show("Thêm thành công", "", MessageBoxButtons.OK);
+                }
+            }
+            catch (Exception ex)
+            {
+                WarningMessageBox(ex);
+                //MessageBox.Show("Có lỗi trong quá trình thêm");
+            }
+            ClearAllTextBoxNV();
+            GetDataNhanVien();
+            this.Cursor = Cursors.Default;
+        }
+
+
+
+        private void BtnLamSachNV_Click(object sender, EventArgs e)
+        {
+            ClearAllTextBoxNV();
+        }
+
+        private void DgrvNhanVien_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            var index = e.RowIndex;
+            if (index <= 0)
+            {
+                return;
+            }
+            txtMaNV.Text = dgrvNhanVien.Rows[index].Cells["MaNV"].Value.ToString();
+            txtDiaChiNV.Text = dgrvNhanVien.Rows[index].Cells["DiaChi"].Value.ToString();
+            txtChucVuNV.Text = dgrvNhanVien.Rows[index].Cells["ChucVu"].Value.ToString();
+            txtEmailNV.Text = dgrvNhanVien.Rows[index].Cells["Email"].Value.ToString();
+            txtSDTNV.Text = dgrvNhanVien.Rows[index].Cells["DienThoai"].Value.ToString();
+            txtTenNV.Text = dgrvNhanVien.Rows[index].Cells["TenNV"].Value.ToString();
+        }
+
+
+
+        private void BtnShow_Click(object sender, EventArgs e)
+        {
+            GetDataNhanVien();
+        }
+
+        #endregion
+
+
+        #region Khách Hàng
+
+        private void BtnThemKhach_Click(object sender, EventArgs e)
         {
             /*this.Cursor = Cursors.WaitCursor;
             if (!CheckTextBoxKH())
@@ -267,15 +339,15 @@ namespace QuanLyBanHang
             {
                 WarningMessageBox(ex);
                 //MessageBox.Show($"Lỗi không thể thêm khách hàng .Lỗi {ex.Message.ToString()}", "Lỗi Thêm Khách Hàng", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
+
             }
             ClearAllTextBoxKH();
             GetDataKhachHang();
             this.Cursor = Cursors.Default;
-            
+
         }
 
-        private void btnSuaKhach_Click(object sender, EventArgs e)
+        private void BtnSuaKhach_Click(object sender, EventArgs e)
         {
             var text = btnSuaKhach.Text;
             if (text.Equals("Sửa"))
@@ -291,7 +363,7 @@ namespace QuanLyBanHang
             }
         }
 
-        private void btnCapNhatKhach_Click(object sender, EventArgs e)
+        private void BtnCapNhatKhach_Click(object sender, EventArgs e)
         {
             /*if (!CheckTextBoxKH())
             {
@@ -316,50 +388,20 @@ namespace QuanLyBanHang
             {
                 WarningMessageBox(ex);
                 //MessageBox.Show($"Không thể cập nhật thông tin khách hàng.Lỗi {ex.Message.ToString()}", "Lỗi Cập Nhật", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
+
             }
             ClearAllTextBoxKH();
             GetDataKhachHang();
             this.Cursor = Cursors.Default;
         }
 
-        /// <summary>
-        /// Cho tất cả các giá trị của textbox Khách hàng về rỗng
-        /// </summary>
-        void ClearAllTextBoxKH()
-        {
-            txtTenKhach.Text = "";
-            txtDiaChiKhach.Text = "";
-            txtGoiTinh.Text = "";
-            txtLoaiKhach.Text = "";
-            txtSDTKhach.Text = "";
-        }
-
-        private void btnLamSachKhach_Click(object sender, EventArgs e)
+        private void BtnLamSachKhach_Click(object sender, EventArgs e)
         {
             ClearAllTextBoxKH();
         }
 
-        /// <summary>
-        /// Lấy tất cả dữ liệu của Nhân Viên
-        /// </summary>
-        void GetDataNhanVien()
-        {
-            this.Cursor = Cursors.WaitCursor;
-            try
-            {
-                dgrvNhanVien.DataSource = QuanLy.GetDataNV();
-            }
-            catch (Exception ex)
-            {
-                WarningMessageBox(ex);
-                return;
-                //MessageBox.Show($"Lỗi không thể lấy dữ liệu.Lỗi {e.Message.ToString()}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            this.Cursor = Cursors.Default;
-        }
 
-        private void txtSDTNV_KeyPress(object sender, KeyPressEventArgs e)
+        private void TxtSDTKhach_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
             {
@@ -367,15 +409,7 @@ namespace QuanLyBanHang
             }
         }
 
-        private void txtSDTKhach_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
-            {
-                e.Handled = true;
-            }
-        }
-
-        private void txtGoiTinh_KeyPress(object sender, KeyPressEventArgs e)
+        private void TxtGoiTinh_KeyPress(object sender, KeyPressEventArgs e)
         {
             var charBinary = e.KeyChar == '0' || e.KeyChar == '1';
             if (!charBinary || txtGoiTinh.Text.Length >= 1)
@@ -387,23 +421,7 @@ namespace QuanLyBanHang
             }
         }
 
-        void GetDataKhachHang()
-        {
-            this.Cursor = Cursors.WaitCursor;
-            try
-            {
-                dgrvKhachHang.DataSource = QuanLy.GetDataKH();
-            }
-            catch (Exception ex)
-            {
-                WarningMessageBox(ex);
-                return;
-                //MessageBox.Show($"Không thể lấy dữ liệu .Tên lỗi {e.Message.ToString()}", "Không thể truy vấn", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            this.Cursor = Cursors.Default;
-        }
-
-        private void dgrvKhachHang_CellClick(object sender, DataGridViewCellEventArgs e)
+        private void DgrvKhachHang_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             var index = e.RowIndex;
             if (index <= 0)
@@ -418,7 +436,7 @@ namespace QuanLyBanHang
             txtLoaiKhach.Text = dgrvKhachHang.Rows[index].Cells["LoaiKhachHang"].Value.ToString();
         }
 
-        private void tabCnQuanLy_Selected(object sender, TabControlEventArgs e)
+        private void TabCnQuanLy_Selected(object sender, TabControlEventArgs e)
         {
             if (e.TabPage.Name.ToString().Equals(tabPgKhach.Name))
             {
@@ -435,9 +453,11 @@ namespace QuanLyBanHang
 
         }
 
-        private void btnShowKH_Click(object sender, EventArgs e)
+        private void BtnShowKH_Click(object sender, EventArgs e)
         {
             GetDataKhachHang();
         }
+        #endregion
+
     }
 }

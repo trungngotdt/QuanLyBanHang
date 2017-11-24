@@ -131,7 +131,7 @@
             this.btnShowKH.TabIndex = 29;
             this.btnShowKH.Text = "Hiển Dữ Liệu";
             this.btnShowKH.UseVisualStyleBackColor = true;
-            this.btnShowKH.Click += new System.EventHandler(this.btnShowKH_Click);
+            this.btnShowKH.Click += new System.EventHandler(this.BtnShowKH_Click);
             // 
             // btnLamSachKhach
             // 
@@ -141,7 +141,7 @@
             this.btnLamSachKhach.TabIndex = 28;
             this.btnLamSachKhach.Text = "Làm Sạch";
             this.btnLamSachKhach.UseVisualStyleBackColor = true;
-            this.btnLamSachKhach.Click += new System.EventHandler(this.btnLamSachKhach_Click);
+            this.btnLamSachKhach.Click += new System.EventHandler(this.BtnLamSachKhach_Click);
             // 
             // btnCapNhatKhach
             // 
@@ -151,7 +151,7 @@
             this.btnCapNhatKhach.TabIndex = 27;
             this.btnCapNhatKhach.Text = "Cập Nhật";
             this.btnCapNhatKhach.UseVisualStyleBackColor = true;
-            this.btnCapNhatKhach.Click += new System.EventHandler(this.btnCapNhatKhach_Click);
+            this.btnCapNhatKhach.Click += new System.EventHandler(this.BtnCapNhatKhach_Click);
             // 
             // btnSuaKhach
             // 
@@ -161,17 +161,20 @@
             this.btnSuaKhach.TabIndex = 26;
             this.btnSuaKhach.Text = "Sửa";
             this.btnSuaKhach.UseVisualStyleBackColor = true;
-            this.btnSuaKhach.Click += new System.EventHandler(this.btnSuaKhach_Click);
+            this.btnSuaKhach.Click += new System.EventHandler(this.BtnSuaKhach_Click);
             // 
             // btnThemKhach
             // 
+            this.btnThemKhach.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.btnThemKhach.Location = new System.Drawing.Point(12, 366);
             this.btnThemKhach.Name = "btnThemKhach";
             this.btnThemKhach.Size = new System.Drawing.Size(75, 23);
             this.btnThemKhach.TabIndex = 25;
             this.btnThemKhach.Text = "Thêm";
             this.btnThemKhach.UseVisualStyleBackColor = true;
-            this.btnThemKhach.Click += new System.EventHandler(this.btnThemKhach_Click);
+            this.btnThemKhach.Click += new System.EventHandler(this.BtnThemKhach_Click);
             // 
             // groupBox4
             // 
@@ -192,7 +195,7 @@
             this.dgrvKhachHang.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgrvKhachHang.Size = new System.Drawing.Size(694, 227);
             this.dgrvKhachHang.TabIndex = 0;
-            this.dgrvKhachHang.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgrvKhachHang_CellClick);
+            this.dgrvKhachHang.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.DgrvKhachHang_CellClick);
             // 
             // groupBox3
             // 
@@ -295,7 +298,7 @@
             this.txtSDTKhach.Name = "txtSDTKhach";
             this.txtSDTKhach.Size = new System.Drawing.Size(160, 20);
             this.txtSDTKhach.TabIndex = 5;
-            this.txtSDTKhach.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtSDTKhach_KeyPress);
+            this.txtSDTKhach.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtSDTKhach_KeyPress);
             // 
             // label12
             // 
@@ -312,7 +315,7 @@
             this.txtGoiTinh.Name = "txtGoiTinh";
             this.txtGoiTinh.Size = new System.Drawing.Size(160, 20);
             this.txtGoiTinh.TabIndex = 6;
-            this.txtGoiTinh.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtGoiTinh_KeyPress);
+            this.txtGoiTinh.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtGoiTinh_KeyPress);
             // 
             // tabPgNV
             // 
@@ -339,7 +342,7 @@
             this.btnShow.TabIndex = 19;
             this.btnShow.Text = "Hiển Dữ Liệu";
             this.btnShow.UseVisualStyleBackColor = true;
-            this.btnShow.Click += new System.EventHandler(this.btnShow_Click);
+            this.btnShow.Click += new System.EventHandler(this.BtnShow_Click);
             // 
             // btnLamSachNV
             // 
@@ -349,7 +352,7 @@
             this.btnLamSachNV.TabIndex = 18;
             this.btnLamSachNV.Text = "Làm Sạch";
             this.btnLamSachNV.UseVisualStyleBackColor = true;
-            this.btnLamSachNV.Click += new System.EventHandler(this.btnLamSachNV_Click);
+            this.btnLamSachNV.Click += new System.EventHandler(this.BtnLamSachNV_Click);
             // 
             // btnCapNhat
             // 
@@ -359,7 +362,7 @@
             this.btnCapNhat.TabIndex = 17;
             this.btnCapNhat.Text = "Cập Nhật";
             this.btnCapNhat.UseVisualStyleBackColor = true;
-            this.btnCapNhat.Click += new System.EventHandler(this.btnCapNhat_Click);
+            this.btnCapNhat.Click += new System.EventHandler(this.BtnCapNhat_Click);
             // 
             // btnSua
             // 
@@ -369,7 +372,7 @@
             this.btnSua.TabIndex = 16;
             this.btnSua.Text = "Sửa";
             this.btnSua.UseVisualStyleBackColor = true;
-            this.btnSua.Click += new System.EventHandler(this.btnSua_Click);
+            this.btnSua.Click += new System.EventHandler(this.BtnSua_Click);
             // 
             // btnThem
             // 
@@ -379,7 +382,7 @@
             this.btnThem.TabIndex = 15;
             this.btnThem.Text = "Thêm";
             this.btnThem.UseVisualStyleBackColor = true;
-            this.btnThem.Click += new System.EventHandler(this.btnThem_Click);
+            this.btnThem.Click += new System.EventHandler(this.BtnThem_Click);
             // 
             // groupBox2
             // 
@@ -400,7 +403,7 @@
             this.dgrvNhanVien.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgrvNhanVien.Size = new System.Drawing.Size(694, 227);
             this.dgrvNhanVien.TabIndex = 0;
-            this.dgrvNhanVien.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgrvNhanVien_CellClick);
+            this.dgrvNhanVien.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.DgrvNhanVien_CellClick);
             // 
             // groupBox1
             // 
@@ -503,7 +506,7 @@
             this.txtSDTNV.Name = "txtSDTNV";
             this.txtSDTNV.Size = new System.Drawing.Size(160, 20);
             this.txtSDTNV.TabIndex = 5;
-            this.txtSDTNV.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtSDTNV_KeyPress);
+            this.txtSDTNV.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtSDTNV_KeyPress);
             // 
             // label1
             // 
@@ -523,6 +526,9 @@
             // 
             // tabCnQuanLy
             // 
+            this.tabCnQuanLy.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tabCnQuanLy.Controls.Add(this.tabPgNV);
             this.tabCnQuanLy.Controls.Add(this.tabPgKhach);
             this.tabCnQuanLy.Location = new System.Drawing.Point(13, 44);
@@ -530,7 +536,7 @@
             this.tabCnQuanLy.SelectedIndex = 0;
             this.tabCnQuanLy.Size = new System.Drawing.Size(726, 428);
             this.tabCnQuanLy.TabIndex = 0;
-            this.tabCnQuanLy.Selected += new System.Windows.Forms.TabControlEventHandler(this.tabCnQuanLy_Selected);
+            this.tabCnQuanLy.Selected += new System.Windows.Forms.TabControlEventHandler(this.TabCnQuanLy_Selected);
             // 
             // frmQuanLy
             // 

@@ -129,7 +129,7 @@
             this.btnHuy.TabIndex = 37;
             this.btnHuy.Text = "Hủy Đơn";
             this.btnHuy.UseVisualStyleBackColor = true;
-            this.btnHuy.Click += new System.EventHandler(this.btnHuy_Click);
+            this.btnHuy.Click += new System.EventHandler(this.BtnHuy_Click);
             // 
             // btnCapNhat
             // 
@@ -139,7 +139,7 @@
             this.btnCapNhat.TabIndex = 36;
             this.btnCapNhat.Text = "Cập Nhật";
             this.btnCapNhat.UseVisualStyleBackColor = true;
-            this.btnCapNhat.Click += new System.EventHandler(this.btnCapNhat_Click);
+            this.btnCapNhat.Click += new System.EventHandler(this.BtnCapNhat_Click);
             // 
             // btnXoa
             // 
@@ -149,7 +149,7 @@
             this.btnXoa.TabIndex = 35;
             this.btnXoa.Text = "Xóa";
             this.btnXoa.UseVisualStyleBackColor = true;
-            this.btnXoa.Click += new System.EventHandler(this.btnXoa_Click);
+            this.btnXoa.Click += new System.EventHandler(this.BtnXoa_Click);
             // 
             // btnInPhieu
             // 
@@ -213,7 +213,7 @@
             this.rdbXuat.TabStop = true;
             this.rdbXuat.Text = "Xuất Hàng";
             this.rdbXuat.UseVisualStyleBackColor = true;
-            this.rdbXuat.CheckedChanged += new System.EventHandler(this.rdbXuat_CheckedChanged);
+            this.rdbXuat.CheckedChanged += new System.EventHandler(this.RdbXuat_CheckedChanged);
             // 
             // groupBox7
             // 
@@ -368,7 +368,7 @@
             this.btnSua.TabIndex = 34;
             this.btnSua.Text = "Sửa";
             this.btnSua.UseVisualStyleBackColor = true;
-            this.btnSua.Click += new System.EventHandler(this.btnSua_Click);
+            this.btnSua.Click += new System.EventHandler(this.BtnSua_Click);
             // 
             // label6
             // 
@@ -425,7 +425,7 @@
             this.lvwChiTietHoaDon.TabIndex = 28;
             this.lvwChiTietHoaDon.UseCompatibleStateImageBehavior = false;
             this.lvwChiTietHoaDon.View = System.Windows.Forms.View.Details;
-            this.lvwChiTietHoaDon.MouseClick += new System.Windows.Forms.MouseEventHandler(this.lvwChiTietHoaDon_MouseClick);
+            this.lvwChiTietHoaDon.MouseClick += new System.Windows.Forms.MouseEventHandler(this.LvwChiTietHoaDon_MouseClick);
             // 
             // tabPage2
             // 

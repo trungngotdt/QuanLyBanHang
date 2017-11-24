@@ -26,15 +26,23 @@ namespace QuanLyBanHang
 
         public void Loading()
         {
-            txtSDTKhachHang.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
-            txtSDTKhachHang.AutoCompleteSource = AutoCompleteSource.CustomSource;
-            HoaDonThanhToan.AutoComplete(txtSDTKhachHang);
-            cboTenHang.DataSource = HoaDonThanhToan.DataSourceForCombobox();
-            lvwChiTietHoaDon.Columns.Add(new ColumnHeader() { Text = "Tên Hàng" });
-            lvwChiTietHoaDon.Columns.Add(new ColumnHeader() { Text = "Đơn Giá" });
-            lvwChiTietHoaDon.Columns.Add(new ColumnHeader() { Text = "Số Lượng" });
-            txtNameStaff.Text = Program.NameStaff;
-            DisEnableControl();
+            try
+            {
+
+                txtSDTKhachHang.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+                txtSDTKhachHang.AutoCompleteSource = AutoCompleteSource.CustomSource;
+                HoaDonThanhToan.AutoComplete(txtSDTKhachHang);
+                cboTenHang.DataSource = HoaDonThanhToan.DataSourceForCombobox();
+                lvwChiTietHoaDon.Columns.Add(new ColumnHeader() { Text = "Tên Hàng" });
+                lvwChiTietHoaDon.Columns.Add(new ColumnHeader() { Text = "Đơn Giá" });
+                lvwChiTietHoaDon.Columns.Add(new ColumnHeader() { Text = "Số Lượng" });
+                txtNameStaff.Text = Program.NameStaff;
+                DisEnableControl();
+            }
+            catch (Exception ex)
+            {
+                WarningMessageBox(ex);
+            }
         }
 
 
@@ -84,20 +92,28 @@ namespace QuanLyBanHang
 
         private void BtnThemHang_Click(object sender, EventArgs e)
         {
-            var tenHang = cboTenHang.Text;
-            bool checkTenHangInListView = lvwChiTietHoaDon.FindItemWithText(tenHang) != null ? true : false;//trả ra true khi tìm thấy có tên hàng trong listview và ngược lại
-            if (checkTenHangInListView)
+            try
             {
-                lvwChiTietHoaDon.FindItemWithText(tenHang).SubItems[2].Text = (int.Parse(lvwChiTietHoaDon.FindItemWithText(tenHang).SubItems[2].Text)
-                    + int.Parse(nudSoLuong.Value.ToString())).ToString();
+
+                var tenHang = cboTenHang.Text;
+                bool checkTenHangInListView = lvwChiTietHoaDon.FindItemWithText(tenHang) != null ? true : false;//trả ra true khi tìm thấy có tên hàng trong listview và ngược lại
+                if (checkTenHangInListView)
+                {
+                    lvwChiTietHoaDon.FindItemWithText(tenHang).SubItems[2].Text = (int.Parse(lvwChiTietHoaDon.FindItemWithText(tenHang).SubItems[2].Text)
+                        + int.Parse(nudSoLuong.Value.ToString())).ToString();
+                }
+                else
+                {
+                    ListViewItem listViewItem = new ListViewItem() { Text = tenHang };
+                    var donGia = HoaDonThanhToan.LayDonGia(tenHang);
+                    listViewItem.SubItems.Add(donGia.ToString());
+                    listViewItem.SubItems.Add(nudSoLuong.Value.ToString());
+                    lvwChiTietHoaDon.Items.Add(listViewItem);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                ListViewItem listViewItem = new ListViewItem() { Text = tenHang };
-                var donGia = HoaDonThanhToan.LayDonGia(tenHang);
-                listViewItem.SubItems.Add(donGia.ToString());
-                listViewItem.SubItems.Add(nudSoLuong.Value.ToString());
-                lvwChiTietHoaDon.Items.Add(listViewItem);
+                WarningMessageBox(ex);
             }
         }
 

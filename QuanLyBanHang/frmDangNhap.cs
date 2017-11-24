@@ -50,7 +50,7 @@ namespace QuanLyBanHang
         {
             try
             {
-
+                this.Cursor = Cursors.WaitCursor;
                 var isTextBoxEmpty = txtName.Text.Trim().Length > 0 && txtPass.Text.Trim().Length > 0;
                 if (!isTextBoxEmpty)
                 {
@@ -102,6 +102,7 @@ namespace QuanLyBanHang
             {
                 WarningMessageBox(ex);
             }
+            this.Cursor = Cursors.Default;
         }
     }
 }

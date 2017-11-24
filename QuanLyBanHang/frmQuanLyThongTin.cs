@@ -51,23 +51,31 @@ namespace QuanLyBanHang
         void Loading()
         {
 
-            this.ActiveControl = txtSDTKhachHang;
-            ConfigForListView();
-            cboTenHang.DataSource = QuanLyThongTin.DataSourceForCombobox();
-            StatusControlLapPhieu(false);
+            try
+            {
 
-            /*txtID.Text = Program.IDStaff;
-            txtName.Text = Program.NameStaff;
-            txtRole.Text = Program.RoleStaff;
-            txtRole.Enabled = false;
-            txtRole.ReadOnly = true;
-            txtID.Enabled = false;
-            txtID.ReadOnly = true;
-            txtName.Enabled = false;
-            txtName.ReadOnly = true;
-            txtNameStaff.Text = txtName.Text;*/
-            DefaultSetControl();
-            this.AcceptButton = btnKiemTraKH;
+                this.ActiveControl = txtSDTKhachHang;
+                ConfigForListView();
+                cboTenHang.DataSource = QuanLyThongTin.DataSourceForCombobox();
+                StatusControlLapPhieu(false);
+
+                /*txtID.Text = Program.IDStaff;
+                txtName.Text = Program.NameStaff;
+                txtRole.Text = Program.RoleStaff;
+                txtRole.Enabled = false;
+                txtRole.ReadOnly = true;
+                txtID.Enabled = false;
+                txtID.ReadOnly = true;
+                txtName.Enabled = false;
+                txtName.ReadOnly = true;
+                txtNameStaff.Text = txtName.Text;*/
+                DefaultSetControl();
+                this.AcceptButton = btnKiemTraKH;
+            }
+            catch (Exception ex)
+            {
+                WarningMessageBox(ex);
+            }
         }
 
         /// <summary>
@@ -175,16 +183,24 @@ namespace QuanLyBanHang
 
         private void BtnTimKiem_Click(object sender, EventArgs e)
         {
-            lvwThongKeHH.Items.Clear();
-            var checkNullTextBox = txtTen.Text.Trim().Length == 0;// String.IsNullOrEmpty(txtTen.Text) || String.IsNullOrWhiteSpace(txtTen.Text);
-            if ((rdbChinhXac.Checked == false && rdbGanDung.Checked == false) || checkNullTextBox == true)
+            try
             {
-                MessageBox.Show("Xin hãy nhập thông tin ", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
+
+                lvwThongKeHH.Items.Clear();
+                var checkNullTextBox = txtTen.Text.Trim().Length == 0;// String.IsNullOrEmpty(txtTen.Text) || String.IsNullOrWhiteSpace(txtTen.Text);
+                if ((rdbChinhXac.Checked == false && rdbGanDung.Checked == false) || checkNullTextBox == true)
+                {
+                    MessageBox.Show("Xin hãy nhập thông tin ", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+                var typeSearch = rdbChinhXac.Checked == true ? true : false;
+                var data = QuanLyThongTin.SearchBy(txtTen.Text, typeSearch);
+                AddDataToListView(data, lvwThongKeHH);
             }
-            var typeSearch = rdbChinhXac.Checked == true ? true : false;
-            var data = QuanLyThongTin.SearchBy(txtTen.Text, typeSearch);
-            AddDataToListView(data, lvwThongKeHH);
+            catch (Exception ex)
+            {
+                WarningMessageBox(ex);
+            }
         }
         #endregion
 
@@ -309,32 +325,40 @@ namespace QuanLyBanHang
 
         private void BtnKiemTraKH_Click(object sender, EventArgs e)
         {
-            var sdtKH = txtSDTKhachHang.Text;
-            var kiemTra = !(sdtKH.Trim().Length > 0); //String.IsNullOrEmpty(sdtKH) || String.IsNullOrWhiteSpace(sdtKH);
-            if (kiemTra)
+            try
             {
-                MessageBox.Show("Điền số điện thoại");
-                StatusControlLapPhieu(false);
-                return;
-            }
-            var tenKH = QuanLyThongTin.GetTenKH(txtSDTKhachHang.Text);
-            txtTenKhachHang.Text = tenKH?.ToString();
-            if (tenKH != null)
-            {
-                StatusControlLapPhieu(true);
-            }
-            else
-            {
-                StatusControlLapPhieu(false);
-                var dialogResult = MessageBox.Show("Số điện thoại không tồn tại.\n Chọn Yes nếu muốn tạo mới và No để quay về", "Lỗi", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1);
-                if (dialogResult == DialogResult.Yes)
+
+                var sdtKH = txtSDTKhachHang.Text;
+                var kiemTra = !(sdtKH.Trim().Length > 0); //String.IsNullOrEmpty(sdtKH) || String.IsNullOrWhiteSpace(sdtKH);
+                if (kiemTra)
                 {
-                    frmThemKhachHang frmThemKhachHang = new frmThemKhachHang();
-                    frmThemKhachHang.ShowDialog();
+                    MessageBox.Show("Điền số điện thoại");
+                    StatusControlLapPhieu(false);
+                    return;
                 }
+                var tenKH = QuanLyThongTin.GetTenKH(txtSDTKhachHang.Text);
+                txtTenKhachHang.Text = tenKH?.ToString();
+                if (tenKH != null)
+                {
+                    StatusControlLapPhieu(true);
+                }
+                else
+                {
+                    StatusControlLapPhieu(false);
+                    var dialogResult = MessageBox.Show("Số điện thoại không tồn tại.\n Chọn Yes nếu muốn tạo mới và No để quay về", "Lỗi", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1);
+                    if (dialogResult == DialogResult.Yes)
+                    {
+                        frmThemKhachHang frmThemKhachHang = new frmThemKhachHang();
+                        frmThemKhachHang.ShowDialog();
+                    }
+                }
+                btnCapNhat.Enabled = false;
+                this.AcceptButton = btnThemHang;
             }
-            btnCapNhat.Enabled = false;
-            this.AcceptButton = btnThemHang;
+            catch (Exception ex)
+            {
+                WarningMessageBox(ex);
+            }
         }
 
 
@@ -496,7 +520,7 @@ namespace QuanLyBanHang
         }
 
 
-        private void btnSua_Click(object sender, EventArgs e)
+        private void BtnSua_Click(object sender, EventArgs e)
         {
             var text = btnSua.Text;
             if (text.Equals("Sửa"))
@@ -511,7 +535,7 @@ namespace QuanLyBanHang
             }
         }
 
-        private void btnXoa_Click(object sender, EventArgs e)
+        private void BtnXoa_Click(object sender, EventArgs e)
         {
             if (KiemTraListViewSelect())
             {
@@ -525,7 +549,7 @@ namespace QuanLyBanHang
 
         //ListViewItem GetListViewItem
 
-        private void btnCapNhat_Click(object sender, EventArgs e)
+        private void BtnCapNhat_Click(object sender, EventArgs e)
         {
             var index = lvwChiTietHoaDon.SelectedIndices.OfType<int>().Single();
             var items = lvwChiTietHoaDon.Items[index];
@@ -540,7 +564,7 @@ namespace QuanLyBanHang
         }
 
 
-        private void lvwChiTietHoaDon_MouseClick(object sender, MouseEventArgs e)
+        private void LvwChiTietHoaDon_MouseClick(object sender, MouseEventArgs e)
         {
             var checkValue = btnSua.Text.Equals("Xong") && lvwChiTietHoaDon.SelectedIndices.Count > 0;
             if (checkValue)
@@ -559,7 +583,7 @@ namespace QuanLyBanHang
 
 
         private int flagRdb = 0;
-        private void rdbXuat_CheckedChanged(object sender, EventArgs e)
+        private void RdbXuat_CheckedChanged(object sender, EventArgs e)
         {
             var countItem = lvwChiTietHoaDon.Items.Count > 0;
             if (flagRdb == 1)
@@ -600,7 +624,7 @@ namespace QuanLyBanHang
             }
         }
 
-        private void btnHuy_Click(object sender, EventArgs e)
+        private void BtnHuy_Click(object sender, EventArgs e)
         {
             var result = MessageBox.Show("Bạn có chắc không", "Hủy hóa đơn", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (result == DialogResult.Yes)
