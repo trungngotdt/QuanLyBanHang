@@ -76,6 +76,11 @@
             this.txtTen = new System.Windows.Forms.TextBox();
             this.bntHienHangHoa = new System.Windows.Forms.Button();
             this.lvwThongKeHH = new System.Windows.Forms.ListView();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.btnNhapHang = new System.Windows.Forms.Button();
+            this.btnChonFile = new System.Windows.Forms.Button();
+            this.btnXuatHang = new System.Windows.Forms.Button();
+            this.dgrvHang = new System.Windows.Forms.DataGridView();
             this.txtID = new System.Windows.Forms.TextBox();
             this.txtName = new System.Windows.Forms.TextBox();
             this.txtRole = new System.Windows.Forms.TextBox();
@@ -90,12 +95,15 @@
             this.tabPage2.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            this.tabPage3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgrvHang)).BeginInit();
             this.SuspendLayout();
             // 
             // tabControl1
             // 
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Location = new System.Drawing.Point(12, 30);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -613,6 +621,59 @@
             this.lvwThongKeHH.UseCompatibleStateImageBehavior = false;
             this.lvwThongKeHH.View = System.Windows.Forms.View.Details;
             // 
+            // tabPage3
+            // 
+            this.tabPage3.Controls.Add(this.btnNhapHang);
+            this.tabPage3.Controls.Add(this.btnChonFile);
+            this.tabPage3.Controls.Add(this.btnXuatHang);
+            this.tabPage3.Controls.Add(this.dgrvHang);
+            this.tabPage3.Location = new System.Drawing.Point(4, 22);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage3.Size = new System.Drawing.Size(680, 442);
+            this.tabPage3.TabIndex = 2;
+            this.tabPage3.Text = "Nhập/Xuất Hàng";
+            this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // btnNhapHang
+            // 
+            this.btnNhapHang.Location = new System.Drawing.Point(547, 380);
+            this.btnNhapHang.Name = "btnNhapHang";
+            this.btnNhapHang.Size = new System.Drawing.Size(75, 23);
+            this.btnNhapHang.TabIndex = 3;
+            this.btnNhapHang.Text = "Nhập Hàng";
+            this.btnNhapHang.UseVisualStyleBackColor = true;
+            this.btnNhapHang.Click += new System.EventHandler(this.btnNhapHang_Click);
+            // 
+            // btnChonFile
+            // 
+            this.btnChonFile.Location = new System.Drawing.Point(291, 380);
+            this.btnChonFile.Name = "btnChonFile";
+            this.btnChonFile.Size = new System.Drawing.Size(75, 23);
+            this.btnChonFile.TabIndex = 2;
+            this.btnChonFile.Text = "Chọn File";
+            this.btnChonFile.UseVisualStyleBackColor = true;
+            this.btnChonFile.Click += new System.EventHandler(this.btnChonFile_ClickAsync);
+            // 
+            // btnXuatHang
+            // 
+            this.btnXuatHang.Location = new System.Drawing.Point(41, 380);
+            this.btnXuatHang.Name = "btnXuatHang";
+            this.btnXuatHang.Size = new System.Drawing.Size(75, 23);
+            this.btnXuatHang.TabIndex = 1;
+            this.btnXuatHang.Text = "Xuất Hàng";
+            this.btnXuatHang.UseVisualStyleBackColor = true;
+            // 
+            // dgrvHang
+            // 
+            this.dgrvHang.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgrvHang.Location = new System.Drawing.Point(6, 6);
+            this.dgrvHang.MultiSelect = false;
+            this.dgrvHang.Name = "dgrvHang";
+            this.dgrvHang.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dgrvHang.Size = new System.Drawing.Size(668, 334);
+            this.dgrvHang.TabIndex = 0;
+            // 
             // txtID
             // 
             this.txtID.Location = new System.Drawing.Point(243, 4);
@@ -662,6 +723,8 @@
             this.groupBox2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.tabPage3.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dgrvHang)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -720,5 +783,10 @@
         private System.Windows.Forms.TextBox txtName;
         private System.Windows.Forms.TextBox txtRole;
         private System.Windows.Forms.Button btnHuy;
+        private System.Windows.Forms.TabPage tabPage3;
+        private System.Windows.Forms.Button btnNhapHang;
+        private System.Windows.Forms.Button btnChonFile;
+        private System.Windows.Forms.Button btnXuatHang;
+        private System.Windows.Forms.DataGridView dgrvHang;
     }
 }

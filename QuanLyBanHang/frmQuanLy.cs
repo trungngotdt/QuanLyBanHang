@@ -362,7 +362,7 @@ namespace QuanLyBanHang
                 btnSuaKhach.Text = "Sửa";
             }
         }
-
+        
         private void BtnCapNhatKhach_Click(object sender, EventArgs e)
         {
             /*if (!CheckTextBoxKH())

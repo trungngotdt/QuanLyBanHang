@@ -37,25 +37,37 @@ namespace QuanLyBanHang
         {
             try
             {
-                if (ChechTextBox())
+                this.Cursor = Cursors.WaitCursor;
+                if (CheckTextBox())
                 {
                     MessageBox.Show("Không được để trống ô nào");
-                    return;
-                }
-                var gioiTinh = cboNam.Checked == true ? 1 : 0;
-                var isThemKH = ThemKhachHang.InsertKhachHang(new object[] { txtTenKhachHang.Text, int.Parse(txtSDT.Text), gioiTinh, txtDiaChi.Text, txtLoaiKH.Text });
-                if (isThemKH)
-                {
-                    MessageBox.Show("Thành công", "Thông Báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    
                 }
                 else
                 {
-                    MessageBox.Show("Có lỗi xảy ra", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    var gioiTinh = cboNam.Checked == true ? 1 : 0;
+                    var isThemKH = ThemKhachHang.InsertKhachHang(new object[] { txtTenKhachHang.Text, int.Parse(txtSDT.Text), gioiTinh, txtDiaChi.Text, txtLoaiKH.Text });
+                    /*if (isThemKH)
+                    {
+                        MessageBox.Show("Thành công", "Thông Báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Có lỗi xảy ra", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }*/
+                    string mess = isThemKH == true ? "Thành Công" : "Có lỗi xảy ra";
+                    MessageBox.Show(mess,"THÔNG BÁO",MessageBoxButtons.OK,MessageBoxIcon.Information);
                 }
+
+
             }
             catch (Exception ex)
             {
                 WarningMessageBox(ex);
+            }
+            finally
+            {
+                this.Cursor = Cursors.Default;
             }
         }
 
@@ -70,7 +82,7 @@ namespace QuanLyBanHang
         /// <summary>
         /// Kiểm tra xem textbox có để trống không
         /// </summary>
-        private bool ChechTextBox()
+        private bool CheckTextBox()
         {
             var chechkSDT = String.IsNullOrEmpty(txtSDT.Text) || String.IsNullOrWhiteSpace(txtSDT.Text);
             var checkTen = String.IsNullOrEmpty(txtTenKhachHang.Text) || String.IsNullOrWhiteSpace(txtTenKhachHang.Text);

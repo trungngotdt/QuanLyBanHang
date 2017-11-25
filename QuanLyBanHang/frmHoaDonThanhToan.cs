@@ -55,13 +55,14 @@ namespace QuanLyBanHang
             MessageBox.Show($"Lỗi trong quá trình thực thi.Mã lỗi :\n {ex.Message.ToString()} \\\n Vui lòng liên hệ người quản trị " +
                 $"hoặc nhân viên để được nhận thêm sự " +
                 $" hỗ trợ", "Lỗi Trong Quá Trình Thực Thi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            this.Cursor = Cursors.Default;
         }
 
         private void BtnThanhToan_Click(object sender, EventArgs e)
         {
             try
             {
-
+                this.Cursor = Cursors.WaitCursor;
                 var maKH = HoaDonThanhToan.GetMaKH(txtSDTKhachHang.Text);
                 var date = DateTime.Now.Year.ToString() + DateTime.Now.Month.ToString() + DateTime.Now.Day.ToString() + " " + DateTime.Now.ToLongTimeString();
                 HoaDonThanhToan.InsertHoaDon(new object[] { maKH, "Bán Hàng", Program.IDStaff, date, txtNameStaff.Text });
@@ -69,20 +70,23 @@ namespace QuanLyBanHang
                 if (kiemtra)
                 {
                     MessageBox.Show("Điền đơn hàng");
-                    return;
                 }
-                var maHD = HoaDonThanhToan.GetMaHoaDon(int.Parse(maKH.ToString()), "Bán Hàng", int.Parse(Program.IDStaff.ToString()), date, txtNameStaff.Text);
-                foreach (ListViewItem item in lvwChiTietHoaDon.Items)
+                else
                 {
-                    var maHang = HoaDonThanhToan.GetMaHang(item.SubItems[0].Text);
-                    var soLuongHang = int.Parse(HoaDonThanhToan.GetSoLuong(new object[] { maHang }).ToString());
-                    var donGia = float.Parse(item.SubItems[1].Text);
-                    var soLuong = int.Parse(item.SubItems[2].Text);
-                    HoaDonThanhToan.InsertChiTietHoaDon(new object[] { maHD, maHang, donGia, soLuong });
-                    HoaDonThanhToan.UpdateHangHoa(new object[] { maHang, soLuongHang - soLuong });
-                    //var element = item.SubItems.OfType<ListViewItem.ListViewSubItem>().Select(p => p.Text);
+                    var maHD = HoaDonThanhToan.GetMaHoaDon(int.Parse(maKH.ToString()), "Bán Hàng", int.Parse(Program.IDStaff.ToString()), date, txtNameStaff.Text);
+                    foreach (ListViewItem item in lvwChiTietHoaDon.Items)
+                    {
+                        var maHang = HoaDonThanhToan.GetMaHang(item.SubItems[0].Text);
+                        var soLuongHang = int.Parse(HoaDonThanhToan.GetSoLuong(new object[] { maHang }).ToString());
+                        var donGia = float.Parse(item.SubItems[1].Text);
+                        var soLuong = int.Parse(item.SubItems[2].Text);
+                        HoaDonThanhToan.InsertChiTietHoaDon(new object[] { maHD, maHang, donGia, soLuong });
+                        HoaDonThanhToan.UpdateHangHoa(new object[] { maHang, soLuongHang - soLuong });
+                        //var element = item.SubItems.OfType<ListViewItem.ListViewSubItem>().Select(p => p.Text);
+                    }
+                    MessageBox.Show("Hoàn Thành Đơn Hàng", "Tình Trạng", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
-                MessageBox.Show("Hoàn Thành Đơn Hàng", "Tình Trạng", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                this.Cursor = Cursors.Default;
             }
             catch (Exception ex)
             {
@@ -153,7 +157,7 @@ namespace QuanLyBanHang
                 else
                 {
                     DisEnableControl();
-                    var dialogResult = MessageBox.Show("Số điện thoại không tồn tại", "Lỗi", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1);
+                    var dialogResult = MessageBox.Show("Số điện thoại không tồn tại\n Chọn YES khi bạn  muốn tạo khách hàng mới và NO ngược lại", "Lỗi", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1);
                     if (dialogResult == DialogResult.Yes)
                     {
                         frmThemKhachHang frmThemKhachHang = new frmThemKhachHang();

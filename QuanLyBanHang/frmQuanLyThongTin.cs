@@ -1,4 +1,6 @@
-﻿using QuanLyBanHang.BUS;
+﻿using Microsoft.Office.Interop.Excel;
+using Excel= Microsoft.Office.Interop.Excel;
+using QuanLyBanHang.BUS;
 using QuanLyBanHang.BUS.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -35,6 +37,8 @@ namespace QuanLyBanHang
             lvwChiTietHoaDon.Columns.Add(new ColumnHeader() { Text = "Tên Hàng" });
             lvwChiTietHoaDon.Columns.Add(new ColumnHeader() { Text = "Đơn Giá" });
             lvwChiTietHoaDon.Columns.Add(new ColumnHeader() { Text = "Số Lượng" });
+
+            
         }
 
         /// <summary>
@@ -509,7 +513,8 @@ namespace QuanLyBanHang
             }
             var khachHang = QuanLyThongTin.GetKhachHangBySDT(int.Parse(txtSDTKhachHang.Text.ToString()));
             //Chỉnh sửa cho đúng dữ liệu
-            DTO.HoaDonDTO hoaDon = new DTO.HoaDonDTO(0, 0, "", 0, DateTime.Now, "0");
+            int maHD = int.Parse((((int)DateTime.Now.TimeOfDay.TotalSeconds).ToString() + ((int)DateTime.Now.DayOfYear).ToString()));
+            DTO.HoaDonDTO hoaDon = new DTO.HoaDonDTO(maHD, 0, "", 0, DateTime.Now, "0");
             //
             this.Cursor = Cursors.WaitCursor;
             using (frmInPhieu inPhieu = new frmInPhieu(list, hoaDon, khachHang))
@@ -631,6 +636,102 @@ namespace QuanLyBanHang
             {
                 lvwChiTietHoaDon.Items.Clear();
             }
+        }
+
+        #endregion
+
+        //===================================================================================================================//
+
+        //===================================================================================================================//
+
+        #region Xuất/Nhập Hàng
+
+
+        #region Method
+
+        public Task<List<Tuple<string, string, string, string, string>>> ReadAsync(string address)
+        {
+            return Task.Factory.StartNew(() => ReadWithInteropExcel(address));
+        }
+
+
+
+        private List<Tuple<string, string,string,string,string>> ReadWithInteropExcel(string address)
+        {
+            object row;
+            object row2;
+            object row3;
+            object row4;
+            object row5;
+
+            List<Tuple<string, string, string, string, string>> list = new List<Tuple<string, string, string, string, string>>();
+            _Application application = new Microsoft.Office.Interop.Excel.Application();
+            Workbook workbook = application.Workbooks.Open(address);
+            Worksheet worksheet = workbook.Worksheets[1];
+            Excel.Range range = worksheet.UsedRange;
+            int countRow = range.Rows.Count;
+            int countColumn = range.Columns.Count;
+            for (int i = 2; i <= countRow; i++)
+            {
+                for (int j = 1; j <= countColumn; j++)
+                {
+
+                    row = worksheet.Cells[i, j].Value2 == null ? "null" : worksheet.Cells[i, j].Value2.ToString();
+                    j++;
+                    row2 = worksheet.Cells[i, j].Value2 == null ? "null" : worksheet.Cells[i, j].Value2.ToString();
+                    j++;
+                    row3 = worksheet.Cells[i, j].Value2 == null ? "null" : worksheet.Cells[i, j].Value2.ToString();
+                    j++;
+                    row4 = worksheet.Cells[i, j].Value2 == null ? "null" : worksheet.Cells[i, j].Value2.ToString();
+                    j++;
+                    row5 = worksheet.Cells[i, j].Value2 == null ? "null" : worksheet.Cells[i, j].Value2.ToString();
+
+                    list.Add(new Tuple<string, string, string, string,string>(row.ToString() , row2.ToString(), row3.ToString(), row4.ToString(), row5.ToString()));
+
+                }
+            }
+            workbook.Close();
+            return list;
+        }
+        #endregion
+        private void btnNhapHang_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private async void btnChonFile_ClickAsync(object sender, EventArgs e)
+        {
+            this.Cursor = Cursors.WaitCursor;
+            System.Data.DataTable dataTable = new System.Data.DataTable();
+            dataTable.Columns.Add("Mã Hàng");
+            dataTable.Columns.Add("Tên Hàng");
+            dataTable.Columns.Add("Đơn Giá");
+            dataTable.Columns.Add("Số Lượng");
+            dataTable.Columns.Add("Ghi Chú");
+
+            dgrvHang.Rows.Clear();
+            Cursor.Current = Cursors.WaitCursor;
+            using (var Opf = new OpenFileDialog() { Filter = "Excel Workbook[97-2003] | *.xls|Excel Workbook|*.xlsx", ValidateNames = true })
+            {
+                if (Opf.ShowDialog() == DialogResult.OK)
+                {
+                    var data = await ReadAsync(Opf.FileName);
+                    data.ForEach(x => 
+                    {
+                        dataTable.Rows.Add(x.Item1,x.Item2,x.Item3,x.Item4,x.Item5);
+                        /*dataTable.Rows.Add(x.Item2);
+                        dataTable.Rows.Add(x.Item3);
+                        dataTable.Rows.Add(x.Item4);
+                        dataTable.Rows.Add(x.Item5);*/
+                    });
+
+                    dataTable.AcceptChanges();
+                    dgrvHang.DataSource = dataTable;
+                }
+                
+            }
+
+            this.Cursor = Cursors.Default;
         }
 
         #endregion

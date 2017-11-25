@@ -46,6 +46,14 @@ namespace QuanLyBanHang
             Application.Exit();
         }
 
+        private void OpenAnOtherFrom(string chucVu)
+        {
+            Program.RoleStaff = chucVu;
+            Program.OpenFrmHoaDonThanhToan = chucVu.Equals("NV");
+            Program.OpenFrmQuanLy = chucVu.Equals("GD");
+            Program.OpenFrmQuanLyThongTin = chucVu.Equals("TK");
+        }
+
         private void BtnDangNhap_Click(object sender, EventArgs e)
         {
             try
@@ -63,40 +71,44 @@ namespace QuanLyBanHang
                     {
                         txtPass.Focus();
                     }
-                    return;
-                }
-                bool kiemTra = DangNhapBUS.IsDangNhap(txtName.Text, txtPass.Text);
-                if (kiemTra)
-                {
-                    MessageBox.Show("Đăng Nhập thành công", "THÔNG BÁO", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    Program.IDStaff = DangNhapBUS.MaNV(txtName.Text);
-                    Program.NameStaff = DangNhapBUS.TenNV(int.Parse(Program.IDStaff));
-                    var chucVu = DangNhapBUS.ChucVu(txtName.Text);
-                    Program.RoleStaff = chucVu;
-                    Program.OpenFrmHoaDonThanhToan = chucVu.Equals("NV");
-                    Program.OpenFrmQuanLy = chucVu.Equals("GD");
-                    Program.OpenFrmQuanLyThongTin = chucVu.Equals("TK");
-                    /*if (chucVu.Equals("NV"))
-                    {
-                        Program.OpenFrmHoaDonThanhToan = true;
-                    }
-                    else if (chucVu.Equals("TK"))
-                    {
-                        Program.OpenFrmQuanLyThongTin = true;
-                    }
-                    else if (chucVu.Equals("GD"))
-                    {
-                        Program.OpenFrmQuanLy = true;
-                    }*/
-                    this.Close();
                 }
                 else
                 {
-                    MessageBox.Show("Đăng Nhập thất bại", "THÔNG BÁO", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    txtName.Text = "";
-                    txtPass.Text = "";
-                    this.ActiveControl = txtName;
+                    bool kiemTra = DangNhapBUS.IsDangNhap(txtName.Text, txtPass.Text);
+                    if (kiemTra)
+                    {
+                        MessageBox.Show("Đăng Nhập thành công", "THÔNG BÁO", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        Program.IDStaff = DangNhapBUS.MaNV(txtName.Text);
+                        Program.NameStaff = DangNhapBUS.TenNV(int.Parse(Program.IDStaff));
+                        var chucVu = DangNhapBUS.ChucVu(txtName.Text);
+                        OpenAnOtherFrom(chucVu);
+                        /*Program.RoleStaff = chucVu;
+                        Program.OpenFrmHoaDonThanhToan = chucVu.Equals("NV");
+                        Program.OpenFrmQuanLy = chucVu.Equals("GD");
+                        Program.OpenFrmQuanLyThongTin = chucVu.Equals("TK");*/
+                        /*if (chucVu.Equals("NV"))
+                        {
+                            Program.OpenFrmHoaDonThanhToan = true;
+                        }
+                        else if (chucVu.Equals("TK"))
+                        {
+                            Program.OpenFrmQuanLyThongTin = true;
+                        }
+                        else if (chucVu.Equals("GD"))
+                        {
+                            Program.OpenFrmQuanLy = true;
+                        }*/
+                        this.Close();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Đăng Nhập thất bại", "THÔNG BÁO", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        txtName.Text = "";
+                        txtPass.Text = "";
+                        this.ActiveControl = txtName;
+                    }
                 }
+
             }
             catch (Exception ex)
             {
