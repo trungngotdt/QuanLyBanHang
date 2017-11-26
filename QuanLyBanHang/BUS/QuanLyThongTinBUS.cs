@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using QuanLyBanHang.DTO;
 using System.Data;
 using QuanLyBanHang.DAO;
+using Microsoft.Office.Interop.Excel;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace QuanLyBanHang.BUS
 {
@@ -188,6 +190,86 @@ namespace QuanLyBanHang.BUS
             var data= dataProvider.ExecuteQuery("USP_GetKHBySDT @SDT",new object[] {sdt });
             KhachHangDTO khachHang = new KhachHangDTO(data.Rows.OfType<DataRow>().Single());
             return khachHang;
+            //throw new NotImplementedException();
+        }
+
+
+        public Workbooks GetWorkBooks(_Application application)
+        {
+            Workbooks workbooks = application.Workbooks;
+            return workbooks;
+        }
+
+        public Worksheet GetWorkSheet(Workbooks workbooks, string address)
+        {
+            var resultworkbooks = workbooks.Open(address).Worksheets[1];
+            return resultworkbooks;
+        }
+
+        public Range GetRange(Worksheet worksheet)
+        {
+            var range = worksheet.UsedRange;
+            return range;
+        }
+
+        public Range GetRangeValueWithIndex(Range range, int i, int j)
+        {
+            Range result = range[i, j];
+            return result;
+        }
+
+        public string GetValueOfRange(Range range)
+        {
+            object value = range.Value2 == null ? "null" : range.Value2; ;
+            return value.ToString();
+        }
+
+        public Task<List<Tuple<string, string, string, string, string>>> ReadAsync(_Application application, string address)
+        {
+            return Task.Factory.StartNew(() => ReadWithInteropExcel(application, address));
+            //throw new NotImplementedException();
+        }
+
+        public List<Tuple<string, string, string, string, string>> ReadWithInteropExcel(_Application application,string address)
+        {
+            object row;
+            object row2;
+            object row3;
+            object row4;
+            object row5;
+
+            List < Tuple < string, string, string, string, string>> list = new List<Tuple<string, string, string, string, string>>();
+            var workBooks = GetWorkBooks(application);
+            var workSheet = GetWorkSheet(workBooks, address);
+            var range = GetRange(workSheet);
+            int countRow = range.Rows.Count;
+            int countColumn = range.Columns.Count;
+            for (int i = 2; i <= countRow; i++)
+            {
+                for (int j = 1; j <= countColumn; j++)
+                {
+                    var value1 = GetRangeValueWithIndex(range, i, j);
+                    row = GetValueOfRange(value1); //worksheet.Cells[i, j].Value2==null?"a":"b";
+                    j++;
+                    var value2 = GetRangeValueWithIndex(range, i, j);
+                    row2 = GetValueOfRange(value2);// worksheet.Cells[i, j].Value2;
+
+                    j++;
+                    var value3 = GetRangeValueWithIndex(range, i, j);
+                    row3 = GetValueOfRange(value3) ;
+                    j++;
+                    var value4 = GetRangeValueWithIndex(range, i, j);
+                    row4 = GetValueOfRange(value4);
+                    j++;
+                    var value5 = GetRangeValueWithIndex(range, i, j);
+                    row5 = GetValueOfRange(value2);
+
+                    list.Add(new Tuple<string, string, string, string, string>(row.ToString(), row2.ToString(), row3.ToString(), row4.ToString(), row5.ToString()));
+
+                }
+            }
+            workBooks.Close();
+            return list;
             //throw new NotImplementedException();
         }
     }

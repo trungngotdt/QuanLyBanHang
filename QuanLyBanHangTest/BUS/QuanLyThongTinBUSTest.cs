@@ -11,6 +11,8 @@ using QuanLyBanHang.DAO;
 using System.Data;
 using FizzWare.NBuilder;
 using QuanLyBanHang.DTO;
+using Microsoft.Office.Interop.Excel;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace QuanLyBanHangTest.BUS
 {
@@ -27,9 +29,9 @@ namespace QuanLyBanHangTest.BUS
         }
 
 
-        private DataTable GenerateDataTable<T>(int rows)
+        private System.Data.DataTable GenerateDataTable<T>(int rows)
         {
-            var datatable = new DataTable(typeof(T).Name);
+            var datatable = new System.Data.DataTable(typeof(T).Name);
             typeof(T).GetProperties().ToList().ForEach(
                 x => datatable.Columns.Add(x.Name.Remove(0, 3)));
             Builder<T>.CreateListOfSize(rows).Build()
@@ -208,6 +210,47 @@ namespace QuanLyBanHangTest.BUS
             }
             Assert.IsTrue(isTrue);
             mockIDataProvider.VerifyAll();
+        }
+
+        [TestCase("a",5,5)]
+        [TestCase("b", 0, 0)]
+        public void AllMethodForReadExcelTest(string a,int i,int j)
+        {
+            Mock<Application> mock_applcation = new Mock<Application>();
+            Mock<Excel.Worksheet> mockSheet = new Mock<Excel.Worksheet>();
+            Mock<Workbooks> mockWorkbooks = new Mock<Workbooks>();
+            Mock<Workbook> mockWorkbook = new Mock<Workbook>();
+            var mockRange = new Mock<Excel.Range>();
+
+            mockWorkbooks.Setup(x => x.Close());
+            mockRange.Setup(x => x[It.IsNotNull<int>(), It.IsNotNull<int>()]).Returns(mockRange.Object);
+            mockRange.Setup(x => x.Count).Returns(4);
+            mockRange.Setup(x => x.Columns).Returns(mockRange.Object);
+            mockRange.Setup(x => x.Rows).Returns(mockRange.Object);
+            mockRange.Setup(x => x.Value2).Returns("");
+            mockSheet.Setup(x => x.UsedRange).Returns(mockRange.Object);
+            mock_applcation.Setup(x => x.Workbooks).Returns(mockWorkbooks.Object);            
+            mockWorkbooks.Setup(x => x.Open(It.IsNotNull<string>(), null, null, null, null, null, null, null, null, null, null, null, null, null, null).Worksheets[1]).Returns(mockSheet.Object);
+
+
+            var resultWorkbooks = quanLyThongTinBUS.GetWorkBooks(mock_applcation.Object);
+            var resultWorksheet = quanLyThongTinBUS.GetWorkSheet(mockWorkbooks.Object, "a");
+            var reslut = quanLyThongTinBUS.ReadWithInteropExcel(mock_applcation.Object,"a");
+            var resultRange = quanLyThongTinBUS.GetRange(mockSheet.Object);
+            var RangeValue = quanLyThongTinBUS.GetRangeValueWithIndex(mockRange.Object, 4, 4);
+            var resultRanges = quanLyThongTinBUS.GetValueOfRange(mockRange.Object);
+
+            Assert.NotNull(quanLyThongTinBUS.ReadAsync(mock_applcation.Object,"a"));
+            Assert.NotNull(resultRange);
+            Assert.NotNull(resultWorkbooks);
+            Assert.NotNull(resultWorksheet);
+            Assert.NotNull(RangeValue);
+            Assert.NotNull(resultRanges);
+
+            mockRange.VerifyAll();
+            mockSheet.VerifyAll();
+            mockWorkbook.VerifyAll();
+            mock_applcation.VerifyAll();
         }
 
         [TestCase(123)]

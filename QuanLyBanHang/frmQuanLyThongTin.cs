@@ -648,51 +648,6 @@ namespace QuanLyBanHang
 
 
         #region Method
-
-        public Task<List<Tuple<string, string, string, string, string>>> ReadAsync(string address)
-        {
-            return Task.Factory.StartNew(() => ReadWithInteropExcel(address));
-        }
-
-
-
-        private List<Tuple<string, string,string,string,string>> ReadWithInteropExcel(string address)
-        {
-            object row;
-            object row2;
-            object row3;
-            object row4;
-            object row5;
-
-            List<Tuple<string, string, string, string, string>> list = new List<Tuple<string, string, string, string, string>>();
-            _Application application = new Microsoft.Office.Interop.Excel.Application();
-            Workbook workbook = application.Workbooks.Open(address);
-            Worksheet worksheet = workbook.Worksheets[1];
-            Excel.Range range = worksheet.UsedRange;
-            int countRow = range.Rows.Count;
-            int countColumn = range.Columns.Count;
-            for (int i = 2; i <= countRow; i++)
-            {
-                for (int j = 1; j <= countColumn; j++)
-                {
-
-                    row = worksheet.Cells[i, j].Value2 == null ? "null" : worksheet.Cells[i, j].Value2.ToString();
-                    j++;
-                    row2 = worksheet.Cells[i, j].Value2 == null ? "null" : worksheet.Cells[i, j].Value2.ToString();
-                    j++;
-                    row3 = worksheet.Cells[i, j].Value2 == null ? "null" : worksheet.Cells[i, j].Value2.ToString();
-                    j++;
-                    row4 = worksheet.Cells[i, j].Value2 == null ? "null" : worksheet.Cells[i, j].Value2.ToString();
-                    j++;
-                    row5 = worksheet.Cells[i, j].Value2 == null ? "null" : worksheet.Cells[i, j].Value2.ToString();
-
-                    list.Add(new Tuple<string, string, string, string,string>(row.ToString() , row2.ToString(), row3.ToString(), row4.ToString(), row5.ToString()));
-
-                }
-            }
-            workbook.Close();
-            return list;
-        }
         #endregion
         private void btnNhapHang_Click(object sender, EventArgs e)
         {
@@ -709,13 +664,13 @@ namespace QuanLyBanHang
             dataTable.Columns.Add("Số Lượng");
             dataTable.Columns.Add("Ghi Chú");
 
-            dgrvHang.Rows.Clear();
+            //dgrvHang.Rows.Clear();
             Cursor.Current = Cursors.WaitCursor;
             using (var Opf = new OpenFileDialog() { Filter = "Excel Workbook[97-2003] | *.xls|Excel Workbook|*.xlsx", ValidateNames = true })
             {
                 if (Opf.ShowDialog() == DialogResult.OK)
                 {
-                    var data = await ReadAsync(Opf.FileName);
+                    var data = await QuanLyThongTin.ReadAsync(new Excel.Application(),Opf.FileName);
                     data.ForEach(x => 
                     {
                         dataTable.Rows.Add(x.Item1,x.Item2,x.Item3,x.Item4,x.Item5);
