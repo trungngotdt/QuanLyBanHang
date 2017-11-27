@@ -19,7 +19,7 @@ namespace QuanLyBanHang
             InitializeComponent();
         }
 
-        private ThemKhachHangBUS ThemKhachHang { get => ServiceLocator.Current.GetInstance<ThemKhachHangBUS>(); }
+        private ThemKhachHangBUS themKhachHang { get => ServiceLocator.Current.GetInstance<ThemKhachHangBUS>(); }
 
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace QuanLyBanHang
                 else
                 {
                     var gioiTinh = cboNam.Checked == true ? 1 : 0;
-                    var isThemKH = ThemKhachHang.InsertKhachHang(new object[] { txtTenKhachHang.Text, int.Parse(txtSDT.Text), gioiTinh, txtDiaChi.Text, txtLoaiKH.Text });
+                    var isThemKH = themKhachHang.InsertKhachHang(new object[] { txtTenKhachHang.Text, int.Parse(txtSDT.Text), gioiTinh, txtDiaChi.Text, txtLoaiKH.Text });
                     /*if (isThemKH)
                     {
                         MessageBox.Show("Thành công", "Thông Báo", MessageBoxButtons.OK, MessageBoxIcon.Information);

@@ -17,7 +17,7 @@ namespace QuanLyBanHang
     {
         private int index;
 
-        public IChiTietDonHangBUS ChiTietDonHang { get => ServiceLocator.Current.GetInstance<ChiTietDonHangBUS>(); }
+        public IChiTietDonHangBUS chiTietDonHang { get => ServiceLocator.Current.GetInstance<ChiTietDonHangBUS>(); }
         public frmChiTietDonHang(int index)
         {
             InitializeComponent();
@@ -42,7 +42,7 @@ namespace QuanLyBanHang
         {
             try
             {
-                dgrvChiTietDonHang.DataSource = ChiTietDonHang.GetDataChiTietDonHang(index);
+                dgrvChiTietDonHang.DataSource = chiTietDonHang.GetDataChiTietDonHang(index);
             }
             catch (Exception ex)
             {

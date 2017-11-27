@@ -16,7 +16,7 @@ namespace QuanLyBanHang
 {
     public partial class frmHoaDonThanhToan : Form
     {
-        public HoaDonThanhToanBUS HoaDonThanhToan { get => ServiceLocator.Current.GetInstance<HoaDonThanhToanBUS>(); }
+        public HoaDonThanhToanBUS hoaDonThanhToan { get => ServiceLocator.Current.GetInstance<HoaDonThanhToanBUS>(); }
         public string TenNhanVien { get; set; }
         public frmHoaDonThanhToan()
         {
@@ -31,8 +31,8 @@ namespace QuanLyBanHang
 
                 txtSDTKhachHang.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
                 txtSDTKhachHang.AutoCompleteSource = AutoCompleteSource.CustomSource;
-                HoaDonThanhToan.AutoComplete(txtSDTKhachHang);
-                cboTenHang.DataSource = HoaDonThanhToan.DataSourceForCombobox();
+                hoaDonThanhToan.AutoComplete(txtSDTKhachHang);
+                cboTenHang.DataSource = hoaDonThanhToan.DataSourceForCombobox();
                 lvwChiTietHoaDon.Columns.Add(new ColumnHeader() { Text = "Tên Hàng" });
                 lvwChiTietHoaDon.Columns.Add(new ColumnHeader() { Text = "Đơn Giá" });
                 lvwChiTietHoaDon.Columns.Add(new ColumnHeader() { Text = "Số Lượng" });
@@ -63,9 +63,9 @@ namespace QuanLyBanHang
             try
             {
                 this.Cursor = Cursors.WaitCursor;
-                var maKH = HoaDonThanhToan.GetMaKH(txtSDTKhachHang.Text);
+                var maKH = hoaDonThanhToan.GetMaKH(txtSDTKhachHang.Text);
                 var date = DateTime.Now.Year.ToString() + DateTime.Now.Month.ToString() + DateTime.Now.Day.ToString() + " " + DateTime.Now.ToLongTimeString();
-                HoaDonThanhToan.InsertHoaDon(new object[] { maKH, "Bán Hàng", Program.IDStaff, date, txtNameStaff.Text });
+                hoaDonThanhToan.InsertHoaDon(new object[] { maKH, "Bán Hàng", Program.IDStaff, date, txtNameStaff.Text });
                 var kiemtra = lvwChiTietHoaDon.Items.Count == 0;
                 if (kiemtra)
                 {
@@ -73,15 +73,15 @@ namespace QuanLyBanHang
                 }
                 else
                 {
-                    var maHD = HoaDonThanhToan.GetMaHoaDon(int.Parse(maKH.ToString()), "Bán Hàng", int.Parse(Program.IDStaff.ToString()), date, txtNameStaff.Text);
+                    var maHD = hoaDonThanhToan.GetMaHoaDon(int.Parse(maKH.ToString()), "Bán Hàng", int.Parse(Program.IDStaff.ToString()), date, txtNameStaff.Text);
                     foreach (ListViewItem item in lvwChiTietHoaDon.Items)
                     {
-                        var maHang = HoaDonThanhToan.GetMaHang(item.SubItems[0].Text);
-                        var soLuongHang = int.Parse(HoaDonThanhToan.GetSoLuong(new object[] { maHang }).ToString());
+                        var maHang = hoaDonThanhToan.GetMaHang(item.SubItems[0].Text);
+                        var soLuongHang = int.Parse(hoaDonThanhToan.GetSoLuong(new object[] { maHang }).ToString());
                         var donGia = float.Parse(item.SubItems[1].Text);
                         var soLuong = int.Parse(item.SubItems[2].Text);
-                        HoaDonThanhToan.InsertChiTietHoaDon(new object[] { maHD, maHang, donGia, soLuong });
-                        HoaDonThanhToan.UpdateHangHoa(new object[] { maHang, soLuongHang - soLuong });
+                        hoaDonThanhToan.InsertChiTietHoaDon(new object[] { maHD, maHang, donGia, soLuong });
+                        hoaDonThanhToan.UpdateHangHoa(new object[] { maHang, soLuongHang - soLuong });
                         //var element = item.SubItems.OfType<ListViewItem.ListViewSubItem>().Select(p => p.Text);
                     }
                     MessageBox.Show("Hoàn Thành Đơn Hàng", "Tình Trạng", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -109,7 +109,7 @@ namespace QuanLyBanHang
                 else
                 {
                     ListViewItem listViewItem = new ListViewItem() { Text = tenHang };
-                    var donGia = HoaDonThanhToan.LayDonGia(tenHang);
+                    var donGia = hoaDonThanhToan.LayDonGia(tenHang);
                     listViewItem.SubItems.Add(donGia.ToString());
                     listViewItem.SubItems.Add(nudSoLuong.Value.ToString());
                     lvwChiTietHoaDon.Items.Add(listViewItem);
@@ -148,7 +148,7 @@ namespace QuanLyBanHang
                     //txtSDTKhachHang.Focus();
                     return;
                 }
-                var tenKH = HoaDonThanhToan.GetTenKH(txtSDTKhachHang.Text);
+                var tenKH = hoaDonThanhToan.GetTenKH(txtSDTKhachHang.Text);
                 txtTenKhachHang.Text = tenKH?.ToString();
                 if (tenKH != null)
                 {

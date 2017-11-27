@@ -13,7 +13,7 @@ namespace QuanLyBanHang
 {
     public partial class frmQuanLy : Form
     {
-        private QuanLyBUS QuanLy { get => Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<QuanLyBUS>(); }
+        private QuanLyBUS quanLy { get => Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<QuanLyBUS>(); }
 
         public frmQuanLy()
         {
@@ -139,7 +139,7 @@ namespace QuanLyBanHang
             this.Cursor = Cursors.WaitCursor;
             try
             {
-                dgrvDonHang.DataSource = QuanLy.GetDataDonHang();
+                dgrvDonHang.DataSource = quanLy.GetDataDonHang();
             }
             catch (Exception ex)
             {
@@ -154,7 +154,7 @@ namespace QuanLyBanHang
             this.Cursor = Cursors.WaitCursor;
             try
             {
-                dgrvKhachHang.DataSource = QuanLy.GetDataKH();
+                dgrvKhachHang.DataSource = quanLy.GetDataKH();
             }
             catch (Exception ex)
             {
@@ -242,7 +242,7 @@ namespace QuanLyBanHang
             this.Cursor = Cursors.WaitCursor;
             try
             {
-                dgrvHang.DataSource = QuanLy.GetDataHang();
+                dgrvHang.DataSource = quanLy.GetDataHang();
             }
             catch (Exception ex)
             {
@@ -260,7 +260,7 @@ namespace QuanLyBanHang
             this.Cursor = Cursors.WaitCursor;
             try
             {
-                dgrvNhanVien.DataSource = QuanLy.GetDataNV();
+                dgrvNhanVien.DataSource = quanLy.GetDataNV();
             }
             catch (Exception ex)
             {
@@ -356,7 +356,7 @@ namespace QuanLyBanHang
             }
             try
             {
-                var isUpdate = QuanLy.UpdateNV(new object[] { txtMaNV.Text, txtTenNV.Text, txtChucVuNV.Text, txtDiaChiNV.Text, txtSDTNV.Text, txtEmailNV.Text });
+                var isUpdate = quanLy.UpdateNV(new object[] { txtMaNV.Text, txtTenNV.Text, txtChucVuNV.Text, txtDiaChiNV.Text, txtSDTNV.Text, txtEmailNV.Text });
                 if (isUpdate)
                 {
                     MessageBox.Show("Thành công", "", MessageBoxButtons.OK);
@@ -386,7 +386,7 @@ namespace QuanLyBanHang
             }
             try
             {
-                var isInsert = QuanLy.InsertNV(new object[] { txtTenNV.Text, txtChucVuNV.Text, txtDiaChiNV.Text, txtSDTNV.Text, txtEmailNV.Text });
+                var isInsert = quanLy.InsertNV(new object[] { txtTenNV.Text, txtChucVuNV.Text, txtDiaChiNV.Text, txtSDTNV.Text, txtEmailNV.Text });
                 if (isInsert)
                 {
                     MessageBox.Show("Thêm thành công", "", MessageBoxButtons.OK);
@@ -455,7 +455,7 @@ namespace QuanLyBanHang
             }
             try
             {
-                var check = QuanLy.InsertKH(new object[] { txtTenKhach.Text, txtSDTKhach.Text, txtGoiTinh.Text, txtDiaChiKhach.Text, txtLoaiKhach.Text });
+                var check = quanLy.InsertKH(new object[] { txtTenKhach.Text, txtSDTKhach.Text, txtGoiTinh.Text, txtDiaChiKhach.Text, txtLoaiKhach.Text });
                 if (check)
                 {
                     MessageBox.Show("Thành công trong việc thêm khách hàng");
@@ -504,7 +504,7 @@ namespace QuanLyBanHang
             }
             try
             {
-                var check = QuanLy.UpdateKH(new object[] { txtMaKhach.Text, txtTenKhach.Text, txtSDTKhach.Text, txtGoiTinh.Text, txtDiaChiKhach.Text, txtLoaiKhach.Text });
+                var check = quanLy.UpdateKH(new object[] { txtMaKhach.Text, txtTenKhach.Text, txtSDTKhach.Text, txtGoiTinh.Text, txtDiaChiKhach.Text, txtLoaiKhach.Text });
                 if (check)
                 {
                     MessageBox.Show("Cập nhật thành công");
@@ -649,7 +649,7 @@ namespace QuanLyBanHang
             }
             try
             {
-                var check = QuanLy.UpdateHang(new object[] { txtMaHang.Text, txtTenHang.Text, txtDonGia.Text, txtSoLuong.Text, txtGhiChu.Text ?? "null" });
+                var check = quanLy.UpdateHang(new object[] { txtMaHang.Text, txtTenHang.Text, txtDonGia.Text, txtSoLuong.Text, txtGhiChu.Text ?? "null" });
                 if (check)
                 {
                     MessageBox.Show("Cập nhật thành công");
@@ -674,7 +674,7 @@ namespace QuanLyBanHang
             }
             try
             {
-                var check = QuanLy.InsertHang(new object[] { txtMaHang.Text, txtTenHang.Text, txtDonGia.Text, txtSoLuong.Text, txtGhiChu.Text ?? "null" });
+                var check = quanLy.InsertHang(new object[] { txtMaHang.Text, txtTenHang.Text, txtDonGia.Text, txtSoLuong.Text, txtGhiChu.Text ?? "null" });
                 if (check)
                 {
                     MessageBox.Show("Cập nhật thành công");

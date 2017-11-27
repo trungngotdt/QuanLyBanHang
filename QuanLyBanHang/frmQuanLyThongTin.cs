@@ -16,7 +16,7 @@ namespace QuanLyBanHang
 {
     public partial class frmQuanLyThongTin : Form
     {
-        private QuanLyThongTinBUS QuanLyThongTin { get => Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<QuanLyThongTinBUS>(); }
+        private QuanLyThongTinBUS quanLyThongTin { get => Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<QuanLyThongTinBUS>(); }
 
         public frmQuanLyThongTin()
         {
@@ -60,7 +60,7 @@ namespace QuanLyBanHang
 
                 this.ActiveControl = txtSDTKhachHang;
                 ConfigForListView();
-                cboTenHang.DataSource = QuanLyThongTin.DataSourceForCombobox();
+                cboTenHang.DataSource = quanLyThongTin.DataSourceForCombobox();
                 StatusControlLapPhieu(false);
 
                 /*txtID.Text = Program.IDStaff;
@@ -129,7 +129,7 @@ namespace QuanLyBanHang
             {
 
                 lvwThongKeHH.Items.Clear();
-                var data = QuanLyThongTin.ShowAllHang();
+                var data = quanLyThongTin.ShowAllHang();
                 AddDataToListView(data, lvwThongKeHH);
             }
             catch (Exception ex)
@@ -177,7 +177,7 @@ namespace QuanLyBanHang
                 var SoLuong = chkSoLuong.CheckState == CheckState.Checked ? "SoLuong" : "";
                 var DonGia = chkDonGia.CheckState == CheckState.Checked ? "DonGia" : "";
                 var asc = rdbBeDenLon.Checked;
-                var data = QuanLyThongTin.SortBy(new object[] { MaHang, TenHang, SoLuong, DonGia }, asc);
+                var data = quanLyThongTin.SortBy(new object[] { MaHang, TenHang, SoLuong, DonGia }, asc);
                 AddDataToListView(data, lvwThongKeHH);
             }
             catch (Exception ex)
@@ -199,7 +199,7 @@ namespace QuanLyBanHang
                     return;
                 }
                 var typeSearch = rdbChinhXac.Checked == true ? true : false;
-                var data = QuanLyThongTin.SearchBy(txtTen.Text, typeSearch);
+                var data = quanLyThongTin.SearchBy(txtTen.Text, typeSearch);
                 AddDataToListView(data, lvwThongKeHH);
             }
             catch (Exception ex)
@@ -341,7 +341,7 @@ namespace QuanLyBanHang
                     StatusControlLapPhieu(false);
                     return;
                 }
-                var tenKH = QuanLyThongTin.GetTenKH(txtSDTKhachHang.Text);
+                var tenKH = quanLyThongTin.GetTenKH(txtSDTKhachHang.Text);
                 txtTenKhachHang.Text = tenKH?.ToString();
                 if (tenKH != null)
                 {
@@ -444,7 +444,7 @@ namespace QuanLyBanHang
                     return;
                 }
                 var tenHang = cboTenHang.Text;
-                var maHang = rdbHangMoi.Checked == true ? "-1" : QuanLyThongTin.GetMaHang(tenHang).ToString();
+                var maHang = rdbHangMoi.Checked == true ? "-1" : quanLyThongTin.GetMaHang(tenHang).ToString();
                 //Kiểm tra xem mặt hàng đó có trong listview chưa nếu có thì tăng mặt hàng đó lên theo số lượng thêm vào
                 bool checkTenHangInListView = lvwChiTietHoaDon.FindItemWithText(tenHang) != null ? true : false;//trả ra true khi tìm thấy có tên hàng trong listview và ngược lại
                 if (checkTenHangInListView)
@@ -456,7 +456,7 @@ namespace QuanLyBanHang
                 //Nếu không thì thêm mặt hàng đó vào listview
                 else
                 {
-                    var donGia = rdbHangTrongKho.Checked == true ? QuanLyThongTin.LayDonGia(tenHang) : txtDonGia.Text;
+                    var donGia = rdbHangTrongKho.Checked == true ? quanLyThongTin.LayDonGia(tenHang) : txtDonGia.Text;
                     DTO.HangDTO hang = new DTO.HangDTO(maHang, tenHang, float.Parse(donGia.ToString()), int.Parse(nudSoLuong.Value.ToString()));
                     List<DTO.HangDTO> list = new List<DTO.HangDTO>
                 {
@@ -484,6 +484,7 @@ namespace QuanLyBanHang
         private void TxtSDTKhachHang_KeyPress(object sender, KeyPressEventArgs e)
         {
             KhongChoNhapChu(e);
+            this.AcceptButton = btnKiemTraKH;
         }
 
         private void BtnInPhieu_Click(object sender, EventArgs e)
@@ -512,8 +513,8 @@ namespace QuanLyBanHang
                 /*DTO.HangDTO chiTietHoaDon = new DTO.HangDTO(maHang, tenHang, donGia, soLuong);*/
                 list.Add(chiTietHoaDon);
             }
-            var khachHang = QuanLyThongTin.GetKhachHangBySDT(int.Parse(txtSDTKhachHang.Text.ToString()));
-            //Chỉnh sửa cho đúng dữ liệu
+            var khachHang = quanLyThongTin.GetKhachHangBySDT(int.Parse(txtSDTKhachHang.Text.ToString()));
+            
             int maHD = int.Parse((((int)DateTime.Now.TimeOfDay.TotalSeconds).ToString() + ((int)DateTime.Now.DayOfYear).ToString()));
             DTO.HoaDonDTO hoaDon = new DTO.HoaDonDTO(maHD, 0, "", 0, DateTime.Now, "0");
             //
@@ -649,32 +650,81 @@ namespace QuanLyBanHang
 
 
         #region Method
+
+        public void EnableControl()
+        {
+            dgrvHang.Enabled = true;
+            btnNhapHang.Enabled = true;
+            btnXuatHang.Enabled = true;
+            btnChonFile.Enabled = true;
+        }
+
+        public void DisEnableControl()
+        {
+            dgrvHang.Enabled = false;
+            btnNhapHang.Enabled = false;
+            btnXuatHang.Enabled = false;
+            btnChonFile.Enabled = false;
+        }
         #endregion
         private void BtnNhapHang_Click(object sender, EventArgs e)
         {
             try
             {
-                if (dgrvHang.Rows.Count!=0)
+                if (dgrvHang.Rows.Count != 0)
                 {
-                    var maKH = QuanLyThongTin.GetMaKH(txtSDT.Text);
+                    var maKH = quanLyThongTin.GetMaKH(txtSDT.Text);
                     var date = DateTime.Now.Year.ToString() + DateTime.Now.Month.ToString() + DateTime.Now.Day.ToString() + " " + DateTime.Now.ToLongTimeString();
-                    QuanLyThongTin.InsertHoaDon(new object[] { maKH, "Nhập", Program.IDStaff, date, txtNameStaff.Text });
+                    quanLyThongTin.InsertHoaDon(new object[] { maKH, "Nhập", Program.IDStaff, date, txtNameStaff.Text });
                     //var data = new object[] { maKH, "Xuất", Program.IDStaff, date, txtNameStaff.Text };
-                    var maHD = QuanLyThongTin.GetMaHoaDon(int.Parse(maKH.ToString()), "Nhập", int.Parse(Program.IDStaff.ToString()), date, txtNameStaff.Text);
-                    var mess= QuanLyThongTin.NhapXuatHang(dgrvHang, true,maHD);
-                    if (mess.Trim().Length!=0)
+                    var maHD = quanLyThongTin.GetMaHoaDon(int.Parse(maKH.ToString()), "Nhập", int.Parse(Program.IDStaff.ToString()), date, txtNameStaff.Text);
+                    var mess = quanLyThongTin.NhapXuatHang(dgrvHang, true, maHD);
+                    if (mess.Trim().Length != 0)
                     {
-                        MessageBox.Show("Mã hàng " + mess+"không thể nhập .Vui lòng xem xét lại","THÔNG BÁO",MessageBoxButtons.OK,MessageBoxIcon.Information);
+                        MessageBox.Show("Mã hàng " + mess + "không thể nhập .Vui lòng xem xét lại", "THÔNG BÁO", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                     else
                     {
-                        MessageBox.Show("Thành công","THÔNG BÁO",MessageBoxButtons.OK,MessageBoxIcon.Information);
+                        MessageBox.Show("Thành công", "THÔNG BÁO", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                 }
                 else
                 {
                     MessageBox.Show("Không có dữ liệu", "THÔNG BÁO", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }                
+                }
+            }
+            catch (Exception ex)
+            {
+                WarningMessageBox(ex);
+            }
+        }
+        
+        private void BtnXuatHang_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (dgrvHang.Rows.Count != 0)
+                {
+                    var maKH = quanLyThongTin.GetMaKH(txtSDT.Text);
+                    var date = DateTime.Now.Year.ToString() + DateTime.Now.Month.ToString() + DateTime.Now.Day.ToString() + " " + DateTime.Now.ToLongTimeString();
+                    quanLyThongTin.InsertHoaDon(new object[] { maKH, "Xuất", Program.IDStaff, date, txtNameStaff.Text });
+                    //var data = new object[] { maKH, "Xuất", Program.IDStaff, date, txtNameStaff.Text };
+                    var maHD = quanLyThongTin.GetMaHoaDon(int.Parse(maKH.ToString()), "Xuất", int.Parse(Program.IDStaff.ToString()), date, txtNameStaff.Text);
+                    var mess = quanLyThongTin.NhapXuatHang(dgrvHang, false, maHD);
+                    if (mess.Trim().Length != 0)
+                    {
+                        MessageBox.Show("Mã hàng " + mess + "không thể xuất .Vui lòng xem xét lại", "THÔNG BÁO", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Thành công", "THÔNG BÁO", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Không có dữ liệu", "THÔNG BÁO", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+
             }
             catch (Exception ex)
             {
@@ -702,8 +752,8 @@ namespace QuanLyBanHang
                 {
                     if (Opf.ShowDialog() == DialogResult.OK)
                     {
-                        var data = await QuanLyThongTin.ReadAsync(new Excel.Application(), Opf.FileName);
-                        var count= data.Count;
+                        var data = await quanLyThongTin.ReadAsync(new Excel.Application(), Opf.FileName);
+                        var count = data.Count;
                         data.ForEach(x =>
                         {
                             dataTable.Rows.Add(x.Item1, x.Item2, x.Item3, x.Item4, x.Item5);
@@ -728,61 +778,11 @@ namespace QuanLyBanHang
                     MessageBox.Show("Có ba cách sửa :\n" +
                         "1: Theo chỉ dẫn sau Excel > File > Options > Add-ins > Manage, sau đó chọn COM add - ins > Go trong ô hiện ra bỏ chọn FoxitReader PDF Creator COM Add-in\n" +
                         "2:Thử lại\n" +
-                        "3:Liên hệ quản trị viên","HƯỚNG DẪN",MessageBoxButtons.OK,MessageBoxIcon.Information);
+                        "3:Liên hệ quản trị viên", "HƯỚNG DẪN", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 this.Cursor = Cursors.Default;
             }
             this.Cursor = Cursors.Default;
-        }               
-
-        private void BtnXuatHang_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                if (dgrvHang.Rows.Count != 0)
-                {
-                    var maKH = QuanLyThongTin.GetMaKH(txtSDT.Text);
-                    var date = DateTime.Now.Year.ToString() + DateTime.Now.Month.ToString() + DateTime.Now.Day.ToString() + " " + DateTime.Now.ToLongTimeString();
-                    QuanLyThongTin.InsertHoaDon(new object[] { maKH, "Xuất", Program.IDStaff, date, txtNameStaff.Text });
-                    //var data = new object[] { maKH, "Xuất", Program.IDStaff, date, txtNameStaff.Text };
-                    var maHD = QuanLyThongTin.GetMaHoaDon(int.Parse(maKH.ToString()), "Xuất", int.Parse(Program.IDStaff.ToString()), date, txtNameStaff.Text);
-                    var mess = QuanLyThongTin.NhapXuatHang(dgrvHang, false,maHD);
-                    if (mess.Trim().Length != 0)
-                    {
-                        MessageBox.Show("Mã hàng " + mess + "không thể xuất .Vui lòng xem xét lại", "THÔNG BÁO", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    }
-                    else
-                    {
-                        MessageBox.Show("Thành công", "THÔNG BÁO", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    }
-                }
-                else
-                {
-                    MessageBox.Show("Không có dữ liệu", "THÔNG BÁO", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
-
-            }
-            catch (Exception ex)
-            {
-                WarningMessageBox(ex);
-            }
-        }
-        #endregion
-
-        public void EnableControl()
-        {
-            dgrvHang.Enabled = true;
-            btnNhapHang.Enabled = true;
-            btnXuatHang.Enabled = true;
-            btnChonFile.Enabled = true;
-        }
-
-        public void DisEnableControl()
-        {
-            dgrvHang.Enabled = false;
-            btnNhapHang.Enabled = false;
-            btnXuatHang.Enabled = false;
-            btnChonFile.Enabled = false;
         }
 
         private void BtnKiemTra_Click(object sender, EventArgs e)
@@ -797,7 +797,7 @@ namespace QuanLyBanHang
                     //txtSDTKhachHang.Focus();
                     return;
                 }
-                var tenKH = QuanLyThongTin.GetTenKH(txtSDT.Text);
+                var tenKH = quanLyThongTin.GetTenKH(txtSDT.Text);
                 txtTenKH.Text = tenKH?.ToString();
                 if (tenKH != null)
                 {
@@ -819,5 +819,15 @@ namespace QuanLyBanHang
                 WarningMessageBox(ex);
             }
         }
+
+
+        private void txtSDT_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            KhongChoNhapChu(e);
+            this.AcceptButton = btnKiemTra;
+        }
+
+        #endregion
+
     }
 }

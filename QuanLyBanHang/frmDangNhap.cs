@@ -28,7 +28,7 @@ namespace QuanLyBanHang
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
         }
 
-        public DangNhapBUS DangNhapBUS { get => ServiceLocator.Current.GetInstance<DangNhapBUS>(); }
+        public DangNhapBUS dangNhapBUS { get => ServiceLocator.Current.GetInstance<DangNhapBUS>(); }
 
         /// <summary>
         ///Hiển thị thông báo khi có bất kì <see cref="Exception"/> nào bị phát hiện 
@@ -74,13 +74,13 @@ namespace QuanLyBanHang
                 }
                 else
                 {
-                    bool kiemTra = DangNhapBUS.IsDangNhap(txtName.Text, txtPass.Text);
+                    bool kiemTra = dangNhapBUS.IsDangNhap(txtName.Text, txtPass.Text);
                     if (kiemTra)
                     {
                         MessageBox.Show("Đăng Nhập thành công", "THÔNG BÁO", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        Program.IDStaff = DangNhapBUS.MaNV(txtName.Text);
-                        Program.NameStaff = DangNhapBUS.TenNV(int.Parse(Program.IDStaff));
-                        var chucVu = DangNhapBUS.ChucVu(txtName.Text);
+                        Program.IDStaff = dangNhapBUS.MaNV(txtName.Text);
+                        Program.NameStaff = dangNhapBUS.TenNV(int.Parse(Program.IDStaff));
+                        var chucVu = dangNhapBUS.ChucVu(txtName.Text);
                         OpenAnOtherFrom(chucVu);
                         /*Program.RoleStaff = chucVu;
                         Program.OpenFrmHoaDonThanhToan = chucVu.Equals("NV");
