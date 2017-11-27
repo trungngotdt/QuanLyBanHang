@@ -84,6 +84,11 @@
             this.txtID = new System.Windows.Forms.TextBox();
             this.txtName = new System.Windows.Forms.TextBox();
             this.txtRole = new System.Windows.Forms.TextBox();
+            this.txtSDT = new System.Windows.Forms.TextBox();
+            this.btnKiemTra = new System.Windows.Forms.Button();
+            this.label8 = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
+            this.txtTenKH = new System.Windows.Forms.TextBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.groupBox6.SuspendLayout();
@@ -623,6 +628,11 @@
             // 
             // tabPage3
             // 
+            this.tabPage3.Controls.Add(this.txtTenKH);
+            this.tabPage3.Controls.Add(this.label9);
+            this.tabPage3.Controls.Add(this.label8);
+            this.tabPage3.Controls.Add(this.btnKiemTra);
+            this.tabPage3.Controls.Add(this.txtSDT);
             this.tabPage3.Controls.Add(this.btnNhapHang);
             this.tabPage3.Controls.Add(this.btnChonFile);
             this.tabPage3.Controls.Add(this.btnXuatHang);
@@ -637,7 +647,7 @@
             // 
             // btnNhapHang
             // 
-            this.btnNhapHang.Location = new System.Drawing.Point(547, 380);
+            this.btnNhapHang.Location = new System.Drawing.Point(547, 400);
             this.btnNhapHang.Name = "btnNhapHang";
             this.btnNhapHang.Size = new System.Drawing.Size(75, 23);
             this.btnNhapHang.TabIndex = 3;
@@ -647,7 +657,7 @@
             // 
             // btnChonFile
             // 
-            this.btnChonFile.Location = new System.Drawing.Point(291, 380);
+            this.btnChonFile.Location = new System.Drawing.Point(289, 400);
             this.btnChonFile.Name = "btnChonFile";
             this.btnChonFile.Size = new System.Drawing.Size(75, 23);
             this.btnChonFile.TabIndex = 2;
@@ -657,7 +667,7 @@
             // 
             // btnXuatHang
             // 
-            this.btnXuatHang.Location = new System.Drawing.Point(41, 380);
+            this.btnXuatHang.Location = new System.Drawing.Point(40, 400);
             this.btnXuatHang.Name = "btnXuatHang";
             this.btnXuatHang.Size = new System.Drawing.Size(75, 23);
             this.btnXuatHang.TabIndex = 1;
@@ -668,9 +678,10 @@
             // dgrvHang
             // 
             this.dgrvHang.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgrvHang.Location = new System.Drawing.Point(6, 6);
+            this.dgrvHang.Location = new System.Drawing.Point(6, 60);
             this.dgrvHang.MultiSelect = false;
             this.dgrvHang.Name = "dgrvHang";
+            this.dgrvHang.ReadOnly = true;
             this.dgrvHang.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgrvHang.Size = new System.Drawing.Size(668, 334);
             this.dgrvHang.TabIndex = 0;
@@ -695,6 +706,49 @@
             this.txtRole.Name = "txtRole";
             this.txtRole.Size = new System.Drawing.Size(100, 20);
             this.txtRole.TabIndex = 3;
+            // 
+            // txtSDT
+            // 
+            this.txtSDT.Location = new System.Drawing.Point(373, 15);
+            this.txtSDT.Name = "txtSDT";
+            this.txtSDT.Size = new System.Drawing.Size(100, 20);
+            this.txtSDT.TabIndex = 4;
+            // 
+            // btnKiemTra
+            // 
+            this.btnKiemTra.Location = new System.Drawing.Point(522, 13);
+            this.btnKiemTra.Name = "btnKiemTra";
+            this.btnKiemTra.Size = new System.Drawing.Size(75, 23);
+            this.btnKiemTra.TabIndex = 5;
+            this.btnKiemTra.Text = "Kiểm Tra";
+            this.btnKiemTra.UseVisualStyleBackColor = true;
+            this.btnKiemTra.Click += new System.EventHandler(this.btnKiemTra_Click);
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(291, 22);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(29, 13);
+            this.label8.TabIndex = 6;
+            this.label8.Text = "SDT";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(6, 26);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(26, 13);
+            this.label9.TabIndex = 7;
+            this.label9.Text = "Ten";
+            // 
+            // txtTenKH
+            // 
+            this.txtTenKH.Location = new System.Drawing.Point(40, 19);
+            this.txtTenKH.Name = "txtTenKH";
+            this.txtTenKH.ReadOnly = true;
+            this.txtTenKH.Size = new System.Drawing.Size(100, 20);
+            this.txtTenKH.TabIndex = 8;
             // 
             // frmQuanLyThongTin
             // 
@@ -725,6 +779,7 @@
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.tabPage3.ResumeLayout(false);
+            this.tabPage3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgrvHang)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -789,5 +844,10 @@
         private System.Windows.Forms.Button btnChonFile;
         private System.Windows.Forms.Button btnXuatHang;
         private System.Windows.Forms.DataGridView dgrvHang;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Button btnKiemTra;
+        private System.Windows.Forms.TextBox txtSDT;
+        private System.Windows.Forms.TextBox txtTenKH;
+        private System.Windows.Forms.Label label9;
     }
 }

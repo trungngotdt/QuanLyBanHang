@@ -74,6 +74,7 @@ namespace QuanLyBanHang
                 txtName.ReadOnly = true;
                 txtNameStaff.Text = txtName.Text;*/
                 DefaultSetControl();
+                DisEnableControl();
                 this.AcceptButton = btnKiemTraKH;
             }
             catch (Exception ex)
@@ -655,7 +656,12 @@ namespace QuanLyBanHang
             {
                 if (dgrvHang.Rows.Count!=0)
                 {
-                    var mess= QuanLyThongTin.NhapXuatHang(dgrvHang, true);
+                    var maKH = QuanLyThongTin.GetMaKH(txtSDT.Text);
+                    var date = DateTime.Now.Year.ToString() + DateTime.Now.Month.ToString() + DateTime.Now.Day.ToString() + " " + DateTime.Now.ToLongTimeString();
+                    QuanLyThongTin.InsertHoaDon(new object[] { maKH, "Nhập", Program.IDStaff, date, txtNameStaff.Text });
+                    //var data = new object[] { maKH, "Xuất", Program.IDStaff, date, txtNameStaff.Text };
+                    var maHD = QuanLyThongTin.GetMaHoaDon(int.Parse(maKH.ToString()), "Nhập", int.Parse(Program.IDStaff.ToString()), date, txtNameStaff.Text);
+                    var mess= QuanLyThongTin.NhapXuatHang(dgrvHang, true,maHD);
                     if (mess.Trim().Length!=0)
                     {
                         MessageBox.Show("Mã hàng " + mess+"không thể nhập .Vui lòng xem xét lại","THÔNG BÁO",MessageBoxButtons.OK,MessageBoxIcon.Information);
@@ -697,6 +703,7 @@ namespace QuanLyBanHang
                     if (Opf.ShowDialog() == DialogResult.OK)
                     {
                         var data = await QuanLyThongTin.ReadAsync(new Excel.Application(), Opf.FileName);
+                        var count= data.Count;
                         data.ForEach(x =>
                         {
                             dataTable.Rows.Add(x.Item1, x.Item2, x.Item3, x.Item4, x.Item5);
@@ -734,7 +741,12 @@ namespace QuanLyBanHang
             {
                 if (dgrvHang.Rows.Count != 0)
                 {
-                    var mess = QuanLyThongTin.NhapXuatHang(dgrvHang, false);
+                    var maKH = QuanLyThongTin.GetMaKH(txtSDT.Text);
+                    var date = DateTime.Now.Year.ToString() + DateTime.Now.Month.ToString() + DateTime.Now.Day.ToString() + " " + DateTime.Now.ToLongTimeString();
+                    QuanLyThongTin.InsertHoaDon(new object[] { maKH, "Xuất", Program.IDStaff, date, txtNameStaff.Text });
+                    //var data = new object[] { maKH, "Xuất", Program.IDStaff, date, txtNameStaff.Text };
+                    var maHD = QuanLyThongTin.GetMaHoaDon(int.Parse(maKH.ToString()), "Xuất", int.Parse(Program.IDStaff.ToString()), date, txtNameStaff.Text);
+                    var mess = QuanLyThongTin.NhapXuatHang(dgrvHang, false,maHD);
                     if (mess.Trim().Length != 0)
                     {
                         MessageBox.Show("Mã hàng " + mess + "không thể xuất .Vui lòng xem xét lại", "THÔNG BÁO", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -756,5 +768,56 @@ namespace QuanLyBanHang
             }
         }
         #endregion
+
+        public void EnableControl()
+        {
+            dgrvHang.Enabled = true;
+            btnNhapHang.Enabled = true;
+            btnXuatHang.Enabled = true;
+            btnChonFile.Enabled = true;
+        }
+
+        public void DisEnableControl()
+        {
+            dgrvHang.Enabled = false;
+            btnNhapHang.Enabled = false;
+            btnXuatHang.Enabled = false;
+            btnChonFile.Enabled = false;
+        }
+
+        private void btnKiemTra_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var sdtKH = txtSDT.Text;
+                var kiemTra = String.IsNullOrEmpty(sdtKH) || String.IsNullOrWhiteSpace(sdtKH);
+                if (kiemTra)
+                {
+                    MessageBox.Show("Điền số điện thoại");
+                    //txtSDTKhachHang.Focus();
+                    return;
+                }
+                var tenKH = QuanLyThongTin.GetTenKH(txtSDT.Text);
+                txtTenKH.Text = tenKH?.ToString();
+                if (tenKH != null)
+                {
+                    EnableControl();
+                }
+                else
+                {
+                    DisEnableControl();
+                    var dialogResult = MessageBox.Show("Số điện thoại không tồn tại\n Chọn YES khi bạn  muốn tạo khách hàng mới và NO ngược lại", "Lỗi", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1);
+                    if (dialogResult == DialogResult.Yes)
+                    {
+                        frmThemKhachHang frmThemKhachHang = new frmThemKhachHang();
+                        frmThemKhachHang.ShowDialog();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                WarningMessageBox(ex);
+            }
+        }
     }
 }

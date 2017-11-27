@@ -42,6 +42,7 @@ namespace QuanLyBanHang
             unityContainer.RegisterType<IThemKhachHangBUS, ThemKhachHangBUS>();
             unityContainer.RegisterType<IQuanLyThongTinBUS, QuanLyThongTinBUS>();
             unityContainer.RegisterType<IQuanLyBUS, QuanLyBUS>();
+            unityContainer.RegisterType<IChiTietDonHangBUS, ChiTietDonHangBUS>();
 
             ServiceLocator.SetLocatorProvider(() => new UnityServiceLocator(unityContainer));
 

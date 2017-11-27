@@ -50,6 +50,23 @@ namespace QuanLyBanHangTest.BUS
         }
 
         [Test]
+        public void GetDataDHTest()
+        {
+            mockIDataProvider.Setup(x => x.ExecuteQuery(It.IsNotNull<string>(), null)).Returns(new System.Data.DataTable());
+            quanLyBUS.GetDataDonHang();
+            mockIDataProvider.VerifyAll();
+        }
+
+        [Test]
+        public void GetDataDHTestException()
+        {
+            mockIDataProvider.Setup(x => x.ExecuteQuery(It.IsNotNull<string>(), null)).Throws(new Exception());
+            var exception = Assert.Catch<Exception>(() => quanLyBUS.GetDataDonHang());
+            Assert.IsTrue(exception.GetType() == typeof(Exception));
+            mockIDataProvider.VerifyAll();
+        }
+
+        [Test]
         public void GetDataHangTest()
         {
             mockIDataProvider.Setup(x => x.ExecuteQuery(It.IsNotNull<string>(), null)).Returns(new System.Data.DataTable());

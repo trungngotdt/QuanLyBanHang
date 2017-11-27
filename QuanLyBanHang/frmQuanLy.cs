@@ -20,6 +20,23 @@ namespace QuanLyBanHang
             InitializeComponent();
         }
 
+        private void frmQuanLy_Load(object sender, EventArgs e)
+        {
+            FlagForNV(true);
+            GetDataNhanVien();
+            txtChucVuNV.Enabled = false;
+            txtID.Text = Program.IDStaff;
+            txtName.Text = Program.NameStaff;
+            txtRole.Text = Program.RoleStaff;
+            txtRole.Enabled = false;
+            txtRole.ReadOnly = true;
+            txtID.Enabled = false;
+            txtID.ReadOnly = true;
+            txtName.Enabled = false;
+            txtName.ReadOnly = true;
+            dgrvNhanVien.ClearSelection();
+        }
+        
         #region common
 
         /// <summary>
@@ -112,6 +129,21 @@ namespace QuanLyBanHang
             return isChucVu && isDiaChi && isDT && isEmail && isTen;
         }
 
+        void GetDataDonHang()
+        {
+
+            this.Cursor = Cursors.WaitCursor;
+            try
+            {
+                dgrvDonHang.DataSource = QuanLy.GetDataDonHang();
+            }
+            catch (Exception ex)
+            {
+                WarningMessageBox(ex);
+                //MessageBox.Show($"Không thể lấy dữ liệu .Tên lỗi {e.Message.ToString()}", "Không thể truy vấn", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            this.Cursor = Cursors.Default;
+        }
 
         void GetDataKhachHang()
         {
@@ -168,9 +200,9 @@ namespace QuanLyBanHang
         /// <returns></returns>
         bool CheckTextBoxHang()
         {
-            var isTen= txtTenHang.Text.Trim().Length >0;
-            var isSoLuong= txtSoLuong.Text.Trim().Length > 0;
-            var isDonGia= txtDonGia.Text.Trim().Length > 0;
+            var isTen = txtTenHang.Text.Trim().Length > 0;
+            var isSoLuong = txtSoLuong.Text.Trim().Length > 0;
+            var isDonGia = txtDonGia.Text.Trim().Length > 0;
             return isTen && isDonGia && isSoLuong;
         }
 
@@ -235,34 +267,58 @@ namespace QuanLyBanHang
         }
 
 
+        public void InputNumber(object sender, KeyPressEventArgs e)
+        {
+
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
+            {
+                e.Handled = true;
+            }
+        }
+
         #endregion
 
-
-        private void frmQuanLy_Load(object sender, EventArgs e)
+        private void TabCnQuanLy_Selected(object sender, TabControlEventArgs e)
         {
-            FlagForNV(true);
-            GetDataNhanVien();
-            txtChucVuNV.Enabled = false;
-            txtID.Text = Program.IDStaff;
-            txtName.Text = Program.NameStaff;
-            txtRole.Text = Program.RoleStaff;
-            txtRole.Enabled = false;
-            txtRole.ReadOnly = true;
-            txtID.Enabled = false;
-            txtID.ReadOnly = true;
-            txtName.Enabled = false;
-            txtName.ReadOnly = true;
-            dgrvNhanVien.ClearSelection();
+            if (e.TabPage.Name.ToString().Equals(tabPgKhach.Name))
+            {
+                FlagForKH(true);
+                GetDataKhachHang();
+                dgrvKhachHang.ClearSelection();
+            }
+            else if (e.TabPage.Name.Equals(tabPgNV.Name))
+            {
+                FlagForNV(true);
+                GetDataNhanVien();
+                dgrvNhanVien.ClearSelection();
+            }
+            else if (e.TabPage.Name.Equals(tabPgHang.Name))
+            {
+                FlagForHang(true);
+                GetDataHang();
+                dgrvHang.ClearSelection();
+            }
+            else if(e.TabPage.Name.Equals(tagPgDonHang.Name))
+            {
+                GetDataDonHang();
+                dgrvDonHang.ClearSelection();
+            }
         }
+
+        //===================================================================================
+
+        //===================================================================================
 
         #region Nhân Viên
 
         private void TxtSDTNV_KeyPress(object sender, KeyPressEventArgs e)
         {
+            InputNumber(sender, e);
+            /*
             if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
             {
                 e.Handled = true;
-            }
+            }*/
         }
 
         private void BtnSua_Click(object sender, EventArgs e)
@@ -373,6 +429,9 @@ namespace QuanLyBanHang
 
         #endregion
 
+        //===================================================================================
+
+        //===================================================================================
 
         #region Khách Hàng
 
@@ -466,10 +525,13 @@ namespace QuanLyBanHang
 
         private void TxtSDTKhach_KeyPress(object sender, KeyPressEventArgs e)
         {
+            InputNumber(sender, e);
+            /*
             if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
             {
                 e.Handled = true;
             }
+            */
         }
 
         private void TxtGoiTinh_KeyPress(object sender, KeyPressEventArgs e)
@@ -499,33 +561,15 @@ namespace QuanLyBanHang
             txtLoaiKhach.Text = dgrvKhachHang.Rows[index].Cells["LoaiKhachHang"].Value.ToString();
         }
 
-        private void TabCnQuanLy_Selected(object sender, TabControlEventArgs e)
-        {
-            if (e.TabPage.Name.ToString().Equals(tabPgKhach.Name))
-            {
-                FlagForKH(true);
-                GetDataKhachHang();
-                dgrvKhachHang.ClearSelection();
-            }
-            else if (e.TabPage.Name.Equals(tabPgNV.Name))
-            {
-                FlagForNV(true);
-                GetDataNhanVien();
-                dgrvNhanVien.ClearSelection();
-            }
-            else if (e.TabPage.Name.Equals(tabPgHang.Name))
-            {
-                FlagForHang(true);
-                GetDataHang();
-                dgrvHang.ClearSelection();
-            }
-        }
-
         private void BtnShowKH_Click(object sender, EventArgs e)
         {
             GetDataKhachHang();
         }
         #endregion
+
+        //===================================================================================
+
+        //===================================================================================
 
         #region Hàng
 
@@ -535,22 +579,27 @@ namespace QuanLyBanHang
         }
 
 
-        
+
 
         private void TxtDonGia_KeyPress(object sender, KeyPressEventArgs e)
         {
+            InputNumber(sender, e);
+            /*
             if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
             {
                 e.Handled = true;
-            }
+            }*/
         }
 
         private void TxtSoLuong_KeyPress(object sender, KeyPressEventArgs e)
         {
+            InputNumber(sender, e);
+            /*
             if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
             {
                 e.Handled = true;
             }
+            */
         }
 
         private void DgrvHang_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -596,7 +645,7 @@ namespace QuanLyBanHang
             }
             try
             {
-                var check = QuanLy.UpdateHang(new object[] { txtMaHang.Text,txtTenHang.Text,txtDonGia.Text,txtSoLuong.Text,txtGhiChu.Text??"null" });
+                var check = QuanLy.UpdateHang(new object[] { txtMaHang.Text, txtTenHang.Text, txtDonGia.Text, txtSoLuong.Text, txtGhiChu.Text ?? "null" });
                 if (check)
                 {
                     MessageBox.Show("Cập nhật thành công");
@@ -638,5 +687,27 @@ namespace QuanLyBanHang
             this.Cursor = Cursors.Default;
         }
         #endregion
+
+        private void btnHienThiDonHang_Click(object sender, EventArgs e)
+        {
+            GetDataDonHang();
+        }
+
+        private void btnHienThiChiTietDonHang_Click(object sender, EventArgs e)
+        {
+            if (dgrvDonHang.SelectedRows==null)
+            {
+                MessageBox.Show("Test");
+            }
+            else
+            {
+                var index = dgrvDonHang.SelectedRows.OfType<DataGridViewRow>().Select(p => p.Cells[0].Value.ToString()).Single();
+                //var maHD=dgrvDonHang.Rows[dgrvDonHang.sele]
+                using (var chiTietDonHang=new frmChiTietDonHang(int.Parse( index)))
+                {
+                    chiTietDonHang.ShowDialog();
+                }
+            }
+        }
     }
 }

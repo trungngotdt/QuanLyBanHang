@@ -93,6 +93,10 @@
             this.txtSoLuong = new System.Windows.Forms.TextBox();
             this.txtGhiChu = new System.Windows.Forms.TextBox();
             this.label18 = new System.Windows.Forms.Label();
+            this.tagPgDonHang = new System.Windows.Forms.TabPage();
+            this.dgrvDonHang = new System.Windows.Forms.DataGridView();
+            this.btnHienThiDonHang = new System.Windows.Forms.Button();
+            this.btnHienThiChiTietDonHang = new System.Windows.Forms.Button();
             this.tabPgKhach.SuspendLayout();
             this.groupBox4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgrvKhachHang)).BeginInit();
@@ -106,6 +110,8 @@
             this.groupBox5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgrvHang)).BeginInit();
             this.groupBox6.SuspendLayout();
+            this.tagPgDonHang.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgrvDonHang)).BeginInit();
             this.SuspendLayout();
             // 
             // txtID
@@ -555,6 +561,7 @@
             this.tabCnQuanLy.Controls.Add(this.tabPgNV);
             this.tabCnQuanLy.Controls.Add(this.tabPgKhach);
             this.tabCnQuanLy.Controls.Add(this.tabPgHang);
+            this.tabCnQuanLy.Controls.Add(this.tagPgDonHang);
             this.tabCnQuanLy.Location = new System.Drawing.Point(13, 44);
             this.tabCnQuanLy.Name = "tabCnQuanLy";
             this.tabCnQuanLy.SelectedIndex = 0;
@@ -756,6 +763,50 @@
             this.label18.TabIndex = 7;
             this.label18.Text = "Tên Hàng";
             // 
+            // tagPgDonHang
+            // 
+            this.tagPgDonHang.Controls.Add(this.btnHienThiChiTietDonHang);
+            this.tagPgDonHang.Controls.Add(this.btnHienThiDonHang);
+            this.tagPgDonHang.Controls.Add(this.dgrvDonHang);
+            this.tagPgDonHang.Location = new System.Drawing.Point(4, 22);
+            this.tagPgDonHang.Name = "tagPgDonHang";
+            this.tagPgDonHang.Padding = new System.Windows.Forms.Padding(3);
+            this.tagPgDonHang.Size = new System.Drawing.Size(718, 402);
+            this.tagPgDonHang.TabIndex = 3;
+            this.tagPgDonHang.Text = "Đơn Hàng";
+            this.tagPgDonHang.UseVisualStyleBackColor = true;
+            // 
+            // dgrvDonHang
+            // 
+            this.dgrvDonHang.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgrvDonHang.Location = new System.Drawing.Point(6, 22);
+            this.dgrvDonHang.MultiSelect = false;
+            this.dgrvDonHang.Name = "dgrvDonHang";
+            this.dgrvDonHang.ReadOnly = true;
+            this.dgrvDonHang.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dgrvDonHang.Size = new System.Drawing.Size(706, 239);
+            this.dgrvDonHang.TabIndex = 0;
+            // 
+            // btnHienThiDonHang
+            // 
+            this.btnHienThiDonHang.Location = new System.Drawing.Point(516, 352);
+            this.btnHienThiDonHang.Name = "btnHienThiDonHang";
+            this.btnHienThiDonHang.Size = new System.Drawing.Size(124, 23);
+            this.btnHienThiDonHang.TabIndex = 1;
+            this.btnHienThiDonHang.Text = "Hiển Thị Đơn Hàng";
+            this.btnHienThiDonHang.UseVisualStyleBackColor = true;
+            this.btnHienThiDonHang.Click += new System.EventHandler(this.btnHienThiDonHang_Click);
+            // 
+            // btnHienThiChiTietDonHang
+            // 
+            this.btnHienThiChiTietDonHang.Location = new System.Drawing.Point(293, 352);
+            this.btnHienThiChiTietDonHang.Name = "btnHienThiChiTietDonHang";
+            this.btnHienThiChiTietDonHang.Size = new System.Drawing.Size(124, 23);
+            this.btnHienThiChiTietDonHang.TabIndex = 2;
+            this.btnHienThiChiTietDonHang.Text = "Chi Tiết Đơn Hàng";
+            this.btnHienThiChiTietDonHang.UseVisualStyleBackColor = true;
+            this.btnHienThiChiTietDonHang.Click += new System.EventHandler(this.btnHienThiChiTietDonHang_Click);
+            // 
             // frmQuanLy
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -784,6 +835,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.dgrvHang)).EndInit();
             this.groupBox6.ResumeLayout(false);
             this.groupBox6.PerformLayout();
+            this.tagPgDonHang.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dgrvDonHang)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -855,5 +908,9 @@
         private System.Windows.Forms.TextBox txtSoLuong;
         private System.Windows.Forms.TextBox txtGhiChu;
         private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.TabPage tagPgDonHang;
+        private System.Windows.Forms.Button btnHienThiChiTietDonHang;
+        private System.Windows.Forms.Button btnHienThiDonHang;
+        private System.Windows.Forms.DataGridView dgrvDonHang;
     }
 }

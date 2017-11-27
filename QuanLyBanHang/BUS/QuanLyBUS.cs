@@ -17,6 +17,20 @@ namespace QuanLyBanHang.BUS
             this.dataProvider = data;
         }
 
+        public DataTable GetDataDonHang()
+        {
+
+            try
+            {
+                return dataProvider.ExecuteQuery("SELECT hd.* FROM dbo.HoaDon hd");
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
         // <summary>
         /// Lấy tất cả dữ liệu về Hàng
         /// </summary>

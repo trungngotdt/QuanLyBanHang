@@ -146,7 +146,23 @@ namespace QuanLyBanHang.BUS
             //throw new NotImplementedException();
         }
 
-
+        /// <summary>
+        /// Chèn dữ liệu HoaDon vào database
+        /// Với các giá trị theo thứ tự MaKH,LoaiHoaDon,MaNV, NgayLap,NguoiLap
+        /// </summary>
+        /// <param name="values"></param>
+        /// <returns></returns>
+        public bool InsertHoaDon(object[] values)
+        {
+            try
+            {
+                return dataProvider.ExecuteNonQuery("EXEC USP_InsertHoaDon   @idcustomer , @typebill , @idstaff , @date , @namestaff", values) > 0;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
 
         /// <summary>
         /// Sắp xếp tăng giảm theo yêu cầu
@@ -215,25 +231,64 @@ namespace QuanLyBanHang.BUS
         }
 
         /// <summary>
+        /// Trả về giá trị MaHoaDon
+        /// </summary>
+        /// <param name="MaKH"></param>
+        /// <param name="LoaiHD"></param>
+        /// <param name="MaNV"></param>
+        /// <param name="NgayLap"></param>
+        /// <param name="TenNV"></param>
+        /// <returns></returns>
+        public object GetMaHoaDon(int MaKH, string LoaiHD, int MaNV, string NgayLap, string TenNV)
+        {
+            try
+            {
+                return dataProvider.ExecuteScalar("EXECUTE USP_GetMaHoaDon @idcustomer , @type , @idstaff , @date , @namestaff ", new object[] { MaKH, LoaiHD, MaNV, NgayLap, TenNV });
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
+        /// <summary>
         /// Thực hiện nhập xuất hàng
         /// </summary>
         /// <param name="dataGridView"></param>
         /// <param name="plus"><see cref="true"/> thì là nhập hàng ,<see cref="false"/> là xuất hàng</param>
         /// <returns></returns>
-        public string NhapXuatHang(DataGridView dataGridView,bool plus)
+        public string NhapXuatHang(DataGridView dataGridView,bool plus,object maHD)
         {
             var data = TransDataGridViewToDictionary(dataGridView,plus);
+            var dic = GetMaHangAndSoLuong();
             string mess = "";
             foreach (var item in data.Item1)
             {
                 var para = new object[] {item.Key.ToString(),item.Value.ToString() };
                 bool checkUpdate = dataProvider.ExecuteNonQuery("USP_UpdateSoLuongHang @id , @number ",para) >0;
+                var donGia = dataProvider.ExecuteScalar("USP_GetDonGiaByMH @id", new object[] {item.Key.ToString() });
+
+                var soLuong = dataProvider.ExecuteScalar("USP_GetSoLuong  @id", new object[] { item.Key.ToString() });
+                var values = new object[] { maHD, item.Key, donGia ,int.Parse( soLuong.ToString())-dic[item.Key.ToString()]};
+                //var values = new object[] { maHD, listData[0]..ToString() };
+                if (checkUpdate)
+                {
+                    dataProvider.ExecuteNonQuery("EXEC USP_InsertChiTietHoaDon @idbill , @idgoods , @price , @number ", values);
+                }
                 mess = checkUpdate ?   "":$"{item.Key}"+mess.ToString();
             }
             data.Item2.ForEach(x => 
             {
                 var para = new object[] {x.StrMaHang,x.StrTenHang,x.FltDonGia,x.IntSoLuong,x.StrGhiChu };
                 bool checkInsert=  dataProvider.ExecuteNonQuery("USP_InsertHang @id , @name , @price , @number , @notice ", para)>0;
+                //var soLuong = dataProvider.ExecuteScalar("USP_GetSoLuong  @id", new object[] { x.StrMaHang });
+
+                var values = new object[] { maHD, para[0], para[2], int.Parse(para[3].ToString()) };
+                if (checkInsert)
+                {
+                    dataProvider.ExecuteNonQuery("EXEC USP_InsertChiTietHoaDon @idbill , @idgoods , @price , @number ", values) ;
+                }
                 mess = checkInsert ? "" : $"{x.StrMaHang}" + mess.ToString();
             });
 
@@ -398,7 +453,6 @@ namespace QuanLyBanHang.BUS
             object row3;
             object row4;
             object row5;
-
             List<Tuple<string, string, string, string, string>> list = new List<Tuple<string, string, string, string, string>>();
             var workBooks = GetWorkBooks(application);
             var workSheet = GetWorkSheet(workBooks, address);
@@ -423,14 +477,15 @@ namespace QuanLyBanHang.BUS
                     row4 = GetValueOfRange(value4);
                     j++;
                     var value5 = GetRangeValueWithIndex(range, i, j);
-                    row5 = GetValueOfRange(value2);
+                    row5 = GetValueOfRange(value5);
 
                     list.Add(new Tuple<string, string, string, string, string>(row.ToString(), row2.ToString(), row3.ToString(), row4.ToString(), row5.ToString()));
 
                 }
             }
+
             workBooks.Close();
-            return list;
+            return new List<Tuple<string, string, string, string, string>>(list);
             //throw new NotImplementedException();
         }
         #endregion

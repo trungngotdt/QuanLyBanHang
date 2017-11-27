@@ -101,7 +101,7 @@ namespace QuanLyBanHang.BUS.Interfaces
         /// <param name="dataGridView"></param>
         /// <param name="plus"><see cref="true"/> thì là nhập hàng ,<see cref="false"/> là xuất hàng</param>
         /// <returns></returns>
-        string NhapXuatHang(DataGridView dataGridView, bool plus);
+        string NhapXuatHang(DataGridView dataGridView, bool plus,object maHD);
 
         /// <summary>
         /// Xử lý bất đồng bộ hàm ReadWithInteropExcel phục vụ cho việc song song

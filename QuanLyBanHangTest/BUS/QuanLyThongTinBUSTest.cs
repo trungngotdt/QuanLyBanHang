@@ -111,18 +111,19 @@ namespace QuanLyBanHangTest.BUS
             dataGridView1.Rows.Add(row);
 
             mockIDataProvider.Setup(x => x.ExecuteQuery(It.IsNotNull<string>(), null)).Returns(data);
-
+            mockIDataProvider.Setup(x => x.ExecuteNonQuery(It.IsNotNull<string>(), It.IsNotNull<object[]>())).Returns(1);
+            mockIDataProvider.Setup(x => x.ExecuteScalar(It.IsNotNull<string>(), It.IsNotNull<object[]>())).Returns(10);
             var result1 = quanLyThongTinBUS.TransDataGridViewToDictionary(dataGridView1, true);//,mockIMapper.Object);
             dataGridView.DataSource = data;
             var result2 = quanLyThongTinBUS.TransDataGridViewToDictionary(dataGridView, false);//,mockIMapper.Object);
             dataGridView.DataSource = data2;
-            var result = quanLyThongTinBUS.NhapXuatHang(dataGridView, true);
+            var result = quanLyThongTinBUS.NhapXuatHang(dataGridView, true,"jh");
             var result3 = quanLyThongTinBUS.TransDataGridViewToDictionary(dataGridView, false);
             dataGridView.DataSource = datatable2;
             var result4 = quanLyThongTinBUS.TransDataGridViewToDictionary(dataGridView, true);
             
 
-            Assert.IsNotNull(result);
+           // Assert.IsNotNull(result);
             Assert.IsNotEmpty(result1.Item2);
             Assert.IsEmpty(result1.Item1);
             Assert.IsNotEmpty(result2.Item1);
