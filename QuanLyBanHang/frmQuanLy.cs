@@ -613,7 +613,7 @@ namespace QuanLyBanHang
             txtTenHang.Text = dgrvHang.Rows[index].Cells["TenHang"].Value.ToString();
             txtSoLuong.Text = dgrvHang.Rows[index].Cells["SoLuong"].Value.ToString();
             txtDonGia.Text = dgrvHang.Rows[index].Cells["DonGia"].Value.ToString();
-            txtGhiChu.Text = dgrvHang.Rows[index].Cells["GhiChu"].Value.ToString();
+            txtGhiChu.Text = dgrvHang.Rows[index].Cells["GhiChu"].Value.ToString()==null?"null": dgrvHang.Rows[index].Cells["GhiChu"].Value.ToString();
         }
 
         private void BtnSuaHang_Click(object sender, EventArgs e)
@@ -688,12 +688,12 @@ namespace QuanLyBanHang
         }
         #endregion
 
-        private void btnHienThiDonHang_Click(object sender, EventArgs e)
+        private void BtnHienThiDonHang_Click(object sender, EventArgs e)
         {
             GetDataDonHang();
         }
 
-        private void btnHienThiChiTietDonHang_Click(object sender, EventArgs e)
+        private void BtnHienThiChiTietDonHang_Click(object sender, EventArgs e)
         {
             if (dgrvDonHang.SelectedRows==null)
             {

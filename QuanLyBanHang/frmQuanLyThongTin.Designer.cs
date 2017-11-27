@@ -77,6 +77,11 @@
             this.bntHienHangHoa = new System.Windows.Forms.Button();
             this.lvwThongKeHH = new System.Windows.Forms.ListView();
             this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.txtTenKH = new System.Windows.Forms.TextBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
+            this.btnKiemTra = new System.Windows.Forms.Button();
+            this.txtSDT = new System.Windows.Forms.TextBox();
             this.btnNhapHang = new System.Windows.Forms.Button();
             this.btnChonFile = new System.Windows.Forms.Button();
             this.btnXuatHang = new System.Windows.Forms.Button();
@@ -84,11 +89,6 @@
             this.txtID = new System.Windows.Forms.TextBox();
             this.txtName = new System.Windows.Forms.TextBox();
             this.txtRole = new System.Windows.Forms.TextBox();
-            this.txtSDT = new System.Windows.Forms.TextBox();
-            this.btnKiemTra = new System.Windows.Forms.Button();
-            this.label8 = new System.Windows.Forms.Label();
-            this.label9 = new System.Windows.Forms.Label();
-            this.txtTenKH = new System.Windows.Forms.TextBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.groupBox6.SuspendLayout();
@@ -645,6 +645,49 @@
             this.tabPage3.Text = "Nhập/Xuất Hàng";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
+            // txtTenKH
+            // 
+            this.txtTenKH.Location = new System.Drawing.Point(40, 19);
+            this.txtTenKH.Name = "txtTenKH";
+            this.txtTenKH.ReadOnly = true;
+            this.txtTenKH.Size = new System.Drawing.Size(100, 20);
+            this.txtTenKH.TabIndex = 8;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(6, 26);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(26, 13);
+            this.label9.TabIndex = 7;
+            this.label9.Text = "Ten";
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(335, 18);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(29, 13);
+            this.label8.TabIndex = 6;
+            this.label8.Text = "SDT";
+            // 
+            // btnKiemTra
+            // 
+            this.btnKiemTra.Location = new System.Drawing.Point(522, 13);
+            this.btnKiemTra.Name = "btnKiemTra";
+            this.btnKiemTra.Size = new System.Drawing.Size(75, 23);
+            this.btnKiemTra.TabIndex = 5;
+            this.btnKiemTra.Text = "Kiểm Tra";
+            this.btnKiemTra.UseVisualStyleBackColor = true;
+            this.btnKiemTra.Click += new System.EventHandler(this.BtnKiemTra_Click);
+            // 
+            // txtSDT
+            // 
+            this.txtSDT.Location = new System.Drawing.Point(373, 15);
+            this.txtSDT.Name = "txtSDT";
+            this.txtSDT.Size = new System.Drawing.Size(100, 20);
+            this.txtSDT.TabIndex = 4;
+            // 
             // btnNhapHang
             // 
             this.btnNhapHang.Location = new System.Drawing.Point(547, 400);
@@ -653,7 +696,7 @@
             this.btnNhapHang.TabIndex = 3;
             this.btnNhapHang.Text = "Nhập Hàng";
             this.btnNhapHang.UseVisualStyleBackColor = true;
-            this.btnNhapHang.Click += new System.EventHandler(this.btnNhapHang_Click);
+            this.btnNhapHang.Click += new System.EventHandler(this.BtnNhapHang_Click);
             // 
             // btnChonFile
             // 
@@ -663,7 +706,7 @@
             this.btnChonFile.TabIndex = 2;
             this.btnChonFile.Text = "Chọn File";
             this.btnChonFile.UseVisualStyleBackColor = true;
-            this.btnChonFile.Click += new System.EventHandler(this.btnChonFile_ClickAsync);
+            this.btnChonFile.Click += new System.EventHandler(this.BtnChonFile_ClickAsync);
             // 
             // btnXuatHang
             // 
@@ -673,7 +716,7 @@
             this.btnXuatHang.TabIndex = 1;
             this.btnXuatHang.Text = "Xuất Hàng";
             this.btnXuatHang.UseVisualStyleBackColor = true;
-            this.btnXuatHang.Click += new System.EventHandler(this.btnXuatHang_Click);
+            this.btnXuatHang.Click += new System.EventHandler(this.BtnXuatHang_Click);
             // 
             // dgrvHang
             // 
@@ -706,49 +749,6 @@
             this.txtRole.Name = "txtRole";
             this.txtRole.Size = new System.Drawing.Size(100, 20);
             this.txtRole.TabIndex = 3;
-            // 
-            // txtSDT
-            // 
-            this.txtSDT.Location = new System.Drawing.Point(373, 15);
-            this.txtSDT.Name = "txtSDT";
-            this.txtSDT.Size = new System.Drawing.Size(100, 20);
-            this.txtSDT.TabIndex = 4;
-            // 
-            // btnKiemTra
-            // 
-            this.btnKiemTra.Location = new System.Drawing.Point(522, 13);
-            this.btnKiemTra.Name = "btnKiemTra";
-            this.btnKiemTra.Size = new System.Drawing.Size(75, 23);
-            this.btnKiemTra.TabIndex = 5;
-            this.btnKiemTra.Text = "Kiểm Tra";
-            this.btnKiemTra.UseVisualStyleBackColor = true;
-            this.btnKiemTra.Click += new System.EventHandler(this.btnKiemTra_Click);
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(291, 22);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(29, 13);
-            this.label8.TabIndex = 6;
-            this.label8.Text = "SDT";
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(6, 26);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(26, 13);
-            this.label9.TabIndex = 7;
-            this.label9.Text = "Ten";
-            // 
-            // txtTenKH
-            // 
-            this.txtTenKH.Location = new System.Drawing.Point(40, 19);
-            this.txtTenKH.Name = "txtTenKH";
-            this.txtTenKH.ReadOnly = true;
-            this.txtTenKH.Size = new System.Drawing.Size(100, 20);
-            this.txtTenKH.TabIndex = 8;
             // 
             // frmQuanLyThongTin
             // 

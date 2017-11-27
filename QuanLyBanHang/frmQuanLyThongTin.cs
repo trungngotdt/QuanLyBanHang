@@ -650,7 +650,7 @@ namespace QuanLyBanHang
 
         #region Method
         #endregion
-        private void btnNhapHang_Click(object sender, EventArgs e)
+        private void BtnNhapHang_Click(object sender, EventArgs e)
         {
             try
             {
@@ -682,7 +682,7 @@ namespace QuanLyBanHang
             }
         }
 
-        private async void btnChonFile_ClickAsync(object sender, EventArgs e)
+        private async void BtnChonFile_ClickAsync(object sender, EventArgs e)
         {
 
             this.Cursor = Cursors.WaitCursor;
@@ -735,7 +735,7 @@ namespace QuanLyBanHang
             this.Cursor = Cursors.Default;
         }               
 
-        private void btnXuatHang_Click(object sender, EventArgs e)
+        private void BtnXuatHang_Click(object sender, EventArgs e)
         {
             try
             {
@@ -785,7 +785,7 @@ namespace QuanLyBanHang
             btnChonFile.Enabled = false;
         }
 
-        private void btnKiemTra_Click(object sender, EventArgs e)
+        private void BtnKiemTra_Click(object sender, EventArgs e)
         {
             try
             {

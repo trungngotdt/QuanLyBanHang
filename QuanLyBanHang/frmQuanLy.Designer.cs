@@ -795,7 +795,7 @@
             this.btnHienThiDonHang.TabIndex = 1;
             this.btnHienThiDonHang.Text = "Hiển Thị Đơn Hàng";
             this.btnHienThiDonHang.UseVisualStyleBackColor = true;
-            this.btnHienThiDonHang.Click += new System.EventHandler(this.btnHienThiDonHang_Click);
+            this.btnHienThiDonHang.Click += new System.EventHandler(this.BtnHienThiDonHang_Click);
             // 
             // btnHienThiChiTietDonHang
             // 
@@ -805,7 +805,7 @@
             this.btnHienThiChiTietDonHang.TabIndex = 2;
             this.btnHienThiChiTietDonHang.Text = "Chi Tiết Đơn Hàng";
             this.btnHienThiChiTietDonHang.UseVisualStyleBackColor = true;
-            this.btnHienThiChiTietDonHang.Click += new System.EventHandler(this.btnHienThiChiTietDonHang_Click);
+            this.btnHienThiChiTietDonHang.Click += new System.EventHandler(this.BtnHienThiChiTietDonHang_Click);
             // 
             // frmQuanLy
             // 

@@ -43,6 +43,7 @@ namespace QuanLyBanHangTest.BUS
             return datatable;
         }
 
+        
 
         [Test]
         public void ClassTest()
@@ -51,6 +52,41 @@ namespace QuanLyBanHangTest.BUS
             var result1 = typeof(QuanLyThongTinBUS).IsPublic;
             Assert.IsTrue(result);
             Assert.IsTrue(result1);
+        }
+
+        [Test]
+        public void InsertHDTest()
+        {
+            mockIDataProvider.Setup(x => x.ExecuteNonQuery(It.IsNotNull<string>(), It.IsNotNull<object[]>())).Returns(1);
+            var result = quanLyThongTinBUS.InsertHoaDon(new object[] { "a" });
+            Assert.NotNull(result);
+        }
+
+        [Test]
+        public void InsertHDTestException()
+        {
+            mockIDataProvider.Setup(x => x.ExecuteNonQuery(It.IsNotNull<string>(), It.IsNotNull<object[]>())).Throws(new Exception());
+            var exception = Assert.Catch<Exception>(() => quanLyThongTinBUS.InsertHoaDon(new object[] {"a" }));
+            Assert.IsTrue(exception.GetType() == typeof(Exception));
+            mockIDataProvider.VerifyAll();
+        }
+
+        [Test]
+        public void GetMaHDTestException()
+        {
+            mockIDataProvider.Setup(x => x.ExecuteScalar(It.IsNotNull<string>(), It.IsNotNull<object[]>())).Throws(new Exception());
+            var exception = Assert.Catch<Exception>(() => quanLyThongTinBUS.GetMaHoaDon(1, "a", 1, "a", "a"));
+            Assert.IsTrue(exception.GetType() == typeof(Exception));
+            mockIDataProvider.VerifyAll();
+        }
+
+
+        [TestCase(1,"a",1,"a","a")]
+        public void GetMaHoaDonTest(int MaKH, string LoaiHD, int MaNV, string NgayLap, string TenNV)
+        {
+            mockIDataProvider.Setup(x => x.ExecuteScalar(It.IsNotNull<string>(), It.IsNotNull<object[]>())).Returns("");
+            var result = quanLyThongTinBUS.GetMaHoaDon(MaKH, LoaiHD, MaNV, NgayLap, TenNV);
+            Assert.NotNull(result);
         }
 
         [Test]
@@ -96,8 +132,10 @@ namespace QuanLyBanHangTest.BUS
             //var mockIMapper = new Mock<IMapper>();
             //mockIMapper.Setup(x => x.Map<List<DataGridViewRow>, List<HangDTO>>(It.IsNotNull<List<DataGridViewRow>>())).Returns(list);// dataGridView.Rows.OfType<DataGridViewRow>().ToList())).Returns(list);
 
-            System.Windows.Forms.DataGridView dataGridView1 = new System.Windows.Forms.DataGridView();
-            dataGridView1.ColumnCount = 5;
+            System.Windows.Forms.DataGridView dataGridView1 = new System.Windows.Forms.DataGridView
+            {
+                ColumnCount = 5
+            };
             dataGridView1.Columns[0].Name = "Mã Hàng";
             dataGridView1.Columns[1].Name = "Tên Hàng";
             dataGridView1.Columns[2].Name = "Đơn Giá";
