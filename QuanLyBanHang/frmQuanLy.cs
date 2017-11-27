@@ -34,6 +34,8 @@ namespace QuanLyBanHang
             txtID.ReadOnly = true;
             txtName.Enabled = false;
             txtName.ReadOnly = true;
+            //txtMaHang.Enabled = true;
+
             dgrvNhanVien.ClearSelection();
         }
         
@@ -109,6 +111,8 @@ namespace QuanLyBanHang
             txtGhiChu.Enabled = !flag;
             txtDonGia.Enabled = !flag;
             txtGhiChu.Enabled = !flag;
+            txtSoLuong.Enabled = !flag;
+            txtTenHang.Enabled = !flag;
             btnCapNhapHang.Enabled = !flag;
             btnThemHang.Enabled = !flag;
             btnLamSachHang.Enabled = !flag;
@@ -408,7 +412,7 @@ namespace QuanLyBanHang
         private void DgrvNhanVien_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             var index = e.RowIndex;
-            if (index <= 0)
+            if (index < 0)
             {
                 return;
             }
@@ -549,7 +553,7 @@ namespace QuanLyBanHang
         private void DgrvKhachHang_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             var index = e.RowIndex;
-            if (index <= 0)
+            if (index < 0)
             {
                 return;
             }
@@ -605,7 +609,7 @@ namespace QuanLyBanHang
         private void DgrvHang_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             var index = e.RowIndex;
-            if (index <= 0)
+            if (index < 0)
             {
                 return;
             }

@@ -36,7 +36,10 @@
             // 
             this.dgrvChiTietDonHang.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgrvChiTietDonHang.Location = new System.Drawing.Point(12, 12);
+            this.dgrvChiTietDonHang.MultiSelect = false;
             this.dgrvChiTietDonHang.Name = "dgrvChiTietDonHang";
+            this.dgrvChiTietDonHang.ReadOnly = true;
+            this.dgrvChiTietDonHang.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgrvChiTietDonHang.Size = new System.Drawing.Size(529, 366);
             this.dgrvChiTietDonHang.TabIndex = 0;
             // 
