@@ -17,6 +17,24 @@ namespace QuanLyBanHang.BUS
             this.dataProvider = data;
         }
 
+        // <summary>
+        /// Lấy tất cả dữ liệu về Hàng
+        /// </summary>
+        /// <returns></returns>
+        public DataTable GetDataHang()
+        {
+            try
+            {
+                return dataProvider.ExecuteQuery("SELECT h.* FROM dbo.Hang h");
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+            //throw new NotImplementedException();
+        }
+
         /// <summary>
         /// Lấy tất cả dữ liệu về khách hàng
         /// </summary>
@@ -25,12 +43,10 @@ namespace QuanLyBanHang.BUS
         {
             try
             {
-
                 return dataProvider.ExecuteQuery("SELECT kh.* FROM dbo.KhachHang kh");
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
             //throw new NotImplementedException();
@@ -44,15 +60,33 @@ namespace QuanLyBanHang.BUS
         {
             try
             {
-
                 return dataProvider.ExecuteQuery("SELECT nv.MaNV ,nv.TenNV,nv.ChucVu,nv.DiaChi,nv.DienThoai,nv.Email,nv.TenDangNhap FROM dbo.NhanVien nv");
                 //throw new NotImplementedException();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        /// <summary>
+        /// Trả về true nếu cập nhật thành công
+        /// Thứ tự paramater @idgoods , @namegoods , @price , @number , @notice 
+        /// </summary>
+        /// <param name="para"></param>
+        /// <returns></returns>
+        public bool InsertHang(object[] para)
+        {
+            try
+            {
+                return dataProvider.ExecuteNonQuery("USP_InsertHang @id , @name , @price , @number , @notice ", para) > 0;
             }
             catch (Exception ex)
             {
 
                 throw ex;
             }
+            //throw new NotImplementedException();
         }
 
         /// <summary>
@@ -65,13 +99,11 @@ namespace QuanLyBanHang.BUS
         {
             try
             {
-
                 return dataProvider.ExecuteNonQuery("EXECUTE USP_InsertKhachHang @name , @phone , @sex , @address , @level ", para) > 0;
                 //throw new NotImplementedException();
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
         }
@@ -87,15 +119,33 @@ namespace QuanLyBanHang.BUS
         {
             try
             {
-
                 return dataProvider.ExecuteNonQuery("EXECUTE USP_InsertNV @Ten , @Chuc , @DiaChi , @SDT , @Email", para) > 0;
                 //throw new NotImplementedException();
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
+        }
+
+        /// <summary>
+        /// Trả về <see cref="true"/> khi cấp nhật thành công và <see cref="false"/> nếu thất bại
+        /// Trả về true nếu cập nhật thành công @idgoods , @namegoods , @price , @number , @notice 
+        /// Thứ tự paramater 
+        /// </summary>
+        /// <param name="para"></param>
+        /// <returns></returns>
+        public bool UpdateHang(object[] para)
+        {
+            try
+            {
+                return dataProvider.ExecuteNonQuery("USP_UpdateHang @id , @name , @price , @number , @notice ", para) > 0;
+            }
+            catch (Exception ex)
+            {
+                throw ex; 
+            }
+            //throw new NotImplementedException();
         }
 
         /// <summary>
@@ -108,13 +158,11 @@ namespace QuanLyBanHang.BUS
         {
             try
             {
-
                 return dataProvider.ExecuteNonQuery("EXECUTE USP_UpdateKH @ID , @name , @phone , @sex , @address , @level ", para) > 0;
                 //throw new NotImplementedException();
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
         }
@@ -129,13 +177,11 @@ namespace QuanLyBanHang.BUS
         {
             try
             {
-
                 return dataProvider.ExecuteNonQuery("EXECUTE USP_UpdateNVWithoutPassAndNameSignIn @MaNV , @Ten , @Chuc , @DiaChi , @SDT , @Email ", para) > 0;
                 //throw new NotImplementedException();
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
         }

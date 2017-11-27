@@ -1,5 +1,5 @@
 ﻿using Microsoft.Office.Interop.Excel;
-using Excel= Microsoft.Office.Interop.Excel;
+using Excel = Microsoft.Office.Interop.Excel;
 using QuanLyBanHang.BUS;
 using QuanLyBanHang.BUS.Interfaces;
 using System;
@@ -38,7 +38,7 @@ namespace QuanLyBanHang
             lvwChiTietHoaDon.Columns.Add(new ColumnHeader() { Text = "Đơn Giá" });
             lvwChiTietHoaDon.Columns.Add(new ColumnHeader() { Text = "Số Lượng" });
 
-            
+
         }
 
         /// <summary>
@@ -652,44 +652,111 @@ namespace QuanLyBanHang
         private void btnNhapHang_Click(object sender, EventArgs e)
         {
 
+            try
+            {
+                if (dgrvHang.Rows.Count!=0)
+                {
+                    var mess= QuanLyThongTin.NhapXuatHang(dgrvHang, true);
+                    if (mess.Trim().Length!=0)
+                    {
+                        MessageBox.Show("Mã hàng " + mess+"không thể nhập .Vui lòng xem xét lại","THÔNG BÁO",MessageBoxButtons.OK,MessageBoxIcon.Information);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Thành công","THÔNG BÁO",MessageBoxButtons.OK,MessageBoxIcon.Information);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Không có dữ liệu", "THÔNG BÁO", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                WarningMessageBox(ex);
+            }
         }
 
         private async void btnChonFile_ClickAsync(object sender, EventArgs e)
         {
+
             this.Cursor = Cursors.WaitCursor;
-            System.Data.DataTable dataTable = new System.Data.DataTable();
-            dataTable.Columns.Add("Mã Hàng");
-            dataTable.Columns.Add("Tên Hàng");
-            dataTable.Columns.Add("Đơn Giá");
-            dataTable.Columns.Add("Số Lượng");
-            dataTable.Columns.Add("Ghi Chú");
-
-            //dgrvHang.Rows.Clear();
-            Cursor.Current = Cursors.WaitCursor;
-            using (var Opf = new OpenFileDialog() { Filter = "Excel Workbook[97-2003] | *.xls|Excel Workbook|*.xlsx", ValidateNames = true })
+            try
             {
-                if (Opf.ShowDialog() == DialogResult.OK)
+
+                System.Data.DataTable dataTable = new System.Data.DataTable();
+                dataTable.Columns.Add("Mã Hàng");
+                dataTable.Columns.Add("Tên Hàng");
+                dataTable.Columns.Add("Đơn Giá");
+                dataTable.Columns.Add("Số Lượng");
+                dataTable.Columns.Add("Ghi Chú");
+
+                //dgrvHang.Rows.Clear();
+                Cursor.Current = Cursors.WaitCursor;
+                using (var Opf = new OpenFileDialog() { Filter = "Excel Workbook[97-2003] | *.xls|Excel Workbook|*.xlsx", ValidateNames = true })
                 {
-                    var data = await QuanLyThongTin.ReadAsync(new Excel.Application(),Opf.FileName);
-                    data.ForEach(x => 
+                    if (Opf.ShowDialog() == DialogResult.OK)
                     {
-                        dataTable.Rows.Add(x.Item1,x.Item2,x.Item3,x.Item4,x.Item5);
-                        /*dataTable.Rows.Add(x.Item2);
-                        dataTable.Rows.Add(x.Item3);
-                        dataTable.Rows.Add(x.Item4);
-                        dataTable.Rows.Add(x.Item5);*/
-                    });
+                        var data = await QuanLyThongTin.ReadAsync(new Excel.Application(), Opf.FileName);
+                        data.ForEach(x =>
+                        {
+                            dataTable.Rows.Add(x.Item1, x.Item2, x.Item3, x.Item4, x.Item5);
+                            /*dataTable.Rows.Add(x.Item2);
+                            dataTable.Rows.Add(x.Item3);
+                            dataTable.Rows.Add(x.Item4);
+                            dataTable.Rows.Add(x.Item5);*/
+                        });
 
-                    dataTable.AcceptChanges();
-                    dgrvHang.DataSource = dataTable;
+                        dataTable.AcceptChanges();
+                        dgrvHang.DataSource = dataTable;
+                    }
+
                 }
-                
             }
-
+            catch (Exception ex)
+            {
+                WarningMessageBox(ex);
+                string error = "0x80010105";
+                if (ex.Message.Contains(error))
+                {
+                    MessageBox.Show("Có ba cách sửa :\n" +
+                        "1: Theo chỉ dẫn sau Excel > File > Options > Add-ins > Manage, sau đó chọn COM add - ins > Go trong ô hiện ra bỏ chọn FoxitReader PDF Creator COM Add-in\n" +
+                        "2:Thử lại\n" +
+                        "3:Liên hệ quản trị viên","HƯỚNG DẪN",MessageBoxButtons.OK,MessageBoxIcon.Information);
+                }
+                this.Cursor = Cursors.Default;
+            }
             this.Cursor = Cursors.Default;
+        }               
+
+        private void btnXuatHang_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (dgrvHang.Rows.Count != 0)
+                {
+                    var mess = QuanLyThongTin.NhapXuatHang(dgrvHang, false);
+                    if (mess.Trim().Length != 0)
+                    {
+                        MessageBox.Show("Mã hàng " + mess + "không thể xuất .Vui lòng xem xét lại", "THÔNG BÁO", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Thành công", "THÔNG BÁO", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Không có dữ liệu", "THÔNG BÁO", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                WarningMessageBox(ex);
+            }
         }
-
         #endregion
-
     }
 }

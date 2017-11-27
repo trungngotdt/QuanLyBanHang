@@ -21,6 +21,7 @@ namespace QuanLyBanHang
         }
 
         #region common
+
         /// <summary>
         ///Hiển thị thông báo khi có bất kì <see cref="Exception"/> nào bị phát hiện 
         /// </summary>
@@ -46,6 +47,11 @@ namespace QuanLyBanHang
 
         }
 
+        /// <summary>
+        /// Sử dụng cờ cho tab Khách hàng
+        /// Khi flag bằng true thì vô hiệu hóa các nút bấm và textbox ngoại trừ <see cref="txtMaNV"/>
+        /// </summary>
+        /// <param name="flag"></param>
         void FlagForKH(bool flag)
         {
             txtDiaChiKhach.Enabled = !flag;
@@ -74,6 +80,21 @@ namespace QuanLyBanHang
             btnThem.Enabled = !flag;
             btnLamSachNV.Enabled = !flag;
 
+        }
+
+        /// <summary>
+        /// Sử dụng cờ cho tab Hang
+        /// Khi flag bằng true thì vô hiệu hóa các nút bấm và textbox ngoại trừ <see cref="txtMaHang"/>
+        /// </summary>
+        /// <param name="flag">Khi flag bằng true thì vô hiệu hóa các nút bấm và textbox ngoại trừ <see cref="txtMaHang"/></param>
+        void FlagForHang(bool flag)
+        {
+            txtGhiChu.Enabled = !flag;
+            txtDonGia.Enabled = !flag;
+            txtGhiChu.Enabled = !flag;
+            btnCapNhapHang.Enabled = !flag;
+            btnThemHang.Enabled = !flag;
+            btnLamSachHang.Enabled = !flag;
         }
 
         /// <summary>
@@ -140,6 +161,18 @@ namespace QuanLyBanHang
             return true;
         }
 
+        /// <summary>
+        /// Kiểm tra các <see cref="TextBox"/> của Khách Hàng xem có để trống không .
+        /// Ngoài trừ hai <see cref="TextBox"/> là <see cref="txtMaHang"/> và <see cref="txtGhiChu"/>
+        /// </summary>
+        /// <returns></returns>
+        bool CheckTextBoxHang()
+        {
+            var isTen= txtTenHang.Text.Trim().Length >0;
+            var isSoLuong= txtSoLuong.Text.Trim().Length > 0;
+            var isDonGia= txtDonGia.Text.Trim().Length > 0;
+            return isTen && isDonGia && isSoLuong;
+        }
 
         /// <summary>
         /// Cho tất cả các giá trị của textbox Khách hàng về rỗng
@@ -151,6 +184,36 @@ namespace QuanLyBanHang
             txtGoiTinh.Text = "";
             txtLoaiKhach.Text = "";
             txtSDTKhach.Text = "";
+        }
+
+        /// <summary>
+        /// Cho tất cả các giá trị của textbox Hàng về rỗng
+        /// </summary>
+        void ClearAllTextBoxHang()
+        {
+            txtTenHang.Text = "";
+            txtSoLuong.Text = "";
+            txtDonGia.Text = "";
+            txtGhiChu.Text = "";
+
+        }
+
+        /// <summary>
+        /// Lấy tất  cả dữ liệu Hàng
+        /// </summary>
+        void GetDataHang()
+        {
+            this.Cursor = Cursors.WaitCursor;
+            try
+            {
+                dgrvHang.DataSource = QuanLy.GetDataHang();
+            }
+            catch (Exception ex)
+            {
+                WarningMessageBox(ex);
+                //MessageBox.Show($"Lỗi không thể lấy dữ liệu.Lỗi {e.Message.ToString()}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            this.Cursor = Cursors.Default;
         }
 
         /// <summary>
@@ -362,7 +425,7 @@ namespace QuanLyBanHang
                 btnSuaKhach.Text = "Sửa";
             }
         }
-        
+
         private void BtnCapNhatKhach_Click(object sender, EventArgs e)
         {
             /*if (!CheckTextBoxKH())
@@ -450,7 +513,12 @@ namespace QuanLyBanHang
                 GetDataNhanVien();
                 dgrvNhanVien.ClearSelection();
             }
-
+            else if (e.TabPage.Name.Equals(tabPgHang.Name))
+            {
+                FlagForHang(true);
+                GetDataHang();
+                dgrvHang.ClearSelection();
+            }
         }
 
         private void BtnShowKH_Click(object sender, EventArgs e)
@@ -459,5 +527,116 @@ namespace QuanLyBanHang
         }
         #endregion
 
+        #region Hàng
+
+        private void BtnHienThiHang_Click(object sender, EventArgs e)
+        {
+            GetDataHang();
+        }
+
+
+        
+
+        private void TxtDonGia_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void TxtSoLuong_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void DgrvHang_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            var index = e.RowIndex;
+            if (index <= 0)
+            {
+                return;
+            }
+            txtMaHang.Text = dgrvHang.Rows[index].Cells["MaHang"].Value.ToString();
+            txtTenHang.Text = dgrvHang.Rows[index].Cells["TenHang"].Value.ToString();
+            txtSoLuong.Text = dgrvHang.Rows[index].Cells["SoLuong"].Value.ToString();
+            txtDonGia.Text = dgrvHang.Rows[index].Cells["DonGia"].Value.ToString();
+            txtGhiChu.Text = dgrvHang.Rows[index].Cells["GhiChu"].Value.ToString();
+        }
+
+        private void BtnSuaHang_Click(object sender, EventArgs e)
+        {
+            var text = btnSuaHang.Text;
+            if (text.Equals("Sửa"))
+            {
+                FlagForHang(false);
+                btnThemHang.Enabled = true;
+                btnSuaHang.Text = "Xong";
+            }
+            else if (text.Equals("Xong"))
+            {
+                FlagForHang(true);
+                btnSuaHang.Text = "Sửa";
+            }
+        }
+
+        private void BtnLamSachHang_Click(object sender, EventArgs e)
+        {
+            ClearAllTextBoxHang();
+        }
+
+        private void BtnCapNhapHang_Click(object sender, EventArgs e)
+        {
+            if (!ValidateBeforeAction(CheckTextBoxHang()))
+            {
+                return;
+            }
+            try
+            {
+                var check = QuanLy.UpdateHang(new object[] { txtMaHang.Text,txtTenHang.Text,txtDonGia.Text,txtSoLuong.Text,txtGhiChu.Text??"null" });
+                if (check)
+                {
+                    MessageBox.Show("Cập nhật thành công");
+                }
+            }
+            catch (Exception ex)
+            {
+                WarningMessageBox(ex);
+                //MessageBox.Show($"Không thể cập nhật thông tin khách hàng.Lỗi {ex.Message.ToString()}", "Lỗi Cập Nhật", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+            }
+            ClearAllTextBoxHang();
+            GetDataHang();
+            this.Cursor = Cursors.Default;
+        }
+
+        private void BtnThemHang_Click(object sender, EventArgs e)
+        {
+            if (!ValidateBeforeAction(CheckTextBoxHang()))
+            {
+                return;
+            }
+            try
+            {
+                var check = QuanLy.InsertHang(new object[] { txtMaHang.Text, txtTenHang.Text, txtDonGia.Text, txtSoLuong.Text, txtGhiChu.Text ?? "null" });
+                if (check)
+                {
+                    MessageBox.Show("Cập nhật thành công");
+                }
+            }
+            catch (Exception ex)
+            {
+                WarningMessageBox(ex);
+                //MessageBox.Show($"Không thể cập nhật thông tin khách hàng.Lỗi {ex.Message.ToString()}", "Lỗi Cập Nhật", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+            }
+            ClearAllTextBoxHang();
+            GetDataHang();
+            this.Cursor = Cursors.Default;
+        }
+        #endregion
     }
 }

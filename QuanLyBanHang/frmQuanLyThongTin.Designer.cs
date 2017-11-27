@@ -663,6 +663,7 @@
             this.btnXuatHang.TabIndex = 1;
             this.btnXuatHang.Text = "Xuất Hàng";
             this.btnXuatHang.UseVisualStyleBackColor = true;
+            this.btnXuatHang.Click += new System.EventHandler(this.btnXuatHang_Click);
             // 
             // dgrvHang
             // 

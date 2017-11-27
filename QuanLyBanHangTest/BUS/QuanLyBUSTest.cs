@@ -50,6 +50,23 @@ namespace QuanLyBanHangTest.BUS
         }
 
         [Test]
+        public void GetDataHangTest()
+        {
+            mockIDataProvider.Setup(x => x.ExecuteQuery(It.IsNotNull<string>(), null)).Returns(new System.Data.DataTable());
+            quanLyBUS.GetDataHang();
+            mockIDataProvider.VerifyAll();
+        }
+
+        [Test]
+        public void GetDataHangTestException()
+        {
+            mockIDataProvider.Setup(x => x.ExecuteQuery(It.IsNotNull<string>(), null)).Throws(new Exception());
+            var exception = Assert.Catch<Exception>(() => quanLyBUS.GetDataHang());
+            Assert.IsTrue(exception.GetType() == typeof(Exception));
+            mockIDataProvider.VerifyAll();
+        }
+
+        [Test]
         public void GetDataNVTest()
         {
             mockIDataProvider.Setup(x => x.ExecuteQuery(It.IsNotNull<string>(), null)).Returns(new System.Data.DataTable());
@@ -81,6 +98,25 @@ namespace QuanLyBanHangTest.BUS
         {
             mockIDataProvider.Setup(x => x.ExecuteNonQuery(It.IsNotNull<string>(), para)).Throws<Exception>();
             var exception = Assert.Catch<Exception>(() => quanLyBUS.InsertKH(para));
+            Assert.IsTrue(exception.GetType() == typeof(Exception));
+            mockIDataProvider.VerifyAll();
+        }
+
+
+        [TestCase(new object[] { "value1", "value2", "value2", "value3", "value4" }, 1, true)]
+        [TestCase(new object[] { "value1", "value2", "value2", "value3", "value5" }, 0, false)]
+        public void InsertHangTest(object[] para, int number, bool value)
+        {
+            mockIDataProvider.Setup(x => x.ExecuteNonQuery(It.IsNotNull<string>(), para)).Returns(number);
+            var result = quanLyBUS.InsertHang(para);
+            Assert.AreEqual(result, value);
+        }
+
+        [TestCase(new object[] { "null" })]
+        public void InsertHangTestException(object[] para)
+        {
+            mockIDataProvider.Setup(x => x.ExecuteNonQuery(It.IsNotNull<string>(), para)).Throws<Exception>();
+            var exception = Assert.Catch<Exception>(() => quanLyBUS.InsertHang(para));
             Assert.IsTrue(exception.GetType() == typeof(Exception));
             mockIDataProvider.VerifyAll();
         }
@@ -141,6 +177,28 @@ Assert.IsTrue(exception.GetType() == typeof(Exception));
         {
             mockIDataProvider.Setup(x => x.ExecuteNonQuery(It.IsNotNull<string>(), para)).Throws<Exception>();
             var exception = Assert.Catch<Exception>(() => quanLyBUS.UpdateKH(para));
+            Assert.IsTrue(exception.GetType() == typeof(Exception));
+            mockIDataProvider.VerifyAll();
+        }
+
+
+
+        [TestCase(new object[] { "value1", "value2", "value2", "value3", "value4", "value5" }, 1, true)]
+        [TestCase(new object[] { "value1", "value2", "value2", "value3", "value5", "value7" }, 0, false)]
+        public void UpdateHangTest(object[] para, int number, bool value)
+        {
+
+            mockIDataProvider.Setup(x => x.ExecuteNonQuery(It.IsNotNull<string>(), para)).Returns(number);
+            var result = quanLyBUS.UpdateHang(para);
+            Assert.AreEqual(result, value);
+        }
+
+
+        [TestCase(new object[] { "null" })]
+        public void UpdateHangTestException(object[] para)
+        {
+            mockIDataProvider.Setup(x => x.ExecuteNonQuery(It.IsNotNull<string>(), para)).Throws<Exception>();
+            var exception = Assert.Catch<Exception>(() => quanLyBUS.UpdateHang(para));
             Assert.IsTrue(exception.GetType() == typeof(Exception));
             mockIDataProvider.VerifyAll();
         }

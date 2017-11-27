@@ -1,5 +1,6 @@
 ﻿using QuanLyBanHang.BUS.Interfaces;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +9,9 @@ using QuanLyBanHang.DTO;
 using System.Data;
 using QuanLyBanHang.DAO;
 using Microsoft.Office.Interop.Excel;
+using AutoMapper;
 using Excel = Microsoft.Office.Interop.Excel;
+using System.Windows.Forms;
 
 namespace QuanLyBanHang.BUS
 {
@@ -112,11 +115,11 @@ namespace QuanLyBanHang.BUS
         /// <param name="values"></param>
         /// <param name="correct"></param>
         /// <returns></returns>
-        public List<HangDTO> SearchBy(object values,bool correct)
+        public List<HangDTO> SearchBy(object values, bool correct)
         {
             List<HangDTO> listHang = new List<HangDTO>();
             var str = correct == true ? values.ToString() : $"%{values.ToString()}%";
-            var data= dataProvider.ExecuteQuery("USP_SearchHang @name",new object[] { str });
+            var data = dataProvider.ExecuteQuery("USP_SearchHang @name", new object[] { str });
             foreach (DataRow item in data.Rows)
             {
                 HangDTO hang = new HangDTO(item);
@@ -164,14 +167,14 @@ namespace QuanLyBanHang.BUS
                 {
                     continue;
                 }
-                if (i!=0 &&query.Length!=stringBuilder.Length)
+                if (i != 0 && query.Length != stringBuilder.Length)
                 {
                     stringBuilder.Append(" , ");
                 }
                 stringBuilder.Append(values[i].ToString());
                 stringBuilder.Append(type);
-            }            
-            var data= dataProvider.ExecuteQuery(stringBuilder.ToString());
+            }
+            var data = dataProvider.ExecuteQuery(stringBuilder.ToString());
             foreach (DataRow item in data.Rows)
             {
                 HangDTO hang = new HangDTO(item);
@@ -187,50 +190,208 @@ namespace QuanLyBanHang.BUS
         /// <returns></returns>
         public KhachHangDTO GetKhachHangBySDT(int sdt)
         {
-            var data= dataProvider.ExecuteQuery("USP_GetKHBySDT @SDT",new object[] {sdt });
+            var data = dataProvider.ExecuteQuery("USP_GetKHBySDT @SDT", new object[] { sdt });
             KhachHangDTO khachHang = new KhachHangDTO(data.Rows.OfType<DataRow>().Single());
             return khachHang;
             //throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Lấy ra Mã Hàng và Số lượng trong database và lưu lại dữ liệu trong dạng <see cref="Dictionary{TKey, TValue}"/>
+        /// </summary>
+        /// <returns></returns>
+        public Dictionary<string, int> GetMaHangAndSoLuong()
+        {
+            var data = dataProvider.ExecuteQuery("SELECT h.* FROM dbo.Hang h");
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.CreateMap<DataRow, HangDTO>().ForMember(x => x.StrMaHang, p => p.MapFrom(s => s["MaHang"].ToString()))
+.ForMember(x => x.IntSoLuong, p => p.MapFrom(s => int.Parse(s["SoLuong"].ToString())));
+            });
+            IMapper iMapper = config.CreateMapper();
+            var map = iMapper.Map<List<DataRow>, List<HangDTO>>(data.Rows.OfType<DataRow>().ToList());
+            var dictionary = map.ToDictionary(x => x.StrMaHang, p => p.IntSoLuong);
+            return dictionary;
+        }
 
+        /// <summary>
+        /// Thực hiện nhập xuất hàng
+        /// </summary>
+        /// <param name="dataGridView"></param>
+        /// <param name="plus"><see cref="true"/> thì là nhập hàng ,<see cref="false"/> là xuất hàng</param>
+        /// <returns></returns>
+        public string NhapXuatHang(DataGridView dataGridView,bool plus)
+        {
+            IMapper mapper=null;
+            var data = TransDataGridViewToDictionary(dataGridView,plus,mapper);
+            string mess = "";
+            foreach (var item in data.Item1)
+            {
+                var para = new object[] {item.Key.ToString(),item.Value.ToString() };
+                bool checkUpdate = dataProvider.ExecuteNonQuery("USP_UpdateSoLuongHang @id , @number ",para) >0;
+                mess = checkUpdate ? $"{item.Key}"+mess.ToString() : "";
+            }
+            data.Item2.ForEach(x => 
+            {
+                var para = new object[] {x.StrMaHang,x.StrTenHang,x.FltDonGia,x.IntSoLuong,x.StrGhiChu };
+                bool checkInsert=  dataProvider.ExecuteNonQuery("USP_InsertHang @id , @name , @price , @number , @notice ", para)>0;
+                mess = checkInsert ? $"{x.StrMaHang}" + mess.ToString() : "";
+            });
+
+            return mess;
+        }
+
+        /// <summary>
+        /// Trả về danh sách 
+        /// Trong đó <see cref="Dictionary{TKey, TValue}"/> là hàng cũ được bổ sung
+        /// Còn <see cref="List{DTO.HangDTO}"/> là hàng mới nhập vào
+        /// </summary>
+        /// <param name="dataGridView"></param>
+        /// <param name="Plus"><see cref="true"/> thì là nhập hàng ,<see cref="false"/> là xuất hàng</param>
+        /// <returns></returns>
+        public Tuple< Dictionary<string, int>,List<HangDTO>> TransDataGridViewToDictionary(DataGridView dataGridView,bool Plus,IMapper iMapper)
+        {
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.CreateMap<DataGridViewRow, HangDTO>().ForMember(x => x.StrMaHang, p => p.MapFrom(s => s.Cells["Mã Hàng"].Value.ToString()))
+                .ForMember(x => x.StrTenHang, p => p.MapFrom(s => s.Cells["Tên Hàng"].Value.ToString()))
+                .ForMember(x => x.FltDonGia, p => p.MapFrom(s => float.Parse(s.Cells["Đơn Giá"].Value.ToString())))
+                .ForMember(x => x.StrGhiChu, p => p.MapFrom(s => s.Cells["Ghi Chú"].Value ?? "null"))
+                .ForMember(x => x.IntSoLuong, p => p.MapFrom(s => int.Parse(s.Cells["Số Lượng"].Value.ToString())));
+            });
+
+            //((DataTable)dataGridView.DataSource).RowsOfType<DataRow>().Select(p => p.ItemArray).ToList()[1]
+            var config2 = new MapperConfiguration(cfg => {
+                cfg.CreateMap<object[], HangDTO>().ForMember(x => x.StrMaHang, p => p.MapFrom(s => s[0].ToString()))
+               .ForMember(x => x.StrTenHang, p => p.MapFrom(s => s[1].ToString()))
+               .ForMember(x => x.FltDonGia, p => p.MapFrom(s =>float.Parse( s[2].ToString())))
+               .ForMember(x => x.IntSoLuong, p => p.MapFrom(s =>int.Parse( s[3].ToString())))
+               .ForMember(x => x.StrGhiChu, p => p.MapFrom(s => s[1].ToString()));
+
+            });
+            List<HangDTO> listData;
+            var count= dataGridView.RowCount == 0;
+            if (count)
+            {
+                iMapper = config2.CreateMapper();
+                listData = iMapper.Map<List<object[]>, List<HangDTO>>(((System.Data.DataTable)dataGridView.DataSource).Rows.OfType<DataRow>().Select(p => p.ItemArray).ToList());
+            }
+            else
+            {
+                iMapper = config.CreateMapper();
+                listData = iMapper.Map<List<DataGridViewRow>, List<HangDTO>>(dataGridView.Rows.OfType<DataGridViewRow>().ToList());
+            }
+            var dic = GetMaHangAndSoLuong();
+            Dictionary<string, int> dictionary = new Dictionary<string, int>();
+            List<HangDTO> list = new List<HangDTO>();
+            listData.ForEach(x =>
+            {
+                if (String.IsNullOrEmpty(x.StrMaHang))
+                {
+
+                }
+                else
+                {
+                    if (dic.ContainsKey(x.StrMaHang.Trim()))
+                    {
+                        var old = dic[x.StrMaHang.Trim()];
+                        //dic.Remove(x.StrMaHang);
+                        var number = Plus ? old + x.IntSoLuong : old - x.IntSoLuong;
+                        dictionary.Add(x.StrMaHang, number);
+                    }
+                    else
+                    {
+                        list.Add(x);
+                        //dic.Add(x.StrMaHang, x.IntSoLuong);
+                    }
+                }
+            });
+            return new Tuple<Dictionary<string, int>, List<HangDTO>>( dictionary,list);
+        }
+        #region Đọc file excel
+
+        /// <summary>
+        /// Lấy ra WorkBook của file excel
+        /// </summary>
+        /// <param name="application"></param>
+        /// <returns></returns>
         public Workbooks GetWorkBooks(_Application application)
         {
             Workbooks workbooks = application.Workbooks;
             return workbooks;
         }
 
-        public Worksheet GetWorkSheet(Workbooks workbooks, string address)
+        /// <summary>
+        /// Lấy ra một sheet trong excel 
+        /// Mặc định là sheet đầu tiên
+        /// </summary>
+        /// <param name="workbooks"></param>
+        /// <param name="address"></param>
+        /// <param name="i">Mặc định là 1</param>
+        /// <returns></returns>
+        public Worksheet GetWorkSheet(Workbooks workbooks, string address, int i = 1)
         {
-            var resultworkbooks = workbooks.Open(address).Worksheets[1];
+            
+
+            var resultworkbooks = workbooks.Open(address).Worksheets[i];
             return resultworkbooks;
         }
 
+        /// <summary>
+        /// Lấy ra vùng giá trị trong worksheet
+        /// </summary>
+        /// <param name="worksheet"></param>
+        /// <returns></returns>
         public Range GetRange(Worksheet worksheet)
         {
             var range = worksheet.UsedRange;
             return range;
         }
 
+        /// <summary>
+        /// Sử dụng hàm <see cref="GetRange(Worksheet)"/> để lấy ra các vùng giá trị trước
+        /// Từ vùng giá trị lấy ra các vùng giá trị nhỏ hơn ( các ô )
+        /// </summary>
+        /// <param name="range"></param>
+        /// <param name="i"></param>
+        /// <param name="j"></param>
+        /// <returns></returns>
         public Range GetRangeValueWithIndex(Range range, int i, int j)
         {
             Range result = range[i, j];
             return result;
         }
 
+        /// <summary>
+        /// Sử dụng hàm <see cref="GetRangeValueWithIndex(Range, int, int)"/> trước để lấy ra các ô giá trị.
+        /// Từ các ô giá trị ta lấy ra các giá trị của ô đó dưới dạng <see cref="String"/>
+        /// </summary>
+        /// <param name="range"></param>
+        /// <returns></returns>
         public string GetValueOfRange(Range range)
         {
             object value = range.Value2 == null ? "null" : range.Value2; ;
             return value.ToString();
         }
 
+        /// <summary>
+        /// Xử lý bất đồng bộ hàm ReadWithInteropExcel phục vụ cho việc song song
+        /// </summary>
+        /// <param name="address"></param>
+        /// <returns></returns>
         public Task<List<Tuple<string, string, string, string, string>>> ReadAsync(_Application application, string address)
         {
             return Task.Factory.StartNew(() => ReadWithInteropExcel(application, address));
             //throw new NotImplementedException();
         }
 
-        public List<Tuple<string, string, string, string, string>> ReadWithInteropExcel(_Application application,string address)
+        /// <summary>
+        /// Đọc file excel và lấy 4 trường dữ liệu ra 
+        /// 4 trường dữ liệu ở đây bao gồm MaHang ,TenHang ,DonGia ,SoLuong ,GhiChu
+        /// </summary>
+        /// <param name="address"></param>
+        /// <returns></returns>
+        public List<Tuple<string, string, string, string, string>> ReadWithInteropExcel(_Application application, string address)
         {
             object row;
             object row2;
@@ -238,7 +399,7 @@ namespace QuanLyBanHang.BUS
             object row4;
             object row5;
 
-            List < Tuple < string, string, string, string, string>> list = new List<Tuple<string, string, string, string, string>>();
+            List<Tuple<string, string, string, string, string>> list = new List<Tuple<string, string, string, string, string>>();
             var workBooks = GetWorkBooks(application);
             var workSheet = GetWorkSheet(workBooks, address);
             var range = GetRange(workSheet);
@@ -256,7 +417,7 @@ namespace QuanLyBanHang.BUS
 
                     j++;
                     var value3 = GetRangeValueWithIndex(range, i, j);
-                    row3 = GetValueOfRange(value3) ;
+                    row3 = GetValueOfRange(value3);
                     j++;
                     var value4 = GetRangeValueWithIndex(range, i, j);
                     row4 = GetValueOfRange(value4);
@@ -272,5 +433,6 @@ namespace QuanLyBanHang.BUS
             return list;
             //throw new NotImplementedException();
         }
+        #endregion
     }
 }

@@ -13,6 +13,8 @@ using FizzWare.NBuilder;
 using QuanLyBanHang.DTO;
 using Microsoft.Office.Interop.Excel;
 using Excel = Microsoft.Office.Interop.Excel;
+using AutoMapper;
+using System.Windows.Forms;
 
 namespace QuanLyBanHangTest.BUS
 {
@@ -49,6 +51,54 @@ namespace QuanLyBanHangTest.BUS
             var result1 = typeof(QuanLyThongTinBUS).IsPublic;
             Assert.IsTrue(result);
             Assert.IsTrue(result1);
+        }
+
+        [Test]
+        public void GetMaHangAndSoLuongTest()
+        {
+            var data = GenerateDataTable<HangDTO>(10);
+
+            mockIDataProvider.Setup(x => x.ExecuteQuery(It.IsNotNull<string>(), null)).Returns(data);
+            var result = quanLyThongTinBUS.GetMaHangAndSoLuong();
+            Assert.NotNull(result);
+
+        }
+
+        [Test]
+        public void TransDataGridViewToDictionaryTest()
+        {
+            var datatable = new System.Data.DataTable(typeof(HangDTO).Name);
+            datatable.Columns.Add("Mã Hàng");
+            datatable.Columns.Add("Tên Hàng");
+            datatable.Columns.Add("Đơn Giá");
+            datatable.Columns.Add("Số Lượng");
+            datatable.Columns.Add("Ghi Chú");
+            Builder<HangDTO>.CreateListOfSize(10).Build()
+                .ToList().ForEach(
+                    x => datatable.LoadDataRow(x.GetType().GetProperties().Select(
+                        y => y.GetValue(x, null)).ToArray(), true));
+            //return datatable;
+            System.Windows.Forms.DataGridView dataGridView = new System.Windows.Forms.DataGridView();
+            datatable.AcceptChanges();
+
+            dataGridView.DataSource = datatable;
+           
+            var listHang = Builder<HangDTO>.CreateListOfSize(10).Build();
+            List<HangDTO> list = new List<HangDTO>(listHang);
+            
+
+            var data = GenerateDataTable<HangDTO>(10);
+            
+            
+            var data2 = GenerateDataTable<HangDTO>(10);
+            mockIDataProvider.Setup(x => x.ExecuteQuery(It.IsNotNull<string>(), null)).Returns(data);
+            var mockIMapper = new Mock<IMapper>();
+            mockIMapper.Setup(x => x.Map<List<DataGridViewRow>, List<HangDTO>>(It.IsNotNull<List<DataGridViewRow>>())).Returns(list);// dataGridView.Rows.OfType<DataGridViewRow>().ToList())).Returns(list);
+            
+            var result1 = quanLyThongTinBUS.TransDataGridViewToDictionary(dataGridView, true,mockIMapper.Object);
+            dataGridView.DataSource = data;
+            var result2 = quanLyThongTinBUS.TransDataGridViewToDictionary(dataGridView, false,mockIMapper.Object);
+            var result = quanLyThongTinBUS.NhapXuatHang(dataGridView, true);
         }
 
         [Test]
@@ -216,7 +266,7 @@ namespace QuanLyBanHangTest.BUS
         [TestCase("b", 0, 0)]
         public void AllMethodForReadExcelTest(string a,int i,int j)
         {
-            Mock<Application> mock_applcation = new Mock<Application>();
+            Mock<Excel.Application> mock_applcation = new Mock<Excel.Application>();
             Mock<Excel.Worksheet> mockSheet = new Mock<Excel.Worksheet>();
             Mock<Workbooks> mockWorkbooks = new Mock<Workbooks>();
             Mock<Workbook> mockWorkbook = new Mock<Workbook>();
