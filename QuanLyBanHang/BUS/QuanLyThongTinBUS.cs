@@ -222,20 +222,19 @@ namespace QuanLyBanHang.BUS
         /// <returns></returns>
         public string NhapXuatHang(DataGridView dataGridView,bool plus)
         {
-            IMapper mapper=null;
-            var data = TransDataGridViewToDictionary(dataGridView,plus,mapper);
+            var data = TransDataGridViewToDictionary(dataGridView,plus);
             string mess = "";
             foreach (var item in data.Item1)
             {
                 var para = new object[] {item.Key.ToString(),item.Value.ToString() };
                 bool checkUpdate = dataProvider.ExecuteNonQuery("USP_UpdateSoLuongHang @id , @number ",para) >0;
-                mess = checkUpdate ? $"{item.Key}"+mess.ToString() : "";
+                mess = checkUpdate ?   "":$"{item.Key}"+mess.ToString();
             }
             data.Item2.ForEach(x => 
             {
                 var para = new object[] {x.StrMaHang,x.StrTenHang,x.FltDonGia,x.IntSoLuong,x.StrGhiChu };
                 bool checkInsert=  dataProvider.ExecuteNonQuery("USP_InsertHang @id , @name , @price , @number , @notice ", para)>0;
-                mess = checkInsert ? $"{x.StrMaHang}" + mess.ToString() : "";
+                mess = checkInsert ? "" : $"{x.StrMaHang}" + mess.ToString();
             });
 
             return mess;
@@ -249,7 +248,7 @@ namespace QuanLyBanHang.BUS
         /// <param name="dataGridView"></param>
         /// <param name="Plus"><see cref="true"/> thì là nhập hàng ,<see cref="false"/> là xuất hàng</param>
         /// <returns></returns>
-        public Tuple< Dictionary<string, int>,List<HangDTO>> TransDataGridViewToDictionary(DataGridView dataGridView,bool Plus,IMapper iMapper)
+        public Tuple< Dictionary<string, int>,List<HangDTO>> TransDataGridViewToDictionary(DataGridView dataGridView,bool Plus)
         {
             var config = new MapperConfiguration(cfg =>
             {
@@ -270,6 +269,7 @@ namespace QuanLyBanHang.BUS
 
             });
             List<HangDTO> listData;
+            IMapper iMapper;
             var count= dataGridView.RowCount == 0;
             if (count)
             {

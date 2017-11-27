@@ -93,7 +93,7 @@ namespace QuanLyBanHang.BUS.Interfaces
         /// <param name="dataGridView"></param>
         /// <param name="Plus"><see cref="true"/> thì là nhập hàng ,<see cref="false"/> là xuất hàng</param>
         /// <returns></returns>
-        Tuple<Dictionary<string, int>, List<DTO.HangDTO>> TransDataGridViewToDictionary(DataGridView dataGridView,bool Plus, AutoMapper.IMapper iMapper);
+        Tuple<Dictionary<string, int>, List<DTO.HangDTO>> TransDataGridViewToDictionary(DataGridView dataGridView,bool Plus);
 
         /// <summary>
         /// Thực hiện nhập xuất hàng

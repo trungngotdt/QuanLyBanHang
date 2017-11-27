@@ -651,7 +651,6 @@ namespace QuanLyBanHang
         #endregion
         private void btnNhapHang_Click(object sender, EventArgs e)
         {
-
             try
             {
                 if (dgrvHang.Rows.Count!=0)
@@ -669,8 +668,7 @@ namespace QuanLyBanHang
                 else
                 {
                     MessageBox.Show("Không có dữ liệu", "THÔNG BÁO", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
-                
+                }                
             }
             catch (Exception ex)
             {

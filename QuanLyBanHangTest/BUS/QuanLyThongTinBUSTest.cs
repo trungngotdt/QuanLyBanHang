@@ -82,23 +82,56 @@ namespace QuanLyBanHangTest.BUS
             datatable.AcceptChanges();
 
             dataGridView.DataSource = datatable;
-           
+
             var listHang = Builder<HangDTO>.CreateListOfSize(10).Build();
             List<HangDTO> list = new List<HangDTO>(listHang);
-            
+
 
             var data = GenerateDataTable<HangDTO>(10);
-            
-            
-            var data2 = GenerateDataTable<HangDTO>(10);
+
+            var datatable2 = new System.Data.DataTable(typeof(HangDTO).Name);
+
+            var data2 = GenerateDataTable<HangDTO>(12);
+
+            //var mockIMapper = new Mock<IMapper>();
+            //mockIMapper.Setup(x => x.Map<List<DataGridViewRow>, List<HangDTO>>(It.IsNotNull<List<DataGridViewRow>>())).Returns(list);// dataGridView.Rows.OfType<DataGridViewRow>().ToList())).Returns(list);
+
+            System.Windows.Forms.DataGridView dataGridView1 = new System.Windows.Forms.DataGridView();
+            dataGridView1.ColumnCount = 5;
+            dataGridView1.Columns[0].Name = "Mã Hàng";
+            dataGridView1.Columns[1].Name = "Tên Hàng";
+            dataGridView1.Columns[2].Name = "Đơn Giá";
+            dataGridView1.Columns[3].Name = "Ghi Chú";
+            dataGridView1.Columns[4].Name = "Số Lượng";
+
+
+            string[] row = new string[] { "1", "Product 1", "1000", "", "50" };
+            dataGridView1.Rows.Add(row);
+            row = new string[] { "2", "Product 2", "2000", "", "20" };
+            dataGridView1.Rows.Add(row);
+
             mockIDataProvider.Setup(x => x.ExecuteQuery(It.IsNotNull<string>(), null)).Returns(data);
-            var mockIMapper = new Mock<IMapper>();
-            mockIMapper.Setup(x => x.Map<List<DataGridViewRow>, List<HangDTO>>(It.IsNotNull<List<DataGridViewRow>>())).Returns(list);// dataGridView.Rows.OfType<DataGridViewRow>().ToList())).Returns(list);
-            
-            var result1 = quanLyThongTinBUS.TransDataGridViewToDictionary(dataGridView, true,mockIMapper.Object);
+
+            var result1 = quanLyThongTinBUS.TransDataGridViewToDictionary(dataGridView1, true);//,mockIMapper.Object);
             dataGridView.DataSource = data;
-            var result2 = quanLyThongTinBUS.TransDataGridViewToDictionary(dataGridView, false,mockIMapper.Object);
+            var result2 = quanLyThongTinBUS.TransDataGridViewToDictionary(dataGridView, false);//,mockIMapper.Object);
+            dataGridView.DataSource = data2;
             var result = quanLyThongTinBUS.NhapXuatHang(dataGridView, true);
+            var result3 = quanLyThongTinBUS.TransDataGridViewToDictionary(dataGridView, false);
+            dataGridView.DataSource = datatable2;
+            var result4 = quanLyThongTinBUS.TransDataGridViewToDictionary(dataGridView, true);
+            
+
+            Assert.IsNotNull(result);
+            Assert.IsNotEmpty(result1.Item2);
+            Assert.IsEmpty(result1.Item1);
+            Assert.IsNotEmpty(result2.Item1);
+            Assert.IsEmpty(result2.Item2);
+            Assert.IsNotEmpty(result3.Item1);
+            Assert.IsNotEmpty(result3.Item2);
+            Assert.IsEmpty(result4.Item1);
+            Assert.IsEmpty(result4.Item2);
+            mockIDataProvider.VerifyAll();
         }
 
         [Test]
@@ -235,14 +268,14 @@ namespace QuanLyBanHangTest.BUS
             mockIDataProvider.VerifyAll();
         }
 
-        [TestCase(new object[]{ "namea , " ,"", " "," , "}, false)]
-        [TestCase(new object[] { "name" },true)]
+        [TestCase(new object[] { "namea , ", "", " ", " , " }, false)]
+        [TestCase(new object[] { "name" }, true)]
         public void SortBy(object[] values, bool asc)
         {
 
             var data = GenerateDataTable<HangDTO>(10);
             mockIDataProvider.Setup(x => x.ExecuteQuery(It.IsNotNull<string>(), null)).Returns(data);
-            var result = quanLyThongTinBUS.SortBy(values , asc);
+            var result = quanLyThongTinBUS.SortBy(values, asc);
             bool isTrue = false;
             var expectResult = new List<HangDTO>();
             foreach (DataRow item in data.Rows)
@@ -262,9 +295,9 @@ namespace QuanLyBanHangTest.BUS
             mockIDataProvider.VerifyAll();
         }
 
-        [TestCase("a",5,5)]
+        [TestCase("a", 5, 5)]
         [TestCase("b", 0, 0)]
-        public void AllMethodForReadExcelTest(string a,int i,int j)
+        public void AllMethodForReadExcelTest(string a, int i, int j)
         {
             Mock<Excel.Application> mock_applcation = new Mock<Excel.Application>();
             Mock<Excel.Worksheet> mockSheet = new Mock<Excel.Worksheet>();
@@ -279,18 +312,18 @@ namespace QuanLyBanHangTest.BUS
             mockRange.Setup(x => x.Rows).Returns(mockRange.Object);
             mockRange.Setup(x => x.Value2).Returns("");
             mockSheet.Setup(x => x.UsedRange).Returns(mockRange.Object);
-            mock_applcation.Setup(x => x.Workbooks).Returns(mockWorkbooks.Object);            
+            mock_applcation.Setup(x => x.Workbooks).Returns(mockWorkbooks.Object);
             mockWorkbooks.Setup(x => x.Open(It.IsNotNull<string>(), null, null, null, null, null, null, null, null, null, null, null, null, null, null).Worksheets[1]).Returns(mockSheet.Object);
 
 
             var resultWorkbooks = quanLyThongTinBUS.GetWorkBooks(mock_applcation.Object);
             var resultWorksheet = quanLyThongTinBUS.GetWorkSheet(mockWorkbooks.Object, "a");
-            var reslut = quanLyThongTinBUS.ReadWithInteropExcel(mock_applcation.Object,"a");
+            var reslut = quanLyThongTinBUS.ReadWithInteropExcel(mock_applcation.Object, "a");
             var resultRange = quanLyThongTinBUS.GetRange(mockSheet.Object);
             var RangeValue = quanLyThongTinBUS.GetRangeValueWithIndex(mockRange.Object, 4, 4);
             var resultRanges = quanLyThongTinBUS.GetValueOfRange(mockRange.Object);
 
-            Assert.NotNull(quanLyThongTinBUS.ReadAsync(mock_applcation.Object,"a"));
+            Assert.NotNull(quanLyThongTinBUS.ReadAsync(mock_applcation.Object, "a"));
             Assert.NotNull(resultRange);
             Assert.NotNull(resultWorkbooks);
             Assert.NotNull(resultWorksheet);
@@ -309,14 +342,14 @@ namespace QuanLyBanHangTest.BUS
         {
             var data = GenerateDataTable<KhachHangDTO>(1);
 
-            mockIDataProvider.Setup(x => x.ExecuteQuery(It.IsNotNull<string>(),new object[] { sdt })).Returns(data);
+            mockIDataProvider.Setup(x => x.ExecuteQuery(It.IsNotNull<string>(), new object[] { sdt })).Returns(data);
             var result = quanLyThongTinBUS.GetKhachHangBySDT(sdt);
             KhachHangDTO khachHang = new KhachHangDTO(data.Rows.OfType<DataRow>().Single());
-            Assert.IsTrue(result.BlnGioiTinh.Equals(khachHang.BlnGioiTinh)&&
-                result.IntSDT.Equals(khachHang.IntSDT)&&
-                result.StrDiaChi.Equals(khachHang.StrDiaChi)&&
-                result.StrLoaiKhachHang.Equals(khachHang.StrLoaiKhachHang)&&
-                result.StrMaKH.Equals(khachHang.StrMaKH)&&
+            Assert.IsTrue(result.BlnGioiTinh.Equals(khachHang.BlnGioiTinh) &&
+                result.IntSDT.Equals(khachHang.IntSDT) &&
+                result.StrDiaChi.Equals(khachHang.StrDiaChi) &&
+                result.StrLoaiKhachHang.Equals(khachHang.StrLoaiKhachHang) &&
+                result.StrMaKH.Equals(khachHang.StrMaKH) &&
                 result.StrTenKH.Equals(khachHang.StrTenKH));
             mockIDataProvider.VerifyAll();
         }
